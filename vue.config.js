@@ -4,6 +4,8 @@ module.exports = {
     devServer: {
       proxy: 'https://localhost:5001'
     },
-    publicPath: '/ibid_mobile/'
+    publicPath: '/ibid_mobile/',
+    lintOnSave: false,
+
 
   }
