@@ -11,7 +11,7 @@ export default new Vuex.Store({
   },
   actions: {
     loadPosts({ commit }) {
-      axios.get('/api/BidItems')
+      axios.get('https://ibidmobile-back.azurewebsites.net/api/BidItems')
         .then(response => response.data)
         .then(posts => {
           commit("GET_POSTS", posts)
