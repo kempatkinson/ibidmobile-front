@@ -158,7 +158,7 @@
         class="rounded-borders card card--three fixed fixed--center cardThree"
         style="z-index: 1"
       >
-         <div style="height: 100%" class="card">
+        <div style="height: 100%" class="card">
           <h2 class="card-title text">{{nextNext.name}}</h2>
           <img class="card-image" src="../assets/sample.jpg" />
 
@@ -334,6 +334,8 @@ export default {
       setTimeout(() => (this.isVisible = false), 200);
       setTimeout(() => {
         this.index++;
+        this.initBid();
+
         this.isVisible = true;
       }, 200);
     },
@@ -368,8 +370,7 @@ export default {
           Price: this.bid,
           Raise: this.current.raise
         };
-        const url =
-          "https://localhost:5001/api/BidItems/" + this.$route.params.id;
+        const url = "https://localhost:5001/api/BidItems/" + this.current.id;
         return axios
           .put(url, newPost, {
             headers: {
@@ -377,7 +378,7 @@ export default {
             }
           })
           .then(response => {
-            console.log(response);
+            // console.log(response);
             this.current.price = this.bid;
             this.initBid();
           })
@@ -532,6 +533,4 @@ export default {
     color: white;
   }
 }
-
-
 </style>
