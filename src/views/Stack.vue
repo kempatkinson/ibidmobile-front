@@ -370,7 +370,7 @@ export default {
           Price: this.bid,
           Raise: this.current.raise
         };
-        const url = "https://localhost:5001/api/BidItems/" + this.current.id;
+        const url = "https://ibidmobile-back.azurewebsites.net/api/biditems" + this.current.id;
         return axios
           .put(url, newPost, {
             headers: {
