@@ -10,7 +10,7 @@
         <Vue2InteractDraggable
           v-if="isVisible"
           :interact-out-of-sight-x-coordinate="100"
-          :interact-max-rotation="150"
+          :interact-max-rotation="100"
           :interact-x-threshold="200"
           :interact-y-threshold="200"
           :interact-event-bus-events="interactEventBus"
