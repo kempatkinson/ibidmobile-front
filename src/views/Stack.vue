@@ -11,8 +11,8 @@
           v-if="isVisible"
           :interact-out-of-sight-x-coordinate="100"
           :interact-max-rotation="150"
-          :interact-x-threshold="500"
-          :interact-y-threshold="500"
+          :interact-x-threshold="200"
+          :interact-y-threshold="200"
           :interact-event-bus-events="interactEventBus"
           interact-block-drag-down
           @draggedRight="emitAndNext('match')"
@@ -339,7 +339,6 @@ export default {
         let height = this.$refs.targetCard.$el.clientHeight + 10 + "px";
         Vue.set(this.containerStyle, "height", height);
       });
-      console.log(this.containerStyle);
     },
     back() {
       this.index--;
@@ -416,7 +415,6 @@ export default {
             }
           })
           .then(response => {
-            // console.log(response);
             this.current.price = this.bid;
             this.initBid();
           })
