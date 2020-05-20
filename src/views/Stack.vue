@@ -1,6 +1,6 @@
 <template>
   <div id="stack">
-    <div class="container">
+    <div class="container" v-bind:style="containerStyle">
       <div
         v-if="current"
         class="fixed fixed--center"
@@ -21,7 +21,7 @@
           class="rounded-borders card card--one"
           ref="targetCard"
         >
-          <div style="height: 70%" class="card">
+          <div class="card">
             <h2 class="card-title text">{{current.name}}</h2>
             <img class="card-image" src="../assets/sample.jpg" />
 
@@ -81,6 +81,21 @@
               </div>
               <br />
               <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
+              <div class="row">
+                <div class="col d-flex justify-content-center">
+                  <button
+                    type="button"
+                    class="btn btn-foot"
+                    v-if="(this.index<this.cards.length-1)"
+                    @touchstart="skip"
+                  >Next item</button>
+                  <button
+                    class="btn btn-foot"
+                    v-if="(this.index>0)"
+                    @touchstart="back"
+                  >Previous item</button>
+                </div>
+              </div>
             </div>
           </div>
         </Vue2InteractDraggable>
@@ -90,7 +105,7 @@
         class="rounded-borders card card--two fixed fixed--center"
         style="z-index: 2"
       >
-        <div style="height: 100%" class="card">
+        <div class="card">
           <h2 class="card-title text">{{next.name}}</h2>
           <img class="card-image" src="../assets/sample.jpg" />
 
@@ -150,15 +165,31 @@
             </div>
             <br />
             <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
+
+            <div class="row">
+              <div class="col d-flex justify-content-center">
+                <button
+                  type="button"
+                  class="btn btn-foot"
+                  v-if="(this.index+1<this.cards.length-1)"
+                  @touchstart="skip"
+                >Next item</button>
+                <button
+                  class="btn btn-foot"
+                  v-if="(this.index+1>0)"
+                  @touchstart="back"
+                >Previous item</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
         v-if="index + 2 < cards.length"
-        class="rounded-borders card card--three fixed fixed--center cardThree"
+        class="rounded-borders card card--three fixed fixed--center"
         style="z-index: 1"
       >
-        <div style="height: 100%" class="card">
+        <div class="card">
           <h2 class="card-title text">{{nextNext.name}}</h2>
           <img class="card-image" src="../assets/sample.jpg" />
 
@@ -218,40 +249,36 @@
             </div>
             <br />
             <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
+            <div class="row">
+              <div class="col d-flex justify-content-center">
+                <button
+                  type="button"
+                  class="btn btn-foot"
+                  v-if="(this.index+2<this.cards.length-1)"
+                  @touchstart="skip"
+                >Next item</button>
+                <button
+                  class="btn btn-foot"
+                  v-if="(this.index+2>0)"
+                  @touchstart="back"
+                >Previous item</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <br />
-    <div class="row">
-      <div class="col d-flex justify-content-center">
-        <button
-          type="button"
-          class="footer-btn btn btn-foot"
-          v-if="(this.index<this.cards.length-1)"
-          @touchstart="skip"
-        >Next item</button>
-        <button
-          class="footer-btn btn btn-foot"
-          v-if="(this.index>0)"
-          @touchstart="back"
-        >Previous item</button>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col d-flex justify-content-center">
-        <button class="footer-btn btn btn-foot">
-          <router-link to="/">Back to All</router-link>
-        </button>
-      </div>
-    </div>
-    <br />
+    <footer>
+      <button class="footer-btn btn btn-foot">
+        <router-link to="/">Back to All</router-link>
+      </button>
+    </footer>
   </div>
 </template>
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
 import { mapState } from "vuex";
-// import Vue from 'vue';
+import Vue from "vue";
 import $ from "jquery";
 import axios from "axios";
 
@@ -276,13 +303,15 @@ export default {
         draggedUp: EVENTS.SKIP
       },
       cards: [],
-      bid: 0
+      bid: 0,
+      containerStyle: {}
     };
   },
   mounted() {
     this.$store.dispatch("loadPosts");
     this.getCards();
     this.initBid();
+    this.getHeight();
   },
 
   computed: {
@@ -304,6 +333,13 @@ export default {
   methods: {
     initBid() {
       this.bid = this.current.price + this.current.raise;
+    },
+    getHeight() {
+      Vue.nextTick(() => {
+        let height = this.$refs.targetCard.$el.clientHeight + 10 + "px";
+        Vue.set(this.containerStyle, "height", height);
+      });
+      console.log(this.containerStyle);
     },
     back() {
       this.index--;
@@ -370,7 +406,9 @@ export default {
           Price: this.bid,
           Raise: this.current.raise
         };
-        const url = "https://ibidmobile-back.azurewebsites.net/api/biditems" + this.current.id;
+        const url =
+          "https://ibidmobile-back.azurewebsites.net/api/biditems" +
+          this.current.id;
         return axios
           .put(url, newPost, {
             headers: {
@@ -396,7 +434,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  height: calc(var(--vh, 1vh) * 80);
+  // margin-bottom: calc(var(--vh, 1vh) * 5);
 }
 .footer {
   position: absolute;
@@ -406,7 +444,6 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   align-items: center;
-  height: calc(var(--vh, 1vh) * 10);
 }
 
 .footer-btn {
@@ -438,7 +475,7 @@ export default {
   position: absolute;
   &--center {
     left: 50%;
-    top: 50%;
+    top: 52%;
     transform: translate(-50%, -50%);
   }
 }
@@ -446,7 +483,7 @@ export default {
   border-radius: 12px;
 }
 .card {
-  width: calc(var(--vw, 1vw) * 70);
+  width: calc(var(--vw, 1vw) * 80);
   border: black 0.5px solid;
   border-top-right-radius: 12px;
   background-color: #bfdbf7;
@@ -509,7 +546,7 @@ export default {
   width: 50%;
 }
 .bidrow {
-  margin-bottom: calc(var(--vh, 1vh) * 2.5);
+  margin-bottom: calc(var(--vh, 1vh) * 2);
 }
 .h2,
 .card-title {
@@ -532,5 +569,12 @@ export default {
   a.router-link-active {
     color: white;
   }
+}
+html,
+body {
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  bottom: 0;
 }
 </style>

@@ -26,7 +26,7 @@
 <style lang="scss">
 body {
   background-color: #444;
-  height : 100%;
+  height : 90%;
 }
 
 #app {
@@ -39,7 +39,8 @@ body {
 
 #nav {
   padding: 20px;
-  margin-bottom: 5%;
+  margin-bottom: calc(var(--vh, 1vh) * 2);
+  height: calc(var(--vh, 1vh) * 10);
   background-color: #053C5E;
 
   a {
@@ -54,4 +55,5 @@ body {
     margin-right: 20px
   }
 }
+
 </style>
