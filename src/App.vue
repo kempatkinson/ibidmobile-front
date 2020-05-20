@@ -25,7 +25,6 @@
 
 <style lang="scss">
 body {
-  background-color: #444;
   height : 90%;
 }
 
