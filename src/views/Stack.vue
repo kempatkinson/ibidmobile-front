@@ -430,6 +430,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.button {
+  -webkit-appearance:none;
+}
 .container {
  margin-bottom: calc(var(--vh, 1vh) * 7);
 }
