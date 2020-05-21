@@ -79,7 +79,6 @@
                   </svg>
                 </button>
               </div>
-              <br />
               <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
               <div class="row">
                 <div class="col d-flex justify-content-center">
@@ -163,7 +162,6 @@
                 </svg>
               </button>
             </div>
-            <br />
             <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
 
             <div class="row">
@@ -247,7 +245,6 @@
                 </svg>
               </button>
             </div>
-            <br />
             <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
             <div class="row">
               <div class="col d-flex justify-content-center">
@@ -336,7 +333,8 @@ export default {
     },
     getHeight() {
       Vue.nextTick(() => {
-        let height = this.$refs.targetCard.$el.clientHeight + 10 + "px";
+        let height = this.$refs.targetCard.$el.clientHeight  + "px";
+        console.log(height)
         Vue.set(this.containerStyle, "height", height);
       });
     },
@@ -432,7 +430,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.container {
+ margin-bottom: calc(var(--vh, 1vh) * 7);
+}
 .footer {
   position: absolute;
   bottom: 0;
@@ -491,7 +491,7 @@ export default {
   color: black;
   img {
     width: 100%;
-    padding: 5%;
+    padding: 2.5%;
   }
   &--one {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.14),
@@ -518,9 +518,8 @@ export default {
   }
 }
 .card-body {
-  height: 50%;
   position: relative;
-  padding: 5% 0% 5% 0%;
+  padding: 5% 0% 2.5% 0%;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
   span {
