@@ -406,7 +406,7 @@ export default {
           Raise: this.current.raise
         };
         const url =
-          "https://afternoon-taiga-12401.herokuapp.com/api/biditems" +
+          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
           this.current.id;
         return axios
           .put(url, newPost, {
