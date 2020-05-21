@@ -37,8 +37,11 @@ body {
 }
 
 #nav {
-  padding: 20px;
   margin-bottom: calc(var(--vh, 1vh) * 2);
+  padding-top: calc(var(--vh, 1vh) * 3);
+  padding-bottom: calc(var(--vh, 1vh) * 3);
+
+  padding-left: 20px;
   height: calc(var(--vh, 1vh) * 10);
   background-color: #053C5E;
 

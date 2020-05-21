@@ -333,8 +333,8 @@ export default {
     },
     getHeight() {
       Vue.nextTick(() => {
-        let height = this.$refs.targetCard.$el.clientHeight  + "px";
-        console.log(height)
+        let height = this.$refs.targetCard.$el.clientHeight + "px";
+        console.log(height);
         Vue.set(this.containerStyle, "height", height);
       });
     },
@@ -420,7 +420,7 @@ export default {
             alert(error);
           });
       } else {
-        console.log(this.bid)
+        console.log(this.bid);
         alert("your bid is not high enough");
         this.initBid();
       }
@@ -431,10 +431,12 @@ export default {
 
 <style lang="scss" scoped>
 .button {
-  -webkit-appearance:none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 .container {
- margin-bottom: calc(var(--vh, 1vh) * 7);
+  margin-bottom: calc(var(--vh, 1vh) * 7);
 }
 .footer {
   position: absolute;
