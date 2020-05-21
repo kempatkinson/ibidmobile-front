@@ -51,7 +51,9 @@ export default {
 <style scoped>
 .card {
   margin-bottom: 10%;
+  border: black 0.5px solid;
   align-content: center;
+  background-color: #bfdbf7;
 }
 h3,
 p {
@@ -66,5 +68,13 @@ p {
 
 button {
   width: 40%;
+}
+
+.btn-primary {
+  background-color: #1f7a8c;
+  border-color: #343a40;
+  color: white;
+  margin: 5px;
+  
 }
 </style>
