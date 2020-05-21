@@ -93,12 +93,6 @@
           </div>
         </div>
       </Vue2InteractDraggable>
-      <div id="gap"></div>
-      <footer>
-        <button class="footer-btn btn btn-foot">
-          <router-link to="/">Back to All</router-link>
-        </button>
-      </footer>
     </div>
     <div v-if="next" class="rounded-borders card card--two fixed fixed--center" style="z-index: 2">
       <div class="card">
@@ -252,6 +246,12 @@
           </div>
         </div>
       </div>
+    </div>
+    <div id="gap" v-bind:style="this.containerStyle"></div>
+    <div id="foot">
+      <button class="footer-btn btn btn-foot">
+        <router-link to="/">Back to All</router-link>
+      </button>
     </div>
   </div>
 </template>
@@ -416,16 +416,14 @@ export default {
 .svg {
   margin: 0 5 0 5;
 }
-#gap {
-  height: calc(var(--vh, 1vh * 5));
-}
-.footer {
-  bottom: 0;
-  margin-top: calc(var(--vh, 1vh * 5));
-  width: 100%;
-  z-index: 3;
+#foot {
+  position: absolute;
+  bottom: calc(var(--vh, 1vh) * 2.5);
   align-items: center;
+    width: 100%;
+
 }
+
 
 .footer-btn {
   cursor: pointer;
@@ -447,7 +445,7 @@ export default {
   position: absolute;
   &--center {
     left: calc(var(--vw, 1vw) * 50);
-    top: calc(var(--vh, 1vh) * 55);
+    top: calc(var(--vh, 1vh) * 50);
     transform: translate(-50%, -50%);
   }
 }
