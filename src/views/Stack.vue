@@ -432,9 +432,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  // margin-bottom: calc(var(--vh, 1vh) * 5);
-}
+
 .footer {
   position: absolute;
   bottom: 0;
