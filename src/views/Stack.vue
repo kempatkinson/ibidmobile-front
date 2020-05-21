@@ -30,7 +30,7 @@
               <h5>Minmum raise: {{current.raise}}</h5>
 
               <div class="row justify-content-center">
-                <button @touchstart="decrement">
+                <a @touchstart="decrement">
                   <svg
                     class="bi bi-dash-circle"
                     width="1.5em"
@@ -50,9 +50,9 @@
                       clip-rule="evenodd"
                     />
                   </svg>
-                </button>
+                </a>
                 <input id="bidinput" type="number" v-model="bid" />
-                <button @touchstart="increment">
+                <a @touchstart="increment">
                   <svg
                     class="bi bi-plus-circle"
                     width="1.5em"
@@ -77,7 +77,7 @@
                       clip-rule="evenodd"
                     />
                   </svg>
-                </button>
+                </a>
               </div>
               <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
               <div class="row">
@@ -430,11 +430,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
+
 .container {
   margin-bottom: calc(var(--vh, 1vh) * 7);
 }
