@@ -51,7 +51,7 @@
                     />
                   </svg>
                 </button>
-                <input id="bid" type="number" v-model="bid" />
+                <input id="bidinput" type="number" v-model="bid" />
                 <button @touchstart="increment">
                   <svg
                     class="bi bi-plus-circle"
@@ -135,7 +135,7 @@
                   />
                 </svg>
               </button>
-              <input id="bidinput" type="number" v-model="bid" />
+              <input type="number" v-model="bid" />
               <button @touchstart="increment">
                 <svg
                   class="bi bi-plus-circle"
@@ -422,6 +422,7 @@ export default {
             alert(error);
           });
       } else {
+        console.log(this.bid)
         alert("your bid is not high enough");
         this.initBid();
       }
