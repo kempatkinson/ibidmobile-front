@@ -513,12 +513,12 @@ export default {
 }
 #bidinput {
   width: 50%;
-  margin-left: 15px;
-  margin-right: 15px;
+  margin-left: calc(var(--vw, 1vw) * 5);
+  margin-right: calc(var(--vw, 1vw) * 5);
+  margin-bottom: calc(var(--vh, 1vh) *3);
+
 }
-.bidrow {
-  margin-bottom: calc(var(--vh, 1vh) * 2);
-}
+
 .h2,
 .card-title {
   padding: 2.5% 0% 0% 0%;
