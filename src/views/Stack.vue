@@ -419,12 +419,12 @@ export default {
 
 <style lang="scss" scoped>
 @media (max-height: 600px) {
-  #gap {
-    background-color: red;
-  }
+  // #gap {
+  //   background-color: red;
+  // }
   #foot {
     position: relative;
-    bottom: calc(var(--vh, 1vh) * 2.5);
+    bottom: 5%;
     align-items: center;
     width: 100%;
   }
@@ -436,15 +436,26 @@ export default {
       transform: translate(-50%, -50%);
     }
   }
+  .btn {
+    font-size: 15px;
+  }
+  .card-title {
+    font-size: 20px;
+  }
+  .card-body {
+    font-size: 1em !important;
+  }
+   .h5 {
+     font-size: 0.5em !important;
+   }
 }
 @media (min-height: 600px) {
-  #gap {
-    background-color: blue;
-  }
+  // #gap {
+  //   background-color: blue;
+  // }
   #foot {
     position: relative;
-    bottom: calc(var(--vh, 1vh) * 0.5);
-
+    margin-top: calc(var(--vh, 1vh) * 7.5);
     align-items: center;
     width: 100%;
   }
@@ -459,12 +470,12 @@ export default {
   }
 }
 @media (min-height: 700px) {
-  #gap {
-    background-color: purple;
-  }
+  // #gap {
+  //   background-color: purple;
+  // }
   #foot {
     position: relative;
-    margin-top: calc(var(--vh, 1vh) * 5);
+    margin-top: calc(var(--vh, 1vh) * 15);
     align-items: center;
     width: 100%;
   }
@@ -473,15 +484,15 @@ export default {
     position: absolute;
     &--center {
       left: calc(var(--vw, 1vw) * 50);
-      top: calc(var(--vh, 1vh) * 47);
+      top: calc(var(--vh, 1vh) * 47.5);
       transform: translate(-50%, -50%);
     }
   }
 }
 @media (min-height: 900px) {
-  #gap {
-    background-color: black;
-  }
+  // #gap {
+  //   background-color: black;
+  // }
   .btn {
     font-size: 25px;
   }
@@ -494,18 +505,19 @@ export default {
   }
  
   #foot {
-    position: relative;
-    margin-top: calc(var(--vh, 1vh) * 10);
+    position: absolute;
+    bottom: 0;
     align-items: center;
     width: 100%;
   }
   .fixed {
     position: absolute;
     &--center {
-      top: calc(var(--vh, 1vh) * 50);
+      top: calc(var(--vh, 1vh) *52.5);
       transform: translate(-50%, -50%);
     }
   }
+  
 }
 
 .svg {
@@ -544,7 +556,7 @@ export default {
   color: black;
   img {
     width: 100%;
-    padding: 2.5%;
+    padding: 2%;
   }
   &--one {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.14),
@@ -572,7 +584,7 @@ export default {
 }
 .card-body {
   position: relative;
-  padding: 5% 0% 2.5% 0%;
+  padding: 2.5% 0% 2.5% 0%;
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
   span {
