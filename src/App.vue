@@ -8,24 +8,23 @@
         <li class="nav-item">
           <router-link to="/about">About</router-link>
         </li>
-         <li class="nav-item">
+        <li class="nav-item">
           <router-link to="/favorites">Favorites</router-link>
         </li>
       </ul>
     </div>
-    
+
     <router-view />
   </div>
 </template>
 
 <script>
-
 </script>
 
 
 <style lang="scss">
 body {
-  height : 90%;
+  height: 90%;
 }
 
 #app {
@@ -43,19 +42,24 @@ body {
 
   padding-left: 20px;
   height: calc(var(--vh, 1vh) * 10);
-  background-color: #053C5E;
+  background-color: #053c5e;
 
   a {
     font-weight: bold;
     color: white;
 
     &.router-link-exact-active {
-      color:#1F7A8C;
+      color: #1f7a8c;
     }
   }
   .nav-item {
-    margin-right: 20px
+    margin-right: 20px;
   }
 }
 
+@media (min-height: 900px) {
+  #nav {
+    font-size: 25px;
+  }
+}
 </style>

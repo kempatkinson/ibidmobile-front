@@ -59,6 +59,21 @@ button {
   border-color: #343a40;
   color: white;
   margin: 5px;
-  
+}
+
+@media (min-height: 900px) {
+  .btn {
+    font-size: 25px;
+  }
+  .card-title {
+    font-size: 40px;
+  }
+  .h5,
+  .card-body {
+    font-size: 2em !important;
+  }
+  .card {
+    width: calc(var(--vh, 1vh) * 40);
+  }
 }
 </style>

@@ -125,7 +125,7 @@
                 />
               </svg>
             </a>
-            <input type="number" v-model="bid" />
+            <input type="number" v-model="nextBid" />
             <a @touchstart="increment">
               <svg
                 class="bi bi-plus-circle"
@@ -204,7 +204,7 @@
                 />
               </svg>
             </a>
-            <input id="bidinput" type="number" v-model="bid" />
+            <input type="number" v-model="bid" />
             <a @touchstart="increment">
               <svg
                 class="bi bi-plus-circle"
@@ -284,6 +284,7 @@ export default {
       },
       cards: [],
       bid: 0,
+      nextBid: 0,
       containerStyle: {}
     };
   },
@@ -313,6 +314,10 @@ export default {
   methods: {
     initBid() {
       this.bid = this.current.price + this.current.raise;
+      if (this.cards[this.index + 1]) {
+        this.nextBid =
+          this.cards[this.index + 1].price + this.cards[this.index + 1].raise;
+      }
     },
     getHeight() {
       Vue.nextTick(() => {
@@ -413,17 +418,99 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media (max-height: 600px) {
+  #gap {
+    background-color: red;
+  }
+  #foot {
+    position: relative;
+    bottom: calc(var(--vh, 1vh) * 2.5);
+    align-items: center;
+    width: 100%;
+  }
+  .fixed {
+    position: absolute;
+    &--center {
+      left: calc(var(--vw, 1vw) * 50);
+      top: calc(var(--vh, 1vh) * 50);
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+@media (min-height: 600px) {
+  #gap {
+    background-color: blue;
+  }
+  #foot {
+    position: relative;
+    bottom: calc(var(--vh, 1vh) * 0.5);
+
+    align-items: center;
+    width: 100%;
+  }
+
+  .fixed {
+    position: absolute;
+    &--center {
+      left: calc(var(--vw, 1vw) * 50);
+      top: calc(var(--vh, 1vh) * 50);
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+@media (min-height: 700px) {
+  #gap {
+    background-color: purple;
+  }
+  #foot {
+    position: relative;
+    margin-top: calc(var(--vh, 1vh) * 5);
+    align-items: center;
+    width: 100%;
+  }
+
+  .fixed {
+    position: absolute;
+    &--center {
+      left: calc(var(--vw, 1vw) * 50);
+      top: calc(var(--vh, 1vh) * 47);
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+@media (min-height: 900px) {
+  #gap {
+    background-color: black;
+  }
+  .btn {
+    font-size: 25px;
+  }
+  .card-title {
+    font-size: 40px;
+  }
+  .h5,
+  .card-body {
+    font-size: 2em !important;
+  }
+ 
+  #foot {
+    position: relative;
+    margin-top: calc(var(--vh, 1vh) * 10);
+    align-items: center;
+    width: 100%;
+  }
+  .fixed {
+    position: absolute;
+    &--center {
+      top: calc(var(--vh, 1vh) * 50);
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
 .svg {
- padding: 10px;
+  padding: 10px;
 }
-#foot {
-  position: absolute;
-  bottom: calc(var(--vh, 1vh) * 2.5);
-  align-items: center;
-  width: 100%;
-
-}
-
 
 .footer-btn {
   cursor: pointer;
@@ -441,14 +528,7 @@ export default {
     justify-content: center;
   }
 }
-.fixed {
-  position: absolute;
-  &--center {
-    left: calc(var(--vw, 1vw) * 50);
-    top: calc(var(--vh, 1vh) * 50);
-    transform: translate(-50%, -50%);
-  }
-}
+
 .rounded-borders {
   border-radius: 12px;
 }
@@ -515,8 +595,7 @@ export default {
   width: 50%;
   margin-left: calc(var(--vw, 1vw) * 5);
   margin-right: calc(var(--vw, 1vw) * 5);
-  margin-bottom: calc(var(--vh, 1vh) *3);
-
+  margin-bottom: calc(var(--vh, 1vh) * 3);
 }
 
 .h2,
