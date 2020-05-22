@@ -414,13 +414,13 @@ export default {
 
 <style lang="scss" scoped>
 .svg {
-  margin: 0 5 0 5;
+ padding: 10px;
 }
 #foot {
   position: absolute;
   bottom: calc(var(--vh, 1vh) * 2.5);
   align-items: center;
-    width: 100%;
+  width: 100%;
 
 }
 
@@ -513,6 +513,8 @@ export default {
 }
 #bidinput {
   width: 50%;
+  margin-left: 15px;
+  margin-right: 15px;
 }
 .bidrow {
   margin-bottom: calc(var(--vh, 1vh) * 2);
