@@ -143,7 +143,7 @@ export default {
           Raise: parseInt(this.$store.getters.post(this.$route.params.id).raise)
         };
         const url =
-          "https://localhost:5001/api/BidItems/" + this.$route.params.id;
+          "https://localhost:5000/api/BidItems/" + this.$route.params.id;
         return axios
           .put(url, newPost, {
             headers: {

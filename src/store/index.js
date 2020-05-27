@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from 'axios'
+import createPersistedState from "vuex-persistedstate";
+
 
 Vue.use(Vuex);
 
@@ -9,9 +11,11 @@ export default new Vuex.Store({
     posts: [],
     favorites: [],
   },
+  plugins: [createPersistedState()],
   actions: {
     loadPosts({ commit }) {
       axios.get("https://afternoon-taiga-12401.herokuapp.com/api/biditems")
+      // axios.get("http://localhost:5000/api/biditems")
         .then(response => response.data)
         .then(posts => {
           commit("GET_POSTS", posts)

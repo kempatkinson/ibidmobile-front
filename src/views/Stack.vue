@@ -20,88 +20,12 @@
         class="rounded-borders card card--one"
         ref="targetCard"
       >
-        <div class="card">
-          <h2 class="card-title text">{{current.name}}</h2>
-          <img class="card-image" src="../assets/sample.jpg" />
-
-          <div class="card-body">
-            <h5>Current Bid: {{current.price}}</h5>
-            <h5>Minmum raise: {{current.raise}}</h5>
-
-            <div class="row justify-content-center">
-              <a @touchstart="decrement">
-                <svg
-                  class="bi bi-dash-circle"
-                  width="1.5em"
-                  height="1.5em"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                    clip-rule="evenodd"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
-              <input id="bidinput" type="number" v-model="bid" />
-              <a @touchstart="increment">
-                <svg
-                  class="bi bi-plus-circle"
-                  width="1.5em"
-                  height="1.5em"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                    clip-rule="evenodd"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                    clip-rule="evenodd"
-                  />
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </a>
-            </div>
-            <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
-            <div class="row">
-              <div class="col d-flex justify-content-center">
-                <button
-                  type="button"
-                  class="btn btn-foot"
-                  v-if="(this.index<this.cards.length-1)"
-                  @touchstart="skip"
-                >Next item</button>
-                <button class="btn btn-foot" v-if="(this.index>0)" @touchstart="back">Previous item</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Vue2InteractDraggable>
-    </div>
-    <div v-if="next" class="rounded-borders card card--two fixed fixed--center" style="z-index: 2">
-      <div class="card">
-        <h2 class="card-title text">{{next.name}}</h2>
+        <h2 class="card-title text">{{current.name}}</h2>
         <img class="card-image" src="../assets/sample.jpg" />
 
         <div class="card-body">
-          <h5>Current Bid: {{next.price}}</h5>
-          <h5>Minmum raise: {{next.raise}}</h5>
+          <h5>Current Bid: {{current.price}}</h5>
+          <h5>Minmum raise: {{current.raise}}</h5>
 
           <div class="row justify-content-center">
             <a @touchstart="decrement">
@@ -125,7 +49,7 @@
                 />
               </svg>
             </a>
-            <input type="number" v-model="nextBid" />
+            <input id="bidinput" type="number" v-model="bid" />
             <a @touchstart="increment">
               <svg
                 class="bi bi-plus-circle"
@@ -154,17 +78,94 @@
             </a>
           </div>
           <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
-
           <div class="row">
             <div class="col d-flex justify-content-center">
               <button
                 type="button"
                 class="btn btn-foot"
-                v-if="(this.index+1<this.cards.length-1)"
+                v-if="(this.index<this.cards.length-1)"
                 @touchstart="skip"
               >Next item</button>
-              <button class="btn btn-foot" v-if="(this.index+1>0)" @touchstart="back">Previous item</button>
+              <button class="btn btn-foot" v-if="(this.index>0)" @touchstart="back">Previous item</button>
             </div>
+          </div>
+        </div>
+      </Vue2InteractDraggable>
+    </div>
+    <div
+      v-if="next"
+      class="rounded-borders card card--two fixed fixed--center"
+      style="z-index: 2"
+      v-bind:style="this.containerStyle"
+    >
+      <h2 class="card-title text">{{next.name}}</h2>
+      <img class="card-image" src="../assets/sample.jpg" />
+
+      <div class="card-body">
+        <h5>Current Bid: {{next.price}}</h5>
+        <h5>Minmum raise: {{next.raise}}</h5>
+
+        <div class="row justify-content-center">
+          <a @touchstart="decrement">
+            <svg
+              class="bi bi-dash-circle"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+          <input type="number" v-model="nextBid" />
+          <a @touchstart="increment">
+            <svg
+              class="bi bi-plus-circle"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </div>
+        <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
+
+        <div class="row">
+          <div class="col d-flex justify-content-center">
+            <button
+              type="button"
+              class="btn btn-foot"
+              v-if="(this.index+1<this.cards.length-1)"
+              @touchstart="skip"
+            >Next item</button>
+            <button class="btn btn-foot" v-if="(this.index+1>0)" @touchstart="back">Previous item</button>
           </div>
         </div>
       </div>
@@ -173,76 +174,75 @@
       v-if="index + 2 < cards.length"
       class="rounded-borders card card--three fixed fixed--center"
       style="z-index: 1"
+      v-bind:style="this.containerStyle"
     >
-      <div class="card">
-        <h2 class="card-title text">{{nextNext.name}}</h2>
-        <img class="card-image" src="../assets/sample.jpg" />
+      <h2 class="card-title text">{{nextNext.name}}</h2>
+      <img class="card-image" src="../assets/sample.jpg" />
 
-        <div class="card-body">
-          <h5>Current Bid: {{nextNext.price}}</h5>
-          <h5>Minmum raise: {{nextNext.raise}}</h5>
+      <div class="card-body">
+        <h5>Current Bid: {{nextNext.price}}</h5>
+        <h5>Minmum raise: {{nextNext.raise}}</h5>
 
-          <div class="row justify-content-center">
-            <a @touchstart="decrement">
-              <svg
-                class="bi bi-dash-circle"
-                width="1.5em"
-                height="1.5em"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-            <input type="number" v-model="bid" />
-            <a @touchstart="increment">
-              <svg
-                class="bi bi-plus-circle"
-                width="1.5em"
-                height="1.5em"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-          </div>
-          <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
-          <div class="row">
-            <div class="col d-flex justify-content-center">
-              <button
-                type="button"
-                class="btn btn-foot"
-                v-if="(this.index+2<this.cards.length-1)"
-                @touchstart="skip"
-              >Next item</button>
-              <button class="btn btn-foot" v-if="(this.index+2>0)" @touchstart="back">Previous item</button>
-            </div>
+        <div class="row justify-content-center">
+          <a @touchstart="decrement">
+            <svg
+              class="bi bi-dash-circle"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+          <input type="number" v-model="bid" />
+          <a @touchstart="increment">
+            <svg
+              class="bi bi-plus-circle"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
+                clip-rule="evenodd"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </div>
+        <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
+        <div class="row">
+          <div class="col d-flex justify-content-center">
+            <button
+              type="button"
+              class="btn btn-foot"
+              v-if="(this.index+2<this.cards.length-1)"
+              @touchstart="skip"
+            >Next item</button>
+            <button class="btn btn-foot" v-if="(this.index+2>0)" @touchstart="back">Previous item</button>
           </div>
         </div>
       </div>
@@ -282,7 +282,7 @@ export default {
         draggedLeft: EVENTS.REJECT,
         draggedUp: EVENTS.SKIP
       },
-      cards: [],
+      cards:this.$store.state.posts,
       bid: 0,
       nextBid: 0,
       containerStyle: {}
@@ -290,7 +290,6 @@ export default {
   },
   mounted() {
     this.$store.dispatch("loadPosts");
-    this.getCards();
     this.initBid();
     this.getHeight();
   },
@@ -326,9 +325,6 @@ export default {
         Vue.set(this.containerStyle, "height", height);
       });
     },
-    back() {
-      this.index--;
-    },
     match() {
       InteractEventBus.$emit(EVENTS.MATCH);
     },
@@ -360,12 +356,6 @@ export default {
         this.isVisible = true;
       }, 200);
     },
-    getCards() {
-      this.cards = this.$store.state.posts;
-      this.index = this.$store.state.posts.findIndex(
-        x => x.id === this.$route.params.id
-      );
-    },
     increment() {
       this.bid = parseInt($("#bidinput").val()) + this.current.raise;
     },
@@ -393,6 +383,7 @@ export default {
         };
         const url =
           "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+          // "http://localhost:5000/api/biditems/" + 
           this.current.id;
         return axios
           .put(url, newPost, {
@@ -445,9 +436,9 @@ export default {
   .card-body {
     font-size: 1em !important;
   }
-   .h5 {
-     font-size: 0.5em !important;
-   }
+  .h5 {
+    font-size: 0.5em !important;
+  }
 }
 @media (min-height: 600px) {
   // #gap {
@@ -455,7 +446,7 @@ export default {
   // }
   #foot {
     position: relative;
-    margin-top: calc(var(--vh, 1vh) * 7.5);
+    margin-top: calc(var(--vh, 1vh) * 10);
     align-items: center;
     width: 100%;
   }
@@ -503,7 +494,7 @@ export default {
   .card-body {
     font-size: 2em !important;
   }
- 
+
   #foot {
     position: absolute;
     bottom: 0;
@@ -513,11 +504,10 @@ export default {
   .fixed {
     position: absolute;
     &--center {
-      top: calc(var(--vh, 1vh) *52.5);
+      top: calc(var(--vh, 1vh) * 52.5);
       transform: translate(-50%, -50%);
     }
   }
-  
 }
 
 .svg {
