@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from 'axios'
+import axios from 'axios';
+import createPresistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
@@ -9,6 +10,7 @@ export default new Vuex.Store({
     posts: [],
     favorites: [],
   },
+
   actions: {
     loadPosts({ commit }) {
       axios.get("https://afternoon-taiga-12401.herokuapp.com/api/biditems")
@@ -38,5 +40,6 @@ export default new Vuex.Store({
     post: (state) => (id) => {
       return state.posts.find(p => p.id === id)
     }
-  }
+  },
+  plugins: [createPresistedState()],
 });
