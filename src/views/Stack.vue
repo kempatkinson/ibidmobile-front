@@ -247,12 +247,6 @@
         </div>
       </div>
     </div>
-    <div id="gap" v-bind:style="containerStyle"></div>
-    <div id="foot">
-      <button class="footer-btn btn btn-foot">
-        <router-link to="/">Back to All</router-link>
-      </button>
-    </div>
   </div>
 </template>
 <script>
@@ -424,7 +418,7 @@ export default {
   // }
   #foot {
     position: absolute;
-    bottom: calc(var(--vh, 1vh) * .5);
+    bottom: calc(var(--vh, 1vh) * 0.5);
     align-items: center;
     width: 100%;
   }
@@ -502,7 +496,8 @@ export default {
   .bidrow {
     font-size: 1.5em !important;
   }
-  .card-body, .h5 {
+  .card-body,
+  .h5 {
     font-size: 15px !important;
   }
 
