@@ -24,7 +24,9 @@ export default new Vuex.Store({
     },
     setFavorite({ commit }, n) {
       commit("favorite", n);
-      console.log('action hit');
+    },
+    removeFavorite({ commit }, n) {
+      commit("unfavorite", n);
     },
   },
   mutations: {
@@ -33,7 +35,11 @@ export default new Vuex.Store({
     },
     favorite(state, n) {
       state.favorites.push(n);
-      console.log("favorites:   ", state.favorites)
+    },
+    unfavorite(state, n) {
+    
+       state.favorites.splice(state.favorites.indexOf(n), 1)
+     
     }
   },
   getters: {

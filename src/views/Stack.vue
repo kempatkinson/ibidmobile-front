@@ -344,6 +344,9 @@ export default {
           this.$store.dispatch("setFavorite", { n: this.index });
         }
       }
+      if (event == "reject") {
+        this.$store.dispatch("removeFavorite", { n: this.index });
+      }
 
       this.$emit(event, this.index);
       setTimeout(() => (this.isVisible = false), 200);
