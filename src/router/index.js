@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Items from "../views/Items.vue";
 import Post from "../views/Post.vue";
 import Stack from "../views/Stack.vue"
 import Favorites from "../views/Favorites.vue"
@@ -12,9 +12,9 @@ const router = new VueRouter({
   history: true,
     routes: [
     {
-      path: "/",
-      name: "Home",
-      component: Home
+      path: "/items",
+      name: "Items",
+      component: Items
     },
     {
       path: "/about",

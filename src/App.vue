@@ -2,15 +2,25 @@
   <div id="app">
     <div id="nav" class="navbar-light">
       <ul class="nav nav-justified-start">
-        <li class="nav-item">
-          <router-link to="/">Home</router-link>
+        <li>
+          <a v-b-toggle.sidebar-1>Menu</a>
+          <b-sidebar id="sidebar-1" title="Menu" shadow>
+            <div class="px-4 py-2">
+              <ul>
+                <li class="nav-item">
+                  <router-link to="/items">Browse Items</router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link to="/about">About this Auction</router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link to="/favorites">Favorites</router-link>
+                </li>
+              </ul>
+            </div>
+          </b-sidebar>
         </li>
-        <li class="nav-item">
-          <router-link to="/about">About</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/favorites">Favorites</router-link>
-        </li>
+        <li class="nav-item" id="sign"><a>Sign In</a></li>
       </ul>
     </div>
 
@@ -34,6 +44,9 @@ body {
   text-align: center;
   color: #2c3e50;
 }
+#sidebar-1{
+  width: 100%;
+}
 
 #nav {
   margin-bottom: calc(var(--vh, 1vh) * 2);
@@ -43,10 +56,13 @@ body {
   padding-left: 20px;
   height: calc(var(--vh, 1vh) * 10);
   background-color: #053c5e;
+  position: fixed;
+  z-index: 4;
+  width: 100%;
 
   a {
     font-weight: bold;
-    color: white;
+    color: #bfdbf7;
 
     &.router-link-exact-active {
       color: #1f7a8c;
@@ -61,5 +77,10 @@ body {
   #nav {
     font-size: 25px;
   }
+}
+
+#sign {
+  position: absolute;
+  right: 10px;
 }
 </style>
