@@ -20,7 +20,9 @@
         class="rounded-borders card card--one"
         ref="targetCard"
       >
-        <h2 class="card-title text">{{current.name}}</h2>
+        <router-link :to="{ name: 'post', params: {id: current.id}}">
+            <h3 class="card-title">{{current.name}}</h3>
+          </router-link>
         <img class="card-image" src="../assets/sample.jpg" />
 
         <div class="card-body">
@@ -381,16 +383,11 @@ export default {
         this.current.price + this.current.raise
       ) {
         alert("all good");
-        var newPost = {
-          Id: this.current.id,
-          Name: this.current.name,
-          Image: this.current.image,
-          Price: this.bid,
-          Raise: this.current.raise
-        };
+        var newPost = this.post;
+        newPost.price = this.bid;
         const url =
-          // "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
-          "https://localhost:5001/api/BidItems/" +
+          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+          // "https://localhost:5001/api/BidItems/" + 
           this.current.id;
         return axios
           .put(url, newPost, {
@@ -639,5 +636,4 @@ body {
   top: 0;
   bottom: 0;
 }
-
 </style>

@@ -8,11 +8,15 @@
             <div class="px-4 py-2">
               <ul>
                 <li class="nav-item">
-                  <router-link to="/items">Browse Items</router-link>
+                  <router-link to="/">Welcome</router-link>
                 </li>
                 <li class="nav-item">
                   <router-link to="/about">About this Auction</router-link>
                 </li>
+                <li class="nav-item">
+                  <router-link to="/items">Browse Items</router-link>
+                </li>
+
                 <li class="nav-item">
                   <router-link to="/favorites">Favorites</router-link>
                 </li>
@@ -20,7 +24,9 @@
             </div>
           </b-sidebar>
         </li>
-        <li class="nav-item" id="sign"><a>Sign In</a></li>
+        <li class="nav-item" id="sign">
+          <a>Sign In</a>
+        </li>
       </ul>
     </div>
 
@@ -44,7 +50,7 @@ body {
   text-align: center;
   color: #2c3e50;
 }
-#sidebar-1{
+#sidebar-1 {
   width: 100%;
 }
 

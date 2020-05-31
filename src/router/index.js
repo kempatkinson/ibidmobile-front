@@ -2,7 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Items from "../views/Items.vue";
 import Post from "../views/Post.vue";
-import Stack from "../views/Stack.vue"
+import Stack from "../views/Stack.vue";
+import Welcome from "../views/Welcome.vue"
+
 import Favorites from "../views/Favorites.vue"
 
 
@@ -11,6 +13,11 @@ const router = new VueRouter({
   mode: "history",
   history: true,
     routes: [
+      {
+        path: "/",
+        name: "Welcome",
+        component: Welcome
+      },
     {
       path: "/items",
       name: "Items",
