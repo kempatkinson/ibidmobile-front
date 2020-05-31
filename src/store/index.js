@@ -13,7 +13,10 @@ export default new Vuex.Store({
 
   actions: {
     loadPosts({ commit }) {
-      axios.get("https://afternoon-taiga-12401.herokuapp.com/api/biditems")
+      axios.get(
+        // "https://afternoon-taiga-12401.herokuapp.com/api/biditems"
+        "https://localhost:5001/api/BidItems/"
+      )
         .then(response => response.data)
         .then(posts => {
           commit("GET_POSTS", posts)

@@ -1,21 +1,36 @@
 <template>
   <div id="list" class="container">
-    <div class="row" v-for="data in posts" :key="data.id">
-      <div class="col d-flex justify-content-center">
-        <router-link :to="{ name: 'stack', params: {id: data.id}}">
-          <div class="card" style="width: 18rem;" v-on:click="select($event)" :id="data.id">
-            <br />
+    <select v-model="selected">
+      <option v-for="option in options" v-bind:key="option.value">{{ option.text }}</option>
+    </select>
+    <span v-if="selected">Selected: {{ selected }}</span>
+
+    <div class="row" v-for="data in filteredPosts" :key="data.id">
+      <div class="col-1"></div>
+      <div class="card col-10">
+        <div class="card-header">
+          <router-link :to="{ name: 'stack', params: {id: data.id}}">
             <h3 class="card-title">{{data.name}}</h3>
-
-            <img class="card-image-top" src="../assets/sample.jpg" />
-            <div class="card-body">
+          </router-link>
+        </div>
+        <div class="card-body row" v-on:click="select($event)" :id="data.id">
+          <div class="col-6">
+            <img class="card-image" src="../assets/sample.jpg" />
+          </div>
+          <div class="col-6">
+            <p v-if="data.sold" class="card-text">Sold Out!</p>
+            <div v-if="!data.sold">
+              <p v-if="data.live" class="card-text">Live!</p>
               <p class="card-text">Current Bid : {{data.price}}</p>
-
-              <button class="btn btn-primary">Bid Now!</button>
+              <p class="card-text">Value : {{data.value}}</p>
+              <router-link :to="{ name: 'stack', params: {id: data.id}}">
+                <button class="btn btn-primary">Bid Now!</button>
+              </router-link>
             </div>
           </div>
-        </router-link>
+        </div>
       </div>
+      <div class="col-1"></div>
     </div>
   </div>
 </template>
@@ -25,18 +40,50 @@
 import { mapState } from "vuex";
 export default {
   name: "Home",
+  data() {
+    return {
+      selected: "All Items",
+      options: [
+        { text: "All Items", value: "1" },
+        { text: "Live Items", value: "2" },
+        { text: "Unsold Items", value: "3" },
+                { text: "Items with no bids", value: "4" }
+
+      ]
+    };
+  },
   mounted() {
     this.$store.dispatch("loadPosts");
   },
-  computed: mapState(["posts"])
+  computed: {
+    filteredPosts() {
+      if (this.selected === "Live Items") {
+        return this.$store.state.posts.filter(post => post.live === true);
+      } if (this.selected === "Unsold Items") {
+        return this.$store.state.posts.filter(post => post.sold === false);
+      } if (this.selected ===  "Items with no bids") {
+        return this.$store.state.posts.filter(
+          post => post.price === post.startingPrice);
+      } else return this.$store.state.posts;
+    },
+    ...mapState(["posts"])
+  }
 };
 </script>
 
 <style scoped>
+.card-header {
+  width: 100%;
+  margin: 0;
+}
+.card-title {
+  margin: 0;
+  font-size: 20px;
+}
 .card {
   margin-bottom: 10%;
+  padding: 0;
   border: black 0.5px solid;
-  align-content: center;
   background-color: #bfdbf7;
 }
 h3,
@@ -44,14 +91,12 @@ p {
   color: black;
 }
 img {
-  margin: 5%;
-}
-p {
-  margin-bottom: 5%;
+  object-fit: cover;
+  width: 100%;
 }
 
 button {
-  width: 40%;
+  width: 90%;
 }
 
 .btn-primary {
