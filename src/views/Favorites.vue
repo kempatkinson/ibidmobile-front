@@ -2,7 +2,7 @@
   <div id="favorites" class="container">
     <div class="row" v-for="data in favs" :key="data.id">
       <div class="col d-flex justify-content-center">
-        <router-link :to="{ name: 'stack', params: {id: data.id}}">
+        <router-link :to="{ name: 'post', params: {id: data.id}}">
           <div class="card" style="width: 18rem;" v-on:click="select($event)" :id="data.id">
             <br />
             <h3 class="card-title">{{data.name}}</h3>
