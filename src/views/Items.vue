@@ -1,10 +1,10 @@
 <template>
   <div id="list" class="container">
-  
     <div class="selection">
-      <select v-model="selected">
+      <select v-model="selected" id="dropdown">
         <option v-for="option in options" v-bind:key="option.value">{{ option.text }}</option>
       </select>
+      <br>
       <span v-if="selected">Selected: {{ selected }}</span>
     </div>
 
@@ -12,7 +12,7 @@
       <div class="col-1"></div>
       <div class="card col-10">
         <div class="card-header">
-          <router-link :to="{ name: 'stack', params: {id: data.id}}">
+          <router-link :to="{ name: 'post', params: {id: data.id}}">
             <h3 class="card-title">{{data.name}}</h3>
           </router-link>
         </div>
@@ -25,10 +25,13 @@
             <div
               v-if="(!data.sold) && (times[times.findIndex((element)=> element.id === data.id)].date>0)"
             >
-              <p v-if="data.live" class="card-text">Live!</p>
+              <p
+                v-if="(times[times.findIndex((element)=> element.id === data.id)].date > 0)"
+                class="card-text"
+              >Live!</p>
               <p class="card-text">Current Bid : {{data.price}}</p>
               <p class="card-text">Value : {{data.value}}</p>
-              <router-link :to="{ name: 'stack', params: {id: data.id}}">
+              <router-link :to="{ name: 'post', params: {id: data.id}}">
                 <button class="btn btn-primary">Bid Now!</button>
               </router-link>
             </div>
@@ -85,14 +88,30 @@ export default {
   computed: {
     filteredPosts() {
       if (this.selected === "Live Items") {
-        return this.$store.state.posts.filter(post => post.live === true);
+        return this.$store.state.posts.filter(
+          post =>
+            this.times[this.times.findIndex(element => element.id === post.id)]
+              .date >
+              0 ===
+            true
+        );
       }
       if (this.selected === "Unsold Items") {
-        return this.$store.state.posts.filter(post => post.sold === false);
+        return this.$store.state.posts.filter(
+          post =>
+            post.sold === false &&
+            this.times[this.times.findIndex(element => element.id === post.id)]
+              .date >
+              0 ===
+              true
+        );
       }
       if (this.selected === "Items with no bids") {
         return this.$store.state.posts.filter(
-          post => post.price === post.startingPrice
+          post =>
+            post.price === post.startingPrice &&
+            this.times[this.times.findIndex(element => element.id === post.id)]
+              .date > 0
         );
       } else return this.$store.state.posts;
     },
@@ -170,6 +189,10 @@ button {
 
 .selection {
   margin-bottom: 10%;
+}
+
+#dropdown {
+  margin-bottom: 5%;
 }
 
 @media (min-height: 900px) {

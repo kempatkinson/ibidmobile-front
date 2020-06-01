@@ -3,10 +3,10 @@
     <div id="nav" class="navbar-light">
       <ul class="nav nav-justified-start">
         <li>
-          <a v-b-toggle.sidebar-1>Menu</a>
-          <b-sidebar id="sidebar-1" title="Menu" shadow>
+          <a v-b-toggle.sidebar-1 class="title">Menu</a>
+          <b-sidebar id="sidebar-1" class="title" title="Menu" shadow text-variant="light">
             <div class="px-4 py-2">
-              <ul>
+              <ul id="sidebarlist">
                 <li class="nav-item">
                   <router-link to="/">Welcome</router-link>
                 </li>
@@ -14,11 +14,14 @@
                   <router-link to="/about">About this Auction</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link to="/items">Browse Items</router-link>
+                  <router-link to="/items">Browse Items as List</router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name:'stack', params: {id: this.id}}">Browse Items as Cards</router-link>
                 </li>
 
                 <li class="nav-item">
-                  <router-link to="/favorites">Favorites</router-link>
+                  <router-link to="/favorites">Favorited Items</router-link>
                 </li>
               </ul>
             </div>
@@ -35,10 +38,23 @@
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      id: this.$store.state.posts[0].id
+    };
+  },
+  mounted() {
+    this.$store.dispatch("loadPosts");
+  }
+};
 </script>
 
 
 <style lang="scss">
+.a {
+  color: #bfdbf7 !important
+}
 body {
   height: 90%;
 }
@@ -52,6 +68,12 @@ body {
 }
 #sidebar-1 {
   width: 100%;
+  background-color: #053c5e !important;
+  color: #bfdbf7 !important;
+}
+#sidebarlist {
+  list-style-type: none;
+  list-style: none;
 }
 
 #nav {

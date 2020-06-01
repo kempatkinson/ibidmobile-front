@@ -21,65 +21,16 @@
         ref="targetCard"
       >
         <router-link :to="{ name: 'post', params: {id: current.id}}">
-            <h3 class="card-title">{{current.name}}</h3>
-          </router-link>
-        <img class="card-image" src="../assets/sample.jpg" />
+          <h3 id="name" class="card-title">{{current.name}}</h3>
 
+          <img class="card-image" src="../assets/sample.jpg" />
+        </router-link>
         <div class="card-body">
           <h5>Current Bid: {{current.price}}</h5>
           <h5>Minmum raise: {{current.raise}}</h5>
-
-          <div class="row justify-content-center bidrow">
-            <a @touchstart="decrement">
-              <svg
-                class="bi bi-dash-circle"
-                width="1.5em"
-                height="1.5em"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-            <input id="bidinput" type="number" v-model="bid" />
-            <a @touchstart="increment">
-              <svg
-                class="bi bi-plus-circle"
-                width="1.5em"
-                height="1.5em"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-          </div>
-          <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
+          <router-link :to="{ name: 'post', params: {id: current.id}}">
+            <button class="btn btn-foot">Bid Now!</button>
+          </router-link>
           <div class="row">
             <div class="col d-flex justify-content-center">
               <button
@@ -106,59 +57,6 @@
       <div class="card-body">
         <h5>Current Bid: {{next.price}}</h5>
         <h5>Minmum raise: {{next.raise}}</h5>
-
-        <div class="row justify-content-center bidrow">
-          <a @touchstart="decrement">
-            <svg
-              class="bi bi-dash-circle"
-              width="1.5em"
-              height="1.5em"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                clip-rule="evenodd"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-          <input type="number" v-model="nextBid" />
-          <a @touchstart="increment">
-            <svg
-              class="bi bi-plus-circle"
-              width="1.5em"
-              height="1.5em"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                clip-rule="evenodd"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                clip-rule="evenodd"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </div>
-        <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
-
         <div class="row">
           <div class="col d-flex justify-content-center">
             <button
@@ -185,57 +83,6 @@
         <h5>Current Bid: {{nextNext.price}}</h5>
         <h5>Minmum raise: {{nextNext.raise}}</h5>
 
-        <div class="row justify-content-center">
-          <a @touchstart="decrement">
-            <svg
-              class="bi bi-dash-circle"
-              width="1.5em"
-              height="1.5em"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                clip-rule="evenodd"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-          <input type="number" v-model="bid" />
-          <a @touchstart="increment">
-            <svg
-              class="bi bi-plus-circle"
-              width="1.5em"
-              height="1.5em"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                clip-rule="evenodd"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                clip-rule="evenodd"
-              />
-              <path
-                fill-rule="evenodd"
-                d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </div>
-        <button type="button" class="btn btn-foot" @touchstart="submit">Submit Bid</button>
         <div class="row">
           <div class="col d-flex justify-content-center">
             <button
@@ -364,49 +211,6 @@ export default {
       this.index = this.$store.state.posts.findIndex(
         x => x.id === this.$route.params.id
       );
-    },
-    increment() {
-      this.bid = parseInt($("#bidinput").val()) + this.current.raise;
-    },
-    decrement() {
-      if (
-        parseInt($("#bidinput").val()) - this.current.raise >=
-        this.current.price + this.current.raise
-      ) {
-        this.bid = parseInt($("#bidinput").val()) - this.current.raise;
-      } else alert("cant do that");
-    },
-    async submit() {
-      this.bid = parseInt($("#bidinput").val());
-      if (
-        parseInt($("#bidinput").val()) >=
-        this.current.price + this.current.raise
-      ) {
-        alert("all good");
-        var newPost = this.post;
-        newPost.price = this.bid;
-        const url =
-          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
-          // "https://localhost:5001/api/BidItems/" + 
-          this.current.id;
-        return axios
-          .put(url, newPost, {
-            headers: {
-              "Content-Type": "application/json"
-            }
-          })
-          .then(response => {
-            this.current.price = this.bid;
-            this.initBid();
-          })
-          .catch(error => {
-            alert(error);
-          });
-      } else {
-        console.log(this.bid);
-        alert("your bid is not high enough");
-        this.initBid();
-      }
     }
   }
 };
@@ -537,7 +341,9 @@ export default {
     justify-content: center;
   }
 }
-
+#name {
+  color: black;
+}
 .rounded-borders {
   border-radius: 12px;
 }

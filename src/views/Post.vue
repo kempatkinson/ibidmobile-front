@@ -94,30 +94,29 @@ export default {
     this.$store.dispatch("loadPosts");
   },
   methods: {
-    increment() {
-      this.bid =
-        parseInt(this.bid) +
-        this.$store.getters.post(this.$route.params.id).raise;
+        increment() {
+      this.bid = parseInt($("#bidinput").val()) + this.current.raise;
     },
     decrement() {
       if (
-        this.bid >
-        parseInt(this.$store.getters.post(this.$route.params.id).price) +
-          this.$store.getters.post(this.$route.params.id).raise
+        parseInt($("#bidinput").val()) - this.current.raise >=
+        this.current.price + this.current.raise
       ) {
-        this.bid =
-          this.bid - this.$store.getters.post(this.$route.params.id).raise;
-      }
+        this.bid = parseInt($("#bidinput").val()) - this.current.raise;
+      } else alert("cant do that");
     },
     async submit() {
       this.bid = parseInt($("#bidinput").val());
-      if (parseInt($("#bidinput").val()) >= this.post.price + this.post.raise) {
+      if (
+        parseInt($("#bidinput").val()) >=
+        this.current.price + this.current.raise
+      ) {
         alert("all good");
         var newPost = this.post;
         newPost.price = this.bid;
         const url =
-          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
-          // "https://localhost:5001/api/BidItems/" +
+          // "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+          "https://localhost:5001/api/BidItems/" + 
           this.current.id;
         return axios
           .put(url, newPost, {
@@ -126,14 +125,16 @@ export default {
             }
           })
           .then(response => {
-            console.log(response);
-            this.post.price = this.bid;
+            this.current.price = this.bid;
+            this.initBid();
           })
           .catch(error => {
-            console.log(error.response);
+            alert(error);
           });
       } else {
+        console.log(this.bid);
         alert("your bid is not high enough");
+        this.initBid();
       }
     }
   }
