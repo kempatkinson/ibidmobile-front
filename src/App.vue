@@ -17,7 +17,7 @@
                   <router-link to="/items">Browse Items as List</router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link :to="{name:'stack', params: {id: this.id}}">Browse Items as Cards</router-link>
+                  <router-link :to="{ path: this.url }">Browse Items as Cards</router-link>
                 </li>
 
                 <li class="nav-item">
@@ -41,11 +41,19 @@
 export default {
   data() {
     return {
-      id: this.$store.state.posts[0].id
+      id: this.$store.state.posts[0].id,
+      url: ""
     };
   },
   mounted() {
     this.$store.dispatch("loadPosts");
+    this.buildUrl();
+  },
+  methods: {
+    buildUrl() {
+      this.url = "/stack/" + this.id
+    }
+ 
   }
 };
 </script>
@@ -96,9 +104,7 @@ body {
       color: #1f7a8c;
     }
   }
-  .nav-item {
-    margin-right: 20px;
-  }
+
 }
 
 @media (min-height: 900px) {
