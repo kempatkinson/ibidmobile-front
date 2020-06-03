@@ -3,32 +3,38 @@
     <div id="nav" class="navbar-light">
       <ul class="nav nav-justified-start">
         <li>
-          <a v-b-toggle.sidebar-1 class="title">Menu</a>
-          <b-sidebar id="sidebar-1" class="title" title="Menu" shadow text-variant="light">
-            <div class="px-4 py-2">
-              <ul id="sidebarlist">
-                <li class="nav-item">
-                  <router-link to="/">Welcome</router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link to="/about">About this Auction</router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link to="/items">Browse Items as List</router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link :to="{ path: this.url }">Browse Items as Cards</router-link>
-                </li>
+          <a v-b-toggle.sidebar-1 class="link">Menu</a>
+            <b-sidebar
+              id="sidebar-1"
+              class="title"
+              title="Menu"
+              shadow
+              text-variant="light"
+            >
+              <div class="px-4 py-2">
+                <ul id="sidebarlist">
+                  <li class="nav-item">
+                    <router-link to="/">Welcome</router-link>
+                  </li>
+                  <li class="nav-item">
+                    <router-link to="/about">About this Auction</router-link>
+                  </li>
+                  <li class="nav-item">
+                    <router-link to="/items">Browse Items as List</router-link>
+                  </li>
+                  <li class="nav-item">
+                    <router-link :to="{ path: this.url }" exact>Browse Items as Cards</router-link>
+                  </li>
 
-                <li class="nav-item">
-                  <router-link to="/favorites">Favorited Items</router-link>
-                </li>
-              </ul>
-            </div>
-          </b-sidebar>
+                  <li class="nav-item">
+                    <router-link to="/favorites">Favorited Items</router-link>
+                  </li>
+                </ul>
+              </div>
+            </b-sidebar>
         </li>
         <li class="nav-item" id="sign">
-          <a>Sign In</a>
+          <a class="link">Sign In</a>
         </li>
       </ul>
     </div>
@@ -51,17 +57,16 @@ export default {
   },
   methods: {
     buildUrl() {
-      this.url = "/stack/" + this.id
+      this.url = "/stack/" + this.id;
     }
- 
   }
 };
 </script>
 
 
 <style lang="scss">
-.a {
-  color: #bfdbf7 !important
+.link {
+  color: #bfdbf7;
 }
 body {
   height: 90%;
@@ -75,7 +80,7 @@ body {
   color: #2c3e50;
 }
 #sidebar-1 {
-  width: 100%;
+  width: 100% !important;
   background-color: #053c5e !important;
   color: #bfdbf7 !important;
 }
@@ -85,7 +90,6 @@ body {
 }
 
 #nav {
-  margin-bottom: calc(var(--vh, 1vh) * 2);
   padding-top: calc(var(--vh, 1vh) * 3);
   padding-bottom: calc(var(--vh, 1vh) * 3);
 
@@ -104,7 +108,6 @@ body {
       color: #1f7a8c;
     }
   }
-
 }
 
 @media (min-height: 900px) {

@@ -225,11 +225,11 @@ export default {
   .card-title {
     font-size: 20px;
   }
-  .card-body {
-    font-size: 1em !important;
+  .cardtext {
+    font-size: 1em ;
   }
   .h5 {
-    font-size: 0.5em !important;
+    font-size: 0.5em;
   }
 }
 @media (min-height: 600px) {
@@ -283,11 +283,11 @@ export default {
     font-size: 40px;
   }
   .bidrow {
-    font-size: 1.5em !important;
+    font-size: 1.5em;
   }
-  .card-body,
+  .cardtext,
   .h5 {
-    font-size: 15px !important;
+    font-size: 15px ;
   }
 
   #foot {

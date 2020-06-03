@@ -1,12 +1,13 @@
 <template>
   <div class="container">
-    <div class="row">
+    <div class="row" id="gap">
       <div class="col d-flex justify-content-center">
         <div class="card" style="width: 18rem;">
-          <br />
           <h3 id="name">{{post.name}}</h3>
-          <img class="card-image-top" src="../assets/sample.jpg" />
-          <div class="card-body">
+          <div class="frame">
+            <img class="card-image-top" src="../assets/sample.jpg" />
+          </div>
+          <div class="card-body cardtext">
             <p class="card-text">{{post.description}}</p>
             <p class="card-text">Value: {{post.value}}</p>
             <p class="card-text">Current Bid: {{post.price}}</p>
@@ -63,7 +64,6 @@
                 </a>
               </form>
             </div>
-            <br />
             <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
           </div>
         </div>
@@ -191,55 +191,50 @@ export default {
   #gap {
     background-color: red;
   }
-  #foot {
+  .container {
     position: absolute;
-    bottom: calc(var(--vh, 1vh) * 0.5);
-    align-items: center;
+    top: 80px;
+    padding: 0px;
+  }
+  .card-image-top {
     width: 100%;
   }
-  .fixed {
-    position: absolute;
-    &--center {
-      left: calc(var(--vw, 1vw) * 50);
-      top: calc(var(--vh, 1vh) * 50);
-      transform: translate(-50%, -50%);
-    }
+  .frame {
+    padding-left: 2%;
+    padding-right: 2%;
+    margin: 0 auto;
+    height: 60%;
+    width: 60%;
+    overflow: hidden;
   }
+
   .btn {
     font-size: 15px;
   }
   .card-title {
     font-size: 20px;
   }
-  .card-body {
-    font-size: 1em !important;
+  .cardtext {
+    font-size: 1em;
   }
   .h5 {
-    font-size: 0.5em !important;
+    font-size: 0.5em;
   }
 }
-#name {
-  padding: 0em;
-  margin: 0;
-}
+
 @media (min-height: 600px) {
   #gap {
     background-color: blue;
   }
-  #foot {
-    position: relative;
-    margin-top: calc(var(--vh, 1vh) * 5);
-    align-items: center;
-    width: 100%;
-  }
-
-  .fixed {
+  .container {
     position: absolute;
-    &--center {
-      left: calc(var(--vw, 1vw) * 50);
-      top: calc(var(--vh, 1vh) * 50);
-      transform: translate(-50%, -50%);
-    }
+    top: 80px;
+    padding: 0px;
+  }
+  .card-image-top {
+    height: 40%;
+    padding-left: 2%;
+    padding-right: 2%;
   }
 }
 @media (min-height: 700px) {
@@ -273,11 +268,10 @@ export default {
     font-size: 40px;
   }
   .bidrow {
-    font-size: 1.5em !important;
+    font-size: 1.5em;
   }
-  .card-body,
-  .h5 {
-    font-size: 15px !important;
+  .card-body {
+    font-size: 15px;
   }
 
   #foot {
@@ -294,7 +288,10 @@ export default {
     }
   }
 }
-
+#name {
+  padding: 0em;
+  margin: 0;
+}
 .svg {
   padding: 10px;
 }
@@ -319,10 +316,6 @@ export default {
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
   color: black;
-  img {
-    width: 100%;
-    padding: 2%;
-  }
   &--one {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.14),
       0 2px 1px -1px rgba(0, 0, 0, 0.12);
@@ -374,7 +367,7 @@ export default {
   margin-left: calc(var(--vw, 1vw) * 5);
   margin-right: calc(var(--vw, 1vw) * 5);
 }
-.card-text{
+.card-text {
   margin: 0px;
 }
 .h2,
@@ -403,7 +396,7 @@ export default {
   background-color: #1f7a8c;
   border-color: #343a40;
   color: white;
-  margin: 5px;
+  margin: 10px;
 }
 html,
 body {
@@ -411,11 +404,6 @@ body {
   position: fixed;
   top: 0;
   bottom: 0;
-}
-.container {
-  position: absolute;
-  top: 100px;
-  padding: 0px;
 }
 
 .footer {

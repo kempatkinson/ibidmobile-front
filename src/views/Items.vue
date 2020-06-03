@@ -1,6 +1,6 @@
 <template>
   <div id="list" class="container">
-    <div class="selection">
+    <div class="selection" id="gap">
       <select v-model="selected" id="dropdown">
         <option v-for="option in options" v-bind:key="option.value">{{ option.text }}</option>
       </select>
@@ -17,10 +17,10 @@
           </router-link>
         </div>
         <div class="card-body row" v-on:click="select($event)" :id="data.id">
-          <div class="col-6">
+          <div class="col-4">
             <img class="card-image" src="../assets/sample.jpg" />
           </div>
-          <div class="col-6">
+          <div class="col-8">
             <p v-if="data.sold" class="card-text">Sold Out!</p>
             <div
               v-if="(!data.sold) && (times[times.findIndex((element)=> element.id === data.id)].date>0)"
@@ -44,7 +44,8 @@
             <countdown :time="times[times.findIndex((element)=> element.id === data.id)].date">
               <div
                 slot-scope="props"
-              >Bid Closes: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes, {{ props.seconds }} seconds.</div>
+                class="date-text"
+              >Bidding closes inf {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
             </countdown>
           </div>
           <div
@@ -137,6 +138,42 @@ export default {
 </script>
 
 <style scoped>
+@media (max-height: 600px) {
+  #gap {
+    background-color: red;
+  }
+}
+
+@media (min-height: 600px) {
+  #gap {
+    background-color: blue;
+  }
+  .card-text {
+    font-size: 14px;
+  }
+  .date-text {
+    font-size: 12px;
+  }
+
+  .card-header {
+    padding: 2.5%;
+  }
+  .card-image {
+    width: 100%;
+    position: absolute;
+    top: 20%;
+    left: 20%;
+  }
+  .card-header {
+    width: 100%;
+    margin-bottom: 5%;
+  }
+}
+@media (min-height: 700px) {
+  #gap {
+    background-color: purple;
+  }
+}
 @media (min-height: 900px) {
   .btn {
     font-size: 25px;
@@ -144,17 +181,12 @@ export default {
   .card-title {
     font-size: 40px;
   }
-  .h5,
-  .card-body {
-    font-size: 2em !important;
+  #card-body {
+    font-size: 2em;
   }
   .card {
     width: calc(var(--vh, 1vh) * 40);
   }
-}
-.card-header {
-  width: 100%;
-  margin-bottom: 5%;
 }
 .card-body {
   width: 100%;
@@ -187,10 +219,12 @@ p {
 img {
   object-fit: cover;
   width: 100%;
+  display: block;
+  margin: auto;
 }
 
 button {
-  width: 90%;
+  width: 60%;
 }
 
 .btn-primary {
