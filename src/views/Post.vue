@@ -7,9 +7,10 @@
           <h3 id="name">{{post.name}}</h3>
           <img class="card-image-top" src="../assets/sample.jpg" />
           <div class="card-body">
-            <p>{{post.description}}</p>
-            <p class="card-title">Current Bid: {{post.price}}</p>
-            <p>Minmum raise: {{post.raise}}</p>
+            <p class="card-text">{{post.description}}</p>
+            <p class="card-text">Value: {{post.value}}</p>
+            <p class="card-text">Current Bid: {{post.price}}</p>
+            <p class="card-text">Minmum raise: {{post.raise}}</p>
             <div class="row justify-content-center">
               <form>
                 <a v-on:click.prevent="decrement">
@@ -63,12 +64,23 @@
               </form>
             </div>
             <br />
-            <button
-              type="button"
-              class="btn btn-outline-dark"
-              v-on:click.prevent="submit"
-            >Submit Bid</button>
+            <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="col d-flex justify-content-center">
+        <div v-if="nextId">
+          <router-link :to="{ name: 'post', params: {id: nextId}}">
+            <button type="button" class="btn btn-foot">Next item</button>
+          </router-link>
+        </div>
+
+        <div v-if="prevId">
+          <router-link :to="{ name: 'post', params: {id: prevId}}">
+            <button type="button" class="btn btn-foot">Previous item</button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -77,47 +89,80 @@
 
 <script>
 import axios from "axios";
+import { mapState } from "vuex";
+import Vue from "vue";
 
 export default {
-  mounted() {},
-
+  beforeRouteUpdate(to, from, next) {
+    this.post = this.$store.getters.post(to.params.id);
+    this.bid =
+      this.$store.getters.post(to.params.id).price +
+      this.$store.getters.post(to.params.id).raise;
+    this.index = this.$store.state.posts.findIndex(
+      element => element.id === to.params.id
+    );
+    next();
+  },
   name: "post",
   data() {
     return {
       post: this.$store.getters.post(this.$route.params.id),
       bid:
         this.$store.getters.post(this.$route.params.id).price +
-        this.$store.getters.post(this.$route.params.id).raise
+        this.$store.getters.post(this.$route.params.id).raise,
+      index: this.$store.state.posts.findIndex(
+        element => element.id === this.$route.params.id
+      ),
+      cards: []
     };
+  },
+  computed: {
+    nextId() {
+      if (this.index + 1 < this.cards.length) {
+        return this.cards[this.index + 1].id;
+      } else return false;
+    },
+    prevId() {
+      if (this.index - 1 >= 0) {
+        return this.cards[this.index - 1].id;
+      } else return false;
+    }
   },
   mounted() {
     this.$store.dispatch("loadPosts");
+    this.getCards();
   },
   methods: {
-        increment() {
-      this.bid = parseInt($("#bidinput").val()) + this.current.raise;
+    initBid() {
+      this.bid = this.post.price + this.post.raise;
+    },
+    getCards() {
+      this.cards = this.$store.state.posts;
+      this.index = this.$store.state.posts.findIndex(
+        x => x.id === this.$route.params.id
+      );
+    },
+    increment() {
+      this.bid = parseInt($("#bidinput").val()) + this.post.raise;
     },
     decrement() {
       if (
-        parseInt($("#bidinput").val()) - this.current.raise >=
-        this.current.price + this.current.raise
+        parseInt($("#bidinput").val()) - this.post.raise >=
+        this.post.price + this.post.raise
       ) {
-        this.bid = parseInt($("#bidinput").val()) - this.current.raise;
+        this.bid = parseInt($("#bidinput").val()) - this.post.raise;
       } else alert("cant do that");
     },
     async submit() {
       this.bid = parseInt($("#bidinput").val());
-      if (
-        parseInt($("#bidinput").val()) >=
-        this.current.price + this.current.raise
-      ) {
+      if (parseInt($("#bidinput").val()) >= this.post.price + this.post.raise) {
         alert("all good");
         var newPost = this.post;
         newPost.price = this.bid;
         const url =
           "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
-          // "https://localhost:5001/api/BidItems/" + 
-          this.current.id;
+          // "https://localhost:5001/api/BidItems/" +
+          this.post.id;
         return axios
           .put(url, newPost, {
             headers: {
@@ -125,7 +170,7 @@ export default {
             }
           })
           .then(response => {
-            this.current.price = this.bid;
+            this.post.price = this.bid;
             this.initBid();
           })
           .catch(error => {
@@ -254,15 +299,6 @@ export default {
   padding: 10px;
 }
 
-.footer-btn {
-  cursor: pointer;
-  transition: all 0.3s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  // &:active {
-  //   transform: translateY(4px);
-  // }
-}
 .flex {
   display: flex;
   &--center {
@@ -275,7 +311,6 @@ export default {
   border-radius: 12px;
 }
 .card {
-  width: calc(var(--vw, 1vw) * 80);
   border: black 0.5px solid;
   border-top-right-radius: 12px;
   background-color: #bfdbf7;
@@ -335,10 +370,13 @@ export default {
 }
 #bidinput {
   width: 50%;
+  margin-top: 5%;
   margin-left: calc(var(--vw, 1vw) * 5);
   margin-right: calc(var(--vw, 1vw) * 5);
 }
-
+.card-text{
+  margin: 0px;
+}
 .h2,
 .card-title {
   padding: 2.5% 0% 0% 0%;
@@ -352,14 +390,20 @@ export default {
   margin-bottom: 5%;
 }
 
+.p {
+}
 .btn-foot {
+  border-color: #343a40;
+  background-color: #bfdbf7;
+  color: black;
+  margin: 10px;
+}
+
+.btn-primary {
   background-color: #1f7a8c;
   border-color: #343a40;
   color: white;
   margin: 5px;
-  a.router-link-active {
-    color: white;
-  }
 }
 html,
 body {
@@ -371,5 +415,15 @@ body {
 .container {
   position: absolute;
   top: 100px;
+  padding: 0px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0px;
+  background-color: lightgrey;
+  border: grey 0.5px solid;
+
+  width: 100%;
 }
 </style>

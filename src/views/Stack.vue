@@ -27,21 +27,12 @@
         </router-link>
         <div class="card-body">
           <h5>Current Bid: {{current.price}}</h5>
-          <h5>Minmum raise: {{current.raise}}</h5>
+          <h5>Minimum raise: {{current.raise}}</h5>
+          <h5>Value: {{current.value}}</h5>
+
           <router-link :to="{ name: 'post', params: {id: current.id}}">
-            <button class="btn btn-foot">Bid Now!</button>
+            <button class="btn btn-primary">Bid Now!</button>
           </router-link>
-          <div class="row">
-            <div class="col d-flex justify-content-center">
-              <button
-                type="button"
-                class="btn btn-foot"
-                v-if="(this.index<this.cards.length-1)"
-                @touchstart="skip"
-              >Next item</button>
-              <button class="btn btn-foot" v-if="(this.index>0)" @touchstart="back">Previous item</button>
-            </div>
-          </div>
         </div>
       </Vue2InteractDraggable>
     </div>
@@ -57,17 +48,9 @@
       <div class="card-body">
         <h5>Current Bid: {{next.price}}</h5>
         <h5>Minmum raise: {{next.raise}}</h5>
-        <div class="row">
-          <div class="col d-flex justify-content-center">
-            <button
-              type="button"
-              class="btn btn-foot"
-              v-if="(this.index+1<this.cards.length-1)"
-              @touchstart="skip"
-            >Next item</button>
-            <button class="btn btn-foot" v-if="(this.index+1>0)" @touchstart="back">Previous item</button>
-          </div>
-        </div>
+        <h5>Value: {{next.value}}</h5>
+
+        <button class="btn btn-primary">Bid Now!</button>
       </div>
     </div>
     <div
@@ -82,17 +65,18 @@
       <div class="card-body">
         <h5>Current Bid: {{nextNext.price}}</h5>
         <h5>Minmum raise: {{nextNext.raise}}</h5>
-
-        <div class="row">
-          <div class="col d-flex justify-content-center">
-            <button
-              type="button"
-              class="btn btn-foot"
-              v-if="(this.index+2<this.cards.length-1)"
-              @touchstart="skip"
-            >Next item</button>
-            <button class="btn btn-foot" v-if="(this.index+2>0)" @touchstart="back">Previous item</button>
-          </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="col d-flex justify-content-center">
+          <button
+            type="button"
+            class="btn btn-foot"
+            v-if="(this.index<this.cards.length-1)"
+            @touchstart="skip"
+          >Next item</button>
+          <button class="btn btn-foot" v-if="(this.index>0)" @touchstart="back">Previous item</button>
         </div>
       </div>
     </div>
@@ -320,20 +304,16 @@ export default {
     }
   }
 }
-
+.btn-primary {
+  background-color: #1f7a8c;
+  border-color: #343a40;
+  color: white;
+  margin: 5px;
+}
 .svg {
   padding: 10px;
 }
 
-.footer-btn {
-  cursor: pointer;
-  transition: all 0.3s ease;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  &:active {
-    transform: translateY(4px);
-  }
-}
 .flex {
   display: flex;
   &--center {
@@ -441,5 +421,20 @@ body {
   position: fixed;
   top: 0;
   bottom: 0;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0px;
+  background-color: lightgrey;
+  border: grey 0.5px solid;
+
+  width: 100%;
+  .btn {
+    border-color: #343a40;
+    background-color: #bfdbf7;
+    color: black;
+    margin: 10px;
+  }
 }
 </style>

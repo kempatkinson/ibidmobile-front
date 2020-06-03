@@ -4,7 +4,7 @@
       <select v-model="selected" id="dropdown">
         <option v-for="option in options" v-bind:key="option.value">{{ option.text }}</option>
       </select>
-      <br>
+      <br />
       <span v-if="selected">Selected: {{ selected }}</span>
     </div>
 
@@ -137,10 +137,23 @@ export default {
 </script>
 
 <style scoped>
+@media (min-height: 900px) {
+  .btn {
+    font-size: 25px;
+  }
+  .card-title {
+    font-size: 40px;
+  }
+  .h5,
+  .card-body {
+    font-size: 2em !important;
+  }
+  .card {
+    width: calc(var(--vh, 1vh) * 40);
+  }
+}
 .card-header {
   width: 100%;
-  margin: 0;
-  padding: 0.75em, 0.75em;
   margin-bottom: 5%;
 }
 .card-body {
@@ -195,21 +208,6 @@ button {
   margin-bottom: 5%;
 }
 
-@media (min-height: 900px) {
-  .btn {
-    font-size: 25px;
-  }
-  .card-title {
-    font-size: 40px;
-  }
-  .h5,
-  .card-body {
-    font-size: 2em !important;
-  }
-  .card {
-    width: calc(var(--vh, 1vh) * 40);
-  }
-}
 .container {
   position: absolute;
   top: 100px;
