@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <div class="row" id="gap">
+    <div class="row d-flex justify-content-center" id="gap">
       <div class="col d-flex justify-content-center">
-        <div class="card" style="width: 18rem;">
-          <h3 id="name">{{post.name}}</h3>
-          <div class="frame">
+        <div class="card">
+          <h3 class="card-header card-title" id="name">{{post.name}}</h3>
+          <div class="frame" style="text-align: center">
             <img class="card-image-top" src="../assets/sample.jpg" />
           </div>
           <div class="card-body cardtext">
@@ -64,6 +64,8 @@
                 </a>
               </form>
             </div>
+          </div>
+          <div class="card-footer">
             <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
           </div>
         </div>
@@ -188,64 +190,63 @@ export default {
 
 <style lang="scss" scoped>
 @media (max-height: 600px) {
-  #gap {
-    background-color: red;
-  }
+  // #gap {
+  //   background-color: red;
+  // }
   .container {
     position: absolute;
     top: 80px;
     padding: 0px;
   }
-  .card-image-top {
-    width: 100%;
-  }
   .frame {
-    padding-left: 2%;
-    padding-right: 2%;
-    margin: 0 auto;
-    height: 60%;
+    padding: auto;
     width: 60%;
+    height: 40%;
+    margin: auto;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-
+  .img {
+    margin: auto;
+  }
   .btn {
     font-size: 15px;
   }
   .card-title {
     font-size: 20px;
   }
-  .cardtext {
-    font-size: 1em;
+  .card-text {
+    font-size: 0.75em;
   }
   .h5 {
     font-size: 0.5em;
   }
+  #bidinput {
+    height: 60%;
+  }
 }
 
 @media (min-height: 600px) {
-  #gap {
-    background-color: blue;
-  }
+  // #gap {
+  //   background-color: blue;
+  // }
   .container {
     position: absolute;
     top: 80px;
     padding: 0px;
-  }
-  .card-image-top {
-    height: 40%;
-    padding-left: 2%;
-    padding-right: 2%;
   }
 }
 @media (min-height: 700px) {
   // #gap {
   //   background-color: purple;
   // }
-  #foot {
-    position: relative;
-    margin-top: calc(var(--vh, 1vh) * 10);
-    align-items: center;
-    width: 100%;
+
+  .container {
+    position: absolute;
+    top: 100px;
+    padding: 0px;
   }
 
   .fixed {
@@ -256,13 +257,16 @@ export default {
       transform: translate(-50%, -50%);
     }
   }
+  .card-footer {
+    margin-top: 5%;
+  }
 }
 @media (min-height: 900px) {
-  #gap {
-    background-color: black;
-  }
+  // #gap {
+  //   background-color: black;
+  // }
   .btn {
-    font-size: 25px;
+    font-size: 30px;
   }
   .card-title {
     font-size: 40px;
@@ -271,22 +275,41 @@ export default {
     font-size: 1.5em;
   }
   .card-body {
-    font-size: 15px;
+    font-size: 24px;
   }
 
-  #foot {
+  .container {
     position: absolute;
-    bottom: 2.5%;
+    top: 200px;
+    max-width: 100vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px;
+  }
+
+  .frame {
+    padding: auto;
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    overflow: hidden;
+    display: flex;
     align-items: center;
-    width: 100%;
+    justify-content: center;
   }
-  .fixed {
-    position: absolute;
-    &--center {
-      top: calc(var(--vh, 1vh) * 52.5);
-      transform: translate(-50%, -50%);
-    }
+  .img {
+    margin: auto;
   }
+  .card-footer {
+    margin-top: 10%;
+  }
+}
+
+.card-image-top {
+  height: 100%;
+  padding-top: 5%;
+  padding-left: 2%;
+  padding-right: 2%;
 }
 #name {
   padding: 0em;
@@ -308,6 +331,7 @@ export default {
   border-radius: 12px;
 }
 .card {
+  width: 90%;
   border: black 0.5px solid;
   border-top-right-radius: 12px;
   background-color: #bfdbf7;
@@ -316,20 +340,7 @@ export default {
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
   color: black;
-  &--one {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.14),
-      0 2px 1px -1px rgba(0, 0, 0, 0.12);
-  }
-  &--two {
-    transform: translate(-48%, -48%);
-    box-shadow: 0 6px 6px -3px rgba(0, 0, 0, 0.2),
-      0 10px 14px 1px rgba(0, 0, 0, 0.14), 0 4px 18px 3px rgba(0, 0, 0, 0.12);
-  }
-  &--three {
-    transform: translate(-46%, -46%);
-    box-shadow: 0 10px 13px -6px rgba(0, 0, 0, 0.2),
-      0 20px 31px 3px rgba(0, 0, 0, 0.14), 0 8px 38px 7px rgba(0, 0, 0, 0.12);
-  }
+
   .text {
     position: relative;
     width: 100%;
@@ -383,8 +394,6 @@ export default {
   margin-bottom: 5%;
 }
 
-.p {
-}
 .btn-foot {
   border-color: #343a40;
   background-color: #bfdbf7;
@@ -394,9 +403,9 @@ export default {
 
 .btn-primary {
   background-color: #1f7a8c;
+
   border-color: #343a40;
   color: white;
-  margin: 10px;
 }
 html,
 body {

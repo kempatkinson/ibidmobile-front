@@ -36,12 +36,7 @@
         </div>
       </Vue2InteractDraggable>
     </div>
-    <div
-      v-if="next"
-      class="rounded-borders card card--two fixed fixed--center"
-      style="z-index: 2"
-      v-bind:style="containerStyle"
-    >
+    <div v-if="next" class="rounded-borders card card--two fixed fixed--center" style="z-index: 2">
       <h2 class="card-title text">{{next.name}}</h2>
       <img class="card-image" src="../assets/sample.jpg" />
 
@@ -53,11 +48,11 @@
         <button class="btn btn-primary">Bid Now!</button>
       </div>
     </div>
+
     <div
       v-if="index + 2 < cards.length"
       class="rounded-borders card card--three fixed fixed--center"
       style="z-index: 1"
-      v-bind:style="containerStyle"
     >
       <h2 class="card-title text">{{nextNext.name}}</h2>
       <img class="card-image" src="../assets/sample.jpg" />
@@ -65,6 +60,9 @@
       <div class="card-body">
         <h5>Current Bid: {{nextNext.price}}</h5>
         <h5>Minmum raise: {{nextNext.raise}}</h5>
+        <h5>Value: {{nextNext.value}}</h5>
+
+        <button class="btn btn-primary">Bid Now!</button>
       </div>
     </div>
     <div class="footer">
@@ -149,7 +147,6 @@ export default {
     getHeight() {
       Vue.nextTick(() => {
         let height = this.$refs.targetCard.$el.clientHeight + "px";
-        console.log(height);
         Vue.set(this.containerStyle, "height", height);
       });
     },
@@ -201,24 +198,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.fixed {
+  position: absolute;
+  &--center {
+    left: calc(var(--vw, 1vw) * 50);
+    top: calc(var(--vh, 1vh) * 50);
+    transform: translate(-50%, -50%);
+  }
+}
 @media (max-height: 600px) {
   // #gap {
   //   background-color: red;
   // }
-  #foot {
-    position: absolute;
-    bottom: calc(var(--vh, 1vh) * 0.5);
-    align-items: center;
-    width: 100%;
-  }
-  .fixed {
-    position: absolute;
-    &--center {
-      left: calc(var(--vw, 1vw) * 50);
-      top: calc(var(--vh, 1vh) * 50);
-      transform: translate(-50%, -50%);
-    }
-  }
   .btn {
     font-size: 15px;
   }
@@ -226,7 +217,7 @@ export default {
     font-size: 20px;
   }
   .cardtext {
-    font-size: 1em ;
+    font-size: 1em;
   }
   .h5 {
     font-size: 0.5em;
@@ -236,41 +227,11 @@ export default {
   // #gap {
   //   background-color: blue;
   // }
-  #foot {
-    position: relative;
-    margin-top: calc(var(--vh, 1vh) * 5);
-    align-items: center;
-    width: 100%;
-  }
-
-  .fixed {
-    position: absolute;
-    &--center {
-      left: calc(var(--vw, 1vw) * 50);
-      top: calc(var(--vh, 1vh) * 50);
-      transform: translate(-50%, -50%);
-    }
-  }
 }
 @media (min-height: 700px) {
   // #gap {
   //   background-color: purple;
   // }
-  #foot {
-    position: relative;
-    margin-top: calc(var(--vh, 1vh) * 10);
-    align-items: center;
-    width: 100%;
-  }
-
-  .fixed {
-    position: absolute;
-    &--center {
-      left: calc(var(--vw, 1vw) * 50);
-      top: calc(var(--vh, 1vh) * 47.5);
-      transform: translate(-50%, -50%);
-    }
-  }
 }
 @media (min-height: 900px) {
   // #gap {
@@ -287,21 +248,7 @@ export default {
   }
   .cardtext,
   .h5 {
-    font-size: 15px ;
-  }
-
-  #foot {
-    position: absolute;
-    bottom: 2.5%;
-    align-items: center;
-    width: 100%;
-  }
-  .fixed {
-    position: absolute;
-    &--center {
-      top: calc(var(--vh, 1vh) * 52.5);
-      transform: translate(-50%, -50%);
-    }
+    font-size: 15px;
   }
 }
 .btn-primary {

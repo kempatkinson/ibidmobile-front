@@ -17,10 +17,10 @@
           </router-link>
         </div>
         <div class="card-body row" v-on:click="select($event)" :id="data.id">
-          <div class="col-4">
+          <div class="col-5 d-flex align-items-center">
             <img class="card-image" src="../assets/sample.jpg" />
           </div>
-          <div class="col-8">
+          <div class="col-7">
             <p v-if="data.sold" class="card-text">Sold Out!</p>
             <div
               v-if="(!data.sold) && (times[times.findIndex((element)=> element.id === data.id)].date>0)"
@@ -45,7 +45,7 @@
               <div
                 slot-scope="props"
                 class="date-text"
-              >Bidding closes inf {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+              >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
             </countdown>
           </div>
           <div
@@ -140,29 +140,47 @@ export default {
 <style scoped>
 @media (max-height: 600px) {
   #gap {
-    background-color: red;
+    background-color: none
+    ;
   }
-}
-
-@media (min-height: 600px) {
-  #gap {
-    background-color: blue;
+  .container {
+    position: absolute;
+    top: 100px;
   }
   .card-text {
     font-size: 14px;
   }
   .date-text {
-    font-size: 12px;
+    font-size: 14px;
+    margin: 0 5% 0 5%;
   }
 
   .card-header {
     padding: 2.5%;
   }
-  .card-image {
+  .card-header {
     width: 100%;
+    margin-bottom: 5%;
+  }
+}
+
+@media (min-height: 600px) {
+  #gap {
+    background-color: none;
+  }
+  .card-text {
+    font-size: 14px;
+  }
+  .date-text {
+    font-size: 14px;
+  }
+  .container {
     position: absolute;
-    top: 20%;
-    left: 20%;
+    top: 100px;
+  }
+
+  .card-header {
+    padding: 2.5%;
   }
   .card-header {
     width: 100%;
@@ -171,21 +189,49 @@ export default {
 }
 @media (min-height: 700px) {
   #gap {
-    background-color: purple;
+    background-color: none;
+  }
+  .container {
+    position: absolute;
+    top: 100px;
+  }
+  .card-text {
+    font-size: 14px;
+  }
+  .date-text {
+    font-size: 14px;
+  }
+
+  .card-header {
+    padding: 2.5%;
+  }
+  .card-header {
+    width: 100%;
+    margin-bottom: 5%;
   }
 }
 @media (min-height: 900px) {
+  #gap {
+    background-color: none;
+  }
   .btn {
     font-size: 25px;
   }
   .card-title {
     font-size: 40px;
   }
-  #card-body {
-    font-size: 2em;
+  .card-text {
+    font-size: 24px;
+  }
+  .date-text {
+    font-size: 20px;
   }
   .card {
     width: calc(var(--vh, 1vh) * 40);
+  }
+  .container {
+    position: absolute;
+    top: 120px;
   }
 }
 .card-body {
@@ -217,14 +263,11 @@ p {
   margin-bottom: 0.25em;
 }
 img {
-  object-fit: cover;
   width: 100%;
-  display: block;
-  margin: auto;
 }
 
 button {
-  width: 60%;
+  width: 75%;
 }
 
 .btn-primary {
@@ -240,10 +283,5 @@ button {
 
 #dropdown {
   margin-bottom: 5%;
-}
-
-.container {
-  position: absolute;
-  top: 100px;
 }
 </style>

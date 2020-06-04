@@ -83,10 +83,12 @@ body {
   width: 100% !important;
   background-color: #053c5e !important;
   color: #bfdbf7 !important;
+  align-content: center;
 }
 #sidebarlist {
   list-style-type: none;
   list-style: none;
+  padding: 0;
 }
 
 #nav {
