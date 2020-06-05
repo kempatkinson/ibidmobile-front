@@ -1,84 +1,100 @@
 <template>
   <div class="container">
-    <div class="row d-flex justify-content-center" id="gap">
+    <div class="row" id="gap">
       <div class="col d-flex justify-content-center">
-        <div class="card">
-          <h3 class="card-header card-title" id="name">{{post.name}}</h3>
-          <div class="frame" style="text-align: center">
-            <img class="card-image-top" src="../assets/sample.jpg" />
-          </div>
-          <div class="card-body cardtext">
-            <p class="card-text">{{post.description}}</p>
-            <p class="card-text">Value: {{post.value}}</p>
-            <p class="card-text">Current Bid: {{post.price}}</p>
-            <p class="card-text">Minmum raise: {{post.raise}}</p>
-            <div class="row justify-content-center">
-              <form>
-                <a v-on:click.prevent="decrement">
-                  <svg
-                    class="bi bi-dash-circle"
-                    width="1.5em"
-                    height="1.5em"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                      clip-rule="evenodd"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </a>
-                <input id="bidinput" type="number" v-model="bid" />
-                <a v-on:click.prevent="increment">
-                  <svg
-                    class="bi bi-plus-circle"
-                    width="1.5em"
-                    height="1.5em"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                      clip-rule="evenodd"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                      clip-rule="evenodd"
-                    />
-                    <path
-                      fill-rule="evenodd"
-                      d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </a>
-              </form>
-            </div>
-          </div>
-          <div class="card-footer">
-            <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
-          </div>
+        <h3 id="name">{{post.name}}</h3>
+      </div>
+    </div>
+    <div class="row image-row">
+      <div class="col d-flex justify-content-center">
+        <img class="card-image-top" src="../assets/sample.jpg" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col d-flex justify-content-center">
+        <div>
+          <p class="card-text" id="description">{{post.description}}</p>
         </div>
       </div>
     </div>
+
+    <div class="bidrow">
+      <div class="row d-flex justify-content-center" id="postinfo">
+        <div class="col">
+          <p class="card-text">Value: {{post.value}}</p>
+          <p class="card-text">Current Bid: {{post.price}}</p>
+          <p class="card-text">Minmum raise: {{post.raise}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col d-flex justify-content-center">
+          <form>
+            <a v-on:click.prevent="decrement">
+              <svg
+                class="bi bi-dash-circle"
+                width="1.5em"
+                height="1.5em"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                  clip-rule="evenodd"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
+            <input id="bidinput" type="number" v-model="bid" />
+            <a v-on:click.prevent="increment">
+              <svg
+                class="bi bi-plus-circle"
+                width="1.5em"
+                height="1.5em"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
+                  clip-rule="evenodd"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
+                  clip-rule="evenodd"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </a>
+          </form>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col d-flex justify-content-center">
+          <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
+        </div>
+      </div>
+    </div>
+
     <div class="footer">
-      <div class="col d-flex justify-content-center">
+      <div id="buttons">
         <div v-if="nextId">
           <router-link :to="{ name: 'post', params: {id: nextId}}">
             <button type="button" class="btn btn-foot">Next item</button>
           </router-link>
         </div>
-
         <div v-if="prevId">
           <router-link :to="{ name: 'post', params: {id: prevId}}">
             <button type="button" class="btn btn-foot">Previous item</button>
@@ -193,33 +209,19 @@ export default {
   // #gap {
   //   background-color: red;
   // }
+  #description {
+    font-size: 12px;
+  }
   .container {
     position: absolute;
     top: 80px;
     padding: 0px;
   }
-  .frame {
-    padding: auto;
-    width: 60%;
-    height: 40%;
-    margin: auto;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .img {
-    margin: auto;
-  }
+
   .btn {
     font-size: 15px;
   }
-  .card-title {
-    font-size: 20px;
-  }
-  .card-text {
-    font-size: 0.75em;
-  }
+
   .h5 {
     font-size: 0.5em;
   }
@@ -236,6 +238,16 @@ export default {
     position: absolute;
     top: 80px;
     padding: 0px;
+  }
+  #description {
+    font-size: 14px;
+  }
+
+  .card-text {
+    font-size: 14px;
+  }
+  .btn {
+    font-size: 14px;
   }
 }
 @media (min-height: 700px) {
@@ -257,9 +269,6 @@ export default {
       transform: translate(-50%, -50%);
     }
   }
-  .card-footer {
-    margin-top: 5%;
-  }
 }
 @media (min-height: 900px) {
   // #gap {
@@ -268,19 +277,10 @@ export default {
   .btn {
     font-size: 30px;
   }
-  .card-title {
-    font-size: 40px;
-  }
-  .bidrow {
-    font-size: 1.5em;
-  }
-  .card-body {
-    font-size: 24px;
-  }
 
   .container {
     position: absolute;
-    top: 200px;
+    top: 160px;
     max-width: 100vw;
     margin-left: auto;
     margin-right: auto;
@@ -300,20 +300,38 @@ export default {
   .img {
     margin: auto;
   }
-  .card-footer {
-    margin-top: 10%;
+
+  #description {
+    font-size: 24px;
+  }
+  .card-text {
+    font-size: 24px;
+  }
+  .btn {
+    font-size: 20px;
   }
 }
-
-.card-image-top {
-  height: 100%;
-  padding-top: 5%;
-  padding-left: 2%;
-  padding-right: 2%;
+#postinfo {
+  margin-bottom: 5%;
 }
 #name {
   padding: 0em;
   margin: 0;
+}
+
+.card-image-top {
+  width: 100%;
+  height: 100%;
+}
+
+.image-row {
+  margin: 0 auto;
+  width: 40%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
 }
 .svg {
   padding: 10px;
@@ -372,17 +390,28 @@ export default {
     transform: translate(-50%, -50%);
   }
 }
+
+.bidrow {
+  position: fixed;
+  width: 100%;
+  bottom: 11%;
+}
 #bidinput {
   width: 50%;
-  margin-top: 5%;
   margin-left: calc(var(--vw, 1vw) * 5);
   margin-right: calc(var(--vw, 1vw) * 5);
 }
-.card-text {
-  margin: 0px;
+
+#description {
+  text-align: left;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
-.h2,
-.card-title {
+.card-text {
+  margin: 0 20px;
+}
+.h2 {
   padding: 2.5% 0% 0% 0%;
   margin: 0px;
 }
@@ -403,7 +432,7 @@ export default {
 
 .btn-primary {
   background-color: #1f7a8c;
-
+  margin-top: 5%;
   border-color: #343a40;
   color: white;
 }
@@ -417,10 +446,18 @@ body {
 
 .footer {
   position: fixed;
-  bottom: 0px;
+  bottom: 0;
+  width: 100%;
   background-color: lightgrey;
   border: grey 0.5px solid;
-
-  width: 100%;
 }
+
+#buttons {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+
 </style>
