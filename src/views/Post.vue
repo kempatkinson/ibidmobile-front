@@ -140,7 +140,7 @@ export default {
       cards: [],
       isActive: false,
       rowHeight: 0,
-      heartHeight: {}
+      heartHeight: {},
     };
   },
   computed: {
@@ -159,8 +159,31 @@ export default {
     this.$store.dispatch("loadPosts");
     this.getCards();
     this.getRowHeight();
+    this.initFavorite();
   },
   methods: {
+    favorite() {
+      let seen = false;
+      for (let i = 0; i < this.$store.state.favorites.length; i++) {
+        if (this.$store.state.favorites[i].n === this.index) {
+          seen = true;
+        }
+      }
+      if (!seen) {
+        this.$store.dispatch("setFavorite", { n: this.index });
+      }
+    },
+    initFavorite() {
+      let seen = false;
+      for (let i = 0; i < this.$store.state.favorites.length; i++) {
+        if (this.$store.state.favorites[i].n === this.index) {
+          seen = true;
+        }
+      }
+      if (seen) {
+        this.isActive = true;
+      }
+    },
     getRowHeight() {
       Vue.nextTick(() => {
         let target = this.$refs.nameRow.clientHeight;
@@ -176,6 +199,13 @@ export default {
     },
     toggle() {
       this.isActive = !this.isActive;
+
+      if (this.isActive) {
+        this.favorite();
+      }
+      if (!this.isActive) {
+        this.$store.dispatch("removeFavorite", { n: this.post.index });
+      }
       // some code to filter users
     },
     initBid() {

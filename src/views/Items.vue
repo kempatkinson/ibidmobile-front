@@ -15,6 +15,7 @@
           <router-link :to="{ name: 'post', params: {id: data.id}}">
             <h3 class="card-title">{{data.name}}</h3>
           </router-link>
+          <div class="heart" v-on:click="toggle" v-bind:key="data.id"></div>
         </div>
         <div class="card-body row" v-on:click="select($event)" :id="data.id">
           <div class="col-5 d-flex align-items-center">
@@ -87,6 +88,22 @@ export default {
   },
 
   computed: {
+    activeKeys() {
+      let array = [];
+      for (post in this.$store.state.posts) {
+        let favorited = false;
+        for (let i = 0; i < this.$store.state.favorites.length; i++) {
+          if (this.$store.state.favorites[i].n === post.id) {
+            favorited = true;
+          }
+        }
+        array.push({
+          id: post.id,
+          active: favorited
+        });
+      }
+      return array
+    },
     filteredPosts() {
       if (this.selected === "Live Items") {
         return this.$store.state.posts.filter(
@@ -120,6 +137,17 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
+    toggle() {
+      this.isActive = !this.isActive;
+
+      if (this.isActive) {
+        this.favorite();
+      }
+      if (!this.isActive) {
+        this.$store.dispatch("removeFavorite", { n: this.post.index });
+      }
+      // some code to filter users
+    },
     timesUntil() {
       for (const i in this.$store.state.posts) {
         const now = new Date();
@@ -137,11 +165,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped  lang="scss">
 @media (max-height: 600px) {
   #gap {
-    background-color: none
-    ;
+    background-color: none;
   }
   .container {
     position: absolute;
@@ -283,5 +310,32 @@ button {
 
 #dropdown {
   margin-bottom: 5%;
+}
+
+// TWITTER HEART
+.heart {
+  position: absolute;
+  top: -16%;
+  right: 0%;
+  width: 100px;
+  height: 100px;
+  background: url("https://cssanimation.rocks/images/posts/steps/heart.png")
+    no-repeat;
+  background-position: 0 0;
+  cursor: pointer;
+  transition: background-position 1s steps(28);
+  transition-duration: 0s;
+
+  &.amactive {
+    transition-duration: 1s;
+    background-position: -2800px 0;
+  }
+}
+
+// BASIC
+body {
+  background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
+  color: #fff;
+  font: 300 16px/1.5 "Open Sans", sans-serif;
 }
 </style>
