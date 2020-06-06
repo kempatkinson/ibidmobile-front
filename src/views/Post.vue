@@ -1,10 +1,15 @@
 <template>
   <div class="container">
     <div class="row" id="gap">
-      <div class="col d-flex justify-content-center">
-        <h3 id="name">{{post.name}}</h3>
-      </div>
+      <h3 id="name" ref="nameRow">{{post.name}}</h3>
+      <div
+        class="heart"
+        v-bind:style="this.heartHeight"
+        v-on:click="toggle"
+        v-bind:class="{amactive: isActive}"
+      ></div>
     </div>
+
     <div class="row image-row">
       <div class="col d-flex justify-content-center">
         <img class="card-image-top" src="../assets/sample.jpg" />
@@ -119,6 +124,7 @@ export default {
     this.index = this.$store.state.posts.findIndex(
       element => element.id === to.params.id
     );
+
     next();
   },
   name: "post",
@@ -131,7 +137,10 @@ export default {
       index: this.$store.state.posts.findIndex(
         element => element.id === this.$route.params.id
       ),
-      cards: []
+      cards: [],
+      isActive: false,
+      rowHeight: 0,
+      heartHeight: {}
     };
   },
   computed: {
@@ -149,8 +158,26 @@ export default {
   mounted() {
     this.$store.dispatch("loadPosts");
     this.getCards();
+    this.getRowHeight();
   },
   methods: {
+    getRowHeight() {
+      Vue.nextTick(() => {
+        let target = this.$refs.nameRow.clientHeight;
+        let factor = (2.5 * target) / 100;
+        let string = "scale(" + factor + ")";
+        Vue.set(this.heartHeight, "transform", string);
+
+        // const left = this.$refs.nameRow.getBoundingClientRect().left + "px";
+        // const top = this.$refs.nameRow.getBoundingClientRect().top + "px";
+        // Vue.set(this.heartHeight, "right", left);
+        // Vue.set(this.heartHeight, "top", top);
+      });
+    },
+    toggle() {
+      this.isActive = !this.isActive;
+      // some code to filter users
+    },
     initBid() {
       this.bid = this.post.price + this.post.raise;
     },
@@ -234,6 +261,9 @@ export default {
   // #gap {
   //   background-color: blue;
   // }
+  #name {
+    font-size: 24px;
+  }
   .container {
     position: absolute;
     top: 80px;
@@ -315,6 +345,9 @@ export default {
   margin-bottom: 5%;
 }
 #name {
+  position: relative;
+  width: 100%;
+  align-content: center;
   padding: 0em;
   margin: 0;
 }
@@ -459,5 +492,30 @@ body {
   margin: 0 auto;
 }
 
+// TWITTER HEART
+.heart {
+  position: absolute;
+  top: -16%;
+  right: 0%;
+  width: 100px;
+  height: 100px;
+  background: url("https://cssanimation.rocks/images/posts/steps/heart.png")
+    no-repeat;
+  background-position: 0 0;
+  cursor: pointer;
+  transition: background-position 1s steps(28);
+  transition-duration: 0s;
 
+  &.amactive {
+    transition-duration: 1s;
+    background-position: -2800px 0;
+  }
+}
+
+// BASIC
+body {
+  background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
+  color: #fff;
+  font: 300 16px/1.5 "Open Sans", sans-serif;
+}
 </style>
