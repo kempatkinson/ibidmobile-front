@@ -1,5 +1,11 @@
 <template>
   <div id="favorites" class="container">
+    <div class="row">
+      <div class="col d-flex justify-content-center">
+        <button v-on:click="empty">empty favorites</button>
+      </div>
+    </div>
+    <br>
     <div class="row" v-for="data in favs" :key="data.id">
       <div class="col d-flex justify-content-center">
         <router-link :to="{ name: 'post', params: {id: data.id}}">
@@ -35,11 +41,22 @@ export default {
   },
   methods: {
     getFavs() {
+      console.log(this.$store.state.favorites);
+
       for (let i = 0; i < this.$store.state.favorites.length; i++) {
         this.favs.push(
-          this.$store.state.posts[this.$store.state.favorites[i].n]
+          this.$store.state.posts[
+            this.$store.state.posts.findIndex(
+              element => element.id === this.$store.state.favorites[i].n
+            )
+          ]
         );
+        console.log(this.$store.state.favorites);
       }
+    },
+    empty() {
+      this.$store.commit("clear");
+      console.log(this.$store.state.favorites);
     }
   },
   computed: {
@@ -49,7 +66,6 @@ export default {
 </script>
 
 <style scoped>
-
 .card {
   margin-bottom: 10%;
   border: black 0.5px solid;

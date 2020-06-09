@@ -124,8 +124,7 @@ export default {
     this.index = this.$store.state.posts.findIndex(
       element => element.id === to.params.id
     );
-
-    next();
+    this.isActive = this.$store.getters.findFavorite(to.params.id);
   },
   name: "post",
   data() {
@@ -140,18 +139,18 @@ export default {
       cards: [],
       isActive: false,
       rowHeight: 0,
-      heartHeight: {},
+      heartHeight: {}
     };
   },
   computed: {
     nextId() {
-      if (this.index + 1 < this.cards.length) {
-        return this.cards[this.index + 1].id;
+      if (this.index + 1 <= this.cards.length-1) {
+        return this.index+1;
       } else return false;
     },
     prevId() {
       if (this.index - 1 >= 0) {
-        return this.cards[this.index - 1].id;
+        return this.index-1;
       } else return false;
     }
   },
@@ -162,27 +161,21 @@ export default {
     this.initFavorite();
   },
   methods: {
-    favorite() {
-      let seen = false;
-      for (let i = 0; i < this.$store.state.favorites.length; i++) {
-        if (this.$store.state.favorites[i].n === this.index) {
-          seen = true;
-        }
-      }
-      if (!seen) {
-        this.$store.dispatch("setFavorite", { n: this.index });
-      }
-    },
     initFavorite() {
-      let seen = false;
-      for (let i = 0; i < this.$store.state.favorites.length; i++) {
-        if (this.$store.state.favorites[i].n === this.index) {
-          seen = true;
-        }
-      }
-      if (seen) {
+      if (this.$store.getters.findFavorite(this.post.id)) {
         this.isActive = true;
       }
+    },
+    toggle() {
+      this.isActive = !this.isActive;
+
+      if (this.isActive) {
+        this.$store.dispatch("setFavorite", { n: this.post.id });
+      }
+      if (!this.isActive) {
+        this.$store.dispatch("removeFavorite", { n: this.post.id });
+      }
+      // some code to filter users
     },
     getRowHeight() {
       Vue.nextTick(() => {
@@ -196,17 +189,6 @@ export default {
         // Vue.set(this.heartHeight, "right", left);
         // Vue.set(this.heartHeight, "top", top);
       });
-    },
-    toggle() {
-      this.isActive = !this.isActive;
-
-      if (this.isActive) {
-        this.favorite();
-      }
-      if (!this.isActive) {
-        this.$store.dispatch("removeFavorite", { n: this.post.index });
-      }
-      // some code to filter users
     },
     initBid() {
       this.bid = this.post.price + this.post.raise;

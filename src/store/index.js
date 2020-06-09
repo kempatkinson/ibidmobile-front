@@ -31,6 +31,9 @@ export default new Vuex.Store({
     removeFavorite({ commit }, n) {
       commit("unfavorite", n);
     },
+    findFavorite({ commit }, i) {
+      commit("findfavorite", i)
+    }
   },
   mutations: {
     GET_POSTS(state, posts) {
@@ -40,14 +43,27 @@ export default new Vuex.Store({
       state.favorites.push(n);
     },
     unfavorite(state, n) {
-    
-       state.favorites.splice(state.favorites.indexOf(n), 1)
-     
+      state.favorites.splice(state.favorites.indexOf(n), 1)
+
+    },
+    clear(state){
+      state.favorites = [];
     }
   },
   getters: {
     post: (state) => (id) => {
       return state.posts.find(p => p.id === id)
+    },
+    findFavorite: (state) => (id) => {
+      let seen = false;
+      for (let i = 0; i < state.favorites.length; i++) {
+        if (state.favorites[i].n === id) {
+          return true;
+        }
+      }
+      if (!seen) {
+        return false
+      }
     }
   },
   plugins: [createPresistedState()],

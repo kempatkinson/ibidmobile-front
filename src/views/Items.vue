@@ -11,11 +11,19 @@
     <div class="row" v-for="data in filteredPosts" :key="data.id">
       <div class="col-1"></div>
       <div class="card col-10">
-        <div class="card-header">
-          <router-link :to="{ name: 'post', params: {id: data.id}}">
-            <h3 class="card-title">{{data.name}}</h3>
-          </router-link>
-          <div class="heart" v-on:click="toggle" v-bind:key="data.id"></div>
+        <div class="card-header" ref="header">
+          <div class="card-title" style="position: relative">
+            <router-link :to="{ name: 'post', params: {id: data.id}}">
+              <h3 ref="items">{{data.name}}</h3>
+            </router-link>
+            <div
+              class="heart"
+              v-on:click="toggle(data.id)"
+              v-bind:key="data.id"
+              v-bind:style="heartHeight"
+              v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.id)].active}"
+            ></div>
+          </div>
         </div>
         <div class="card-body row" v-on:click="select($event)" :id="data.id">
           <div class="col-5 d-flex align-items-center">
@@ -79,30 +87,28 @@ export default {
         { text: "Unsold Items", value: "3" },
         { text: "Items with no bids", value: "4" }
       ],
-      times: []
+      times: [],
+      heartHeight: {}
     };
   },
   mounted() {
     this.$store.dispatch("loadPosts");
     this.timesUntil();
+    this.getRowHeight();
   },
 
   computed: {
     activeKeys() {
-      let array = [];
-      for (post in this.$store.state.posts) {
-        let favorited = false;
-        for (let i = 0; i < this.$store.state.favorites.length; i++) {
-          if (this.$store.state.favorites[i].n === post.id) {
-            favorited = true;
-          }
-        }
+      var array = [];
+      for (let i = 0; i < this.$store.state.posts.length; i++) {
         array.push({
-          id: post.id,
-          active: favorited
+          id: this.$store.state.posts[i].id,
+          active: this.$store.getters.findFavorite(
+            this.$store.state.posts[i].id
+          )
         });
       }
-      return array
+      return array;
     },
     filteredPosts() {
       if (this.selected === "Live Items") {
@@ -137,24 +143,51 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
-    toggle() {
-      this.isActive = !this.isActive;
+    getRowHeight() {
+      this.$nextTick(() => {
+        //sizing
+        let target = this.$refs.items[0].clientHeight;
+        let factor = target / 100;
+        let string = "scale(" + 2 * factor + ")";
+        Vue.set(this.heartHeight, "transform", string);
 
-      if (this.isActive) {
-        this.favorite();
+        // positioning
+        const left =
+          -this.$refs.header[0].getBoundingClientRect().left + target + "px";
+
+        let header = this.$refs.header[0].clientHeight;
+        const top = -this.$refs.header[0].getBoundingClientRect().top + "px";
+        Vue.set(this.heartHeight, "position", "absolute");
+        Vue.set(this.heartHeight, "left", "0%");
+        Vue.set(this.heartHeight, "top", "-100%");
+      });
+    },
+    toggle: function(id) {
+      this.activeKeys[
+        this.activeKeys.findIndex(element => element.id === id)
+      ].active = !this.activeKeys[
+        this.activeKeys.findIndex(element => element.id === id)
+      ].active;
+
+      if (
+        this.activeKeys[this.activeKeys.findIndex(element => element.id === id)]
+          .active
+      ) {
+        this.$store.dispatch("setFavorite", { n: id });
       }
-      if (!this.isActive) {
-        this.$store.dispatch("removeFavorite", { n: this.post.index });
+      if (
+        !this.activeKeys[
+          this.activeKeys.findIndex(element => element.id === id)
+        ].active
+      ) {
+        this.$store.dispatch("removeFavorite", { n: id });
       }
-      // some code to filter users
     },
     timesUntil() {
       for (const i in this.$store.state.posts) {
         const now = new Date();
         const then = new Date(this.$store.state.posts[i].end);
         const difference = then - now + 5 * 60 * 60 * 1000;
-        console.log(difference);
-
         this.times.push({
           id: this.$store.state.posts[i].id,
           date: difference
@@ -181,14 +214,6 @@ export default {
     font-size: 14px;
     margin: 0 5% 0 5%;
   }
-
-  .card-header {
-    padding: 2.5%;
-  }
-  .card-header {
-    width: 100%;
-    margin-bottom: 5%;
-  }
 }
 
 @media (min-height: 600px) {
@@ -205,13 +230,8 @@ export default {
     position: absolute;
     top: 100px;
   }
-
-  .card-header {
-    padding: 2.5%;
-  }
-  .card-header {
-    width: 100%;
-    margin-bottom: 5%;
+  .card-title {
+    font-size: 18px;
   }
 }
 @media (min-height: 700px) {
@@ -225,16 +245,14 @@ export default {
   .card-text {
     font-size: 14px;
   }
+  .card-title {
+    font-size: 24px;
+  }
   .date-text {
     font-size: 14px;
   }
-
-  .card-header {
-    padding: 2.5%;
-  }
-  .card-header {
-    width: 100%;
-    margin-bottom: 5%;
+  .card-title {
+    font-size: 20px;
   }
 }
 @media (min-height: 900px) {
@@ -245,7 +263,7 @@ export default {
     font-size: 25px;
   }
   .card-title {
-    font-size: 40px;
+    font-size: 64px;
   }
   .card-text {
     font-size: 24px;
@@ -260,6 +278,15 @@ export default {
     position: absolute;
     top: 120px;
   }
+
+  .selection {
+    font-size: 24px;
+  }
+}
+.card-header {
+  padding: 2.5%;
+  width: 100%;
+  margin-bottom: 5%;
 }
 .card-body {
   width: 100%;
@@ -276,7 +303,6 @@ export default {
 .card-title {
   margin-top: 5%;
   margin: 0;
-  font-size: 20px;
 }
 .card {
   margin-bottom: 10%;
@@ -315,8 +341,9 @@ button {
 // TWITTER HEART
 .heart {
   position: absolute;
-  top: -16%;
-  right: 0%;
+  z-index: 2;
+  // top: -14%;
+  // right: 0%;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")

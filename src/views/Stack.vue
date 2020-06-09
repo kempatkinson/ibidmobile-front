@@ -164,18 +164,20 @@ export default {
     },
     emitAndNext(event) {
       if (event == "match") {
-        let seen = false;
-        for (let i = 0; i < this.$store.state.favorites.length; i++) {
-          if (this.$store.state.favorites[i].n === this.index) {
-            seen = true;
-          }
-        }
-        if (!seen) {
-          this.$store.dispatch("setFavorite", { n: this.index });
+        if (!this.$store.getters.findFavorite(this.current.id)) {
+          this.$store.dispatch("setFavorite", {
+            n: this.cards[
+              this.cards.findIndex(element => element.id === this.current.id)
+            ].id
+          });
         }
       }
       if (event == "reject") {
-        this.$store.dispatch("removeFavorite", { n: this.index });
+        this.$store.dispatch("removeFavorite", {
+          n: this.cards[
+            this.cards.findIndex(element => element.id === this.current.id)
+          ].id
+        });
       }
 
       this.$emit(event, this.index);
