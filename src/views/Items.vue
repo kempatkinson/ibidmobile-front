@@ -27,17 +27,12 @@
         </div>
         <div class="card-body row" v-on:click="select($event)" :id="data.id">
           <div class="col-5 d-flex align-items-center">
-            <img class="card-image" src="../assets/sample.jpg" />
+            <img class="card-image" v-bind:src="getImage(data.image)" />
           </div>
           <div class="col-7">
             <p v-if="data.sold" class="card-text">Sold Out!</p>
-            <div
-              v-if="(!data.sold) && (times[times.findIndex((element)=> element.id === data.id)].date>0)"
-            >
-              <p
-                v-if="(times[times.findIndex((element)=> element.id === data.id)].date > 0)"
-                class="card-text"
-              >Live!</p>
+            <div v-if="(!data.sold) && (timeUntil(data.end) > 0)">
+              <p v-if="(timeUntil(data.end) > 0 )" class="card-text">Live!</p>
               <p class="card-text">Current Bid : {{data.price}}</p>
               <p class="card-text">Value : {{data.value}}</p>
               <router-link :to="{ name: 'post', params: {id: data.id}}">
@@ -45,22 +40,15 @@
               </router-link>
             </div>
           </div>
-
-          <div
-            class="card-footer"
-            v-if="(times[times.findIndex((element)=> element.id === data.id)].date > 0)"
-          >
-            <countdown :time="times[times.findIndex((element)=> element.id === data.id)].date">
+          <div class="card-footer" v-if="(timeUntil(data.end) > 0)">
+            <countdown :time="timeUntil(data.end)">
               <div
                 slot-scope="props"
                 class="date-text"
               >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
             </countdown>
           </div>
-          <div
-            class="card-footer"
-            v-if="(times[times.findIndex((element)=> element.id === data.id)].date <= 0)"
-          >Auction Over!</div>
+          <div class="card-footer" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
         </div>
       </div>
       <div class="col-1"></div>
@@ -74,6 +62,7 @@ import datetime from "datetime";
 import { mapState } from "vuex";
 import Vue from "vue";
 import VueCountdown from "@chenfengyuan/vue-countdown";
+import cloudinary from "cloudinary-core";
 
 Vue.component(VueCountdown.name, VueCountdown);
 export default {
@@ -93,7 +82,6 @@ export default {
   },
   mounted() {
     this.$store.dispatch("loadPosts");
-    this.timesUntil();
     this.getRowHeight();
   },
 
@@ -113,29 +101,19 @@ export default {
     filteredPosts() {
       if (this.selected === "Live Items") {
         return this.$store.state.posts.filter(
-          post =>
-            this.times[this.times.findIndex(element => element.id === post.id)]
-              .date >
-              0 ===
-            true
+          post => this.timeUntil(post.end) > 0 === true
         );
       }
       if (this.selected === "Unsold Items") {
         return this.$store.state.posts.filter(
-          post =>
-            post.sold === false &&
-            this.times[this.times.findIndex(element => element.id === post.id)]
-              .date >
-              0 ===
-              true
+          post => post.sold === false && this.timeUntil(post.end) > 0 === true
         );
       }
       if (this.selected === "Items with no bids") {
         return this.$store.state.posts.filter(
           post =>
             post.price === post.startingPrice &&
-            this.times[this.times.findIndex(element => element.id === post.id)]
-              .date > 0
+            this.timeUntil(post.end) > 0 === true
         );
       } else return this.$store.state.posts;
     },
@@ -143,6 +121,11 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
+    getImage: function(image) {
+      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
+      var tag = cl.url(image, { height: 200, width: 200, crop: "fill" });
+      return tag;
+    },
     getRowHeight() {
       this.$nextTick(() => {
         //sizing
@@ -163,36 +146,25 @@ export default {
       });
     },
     toggle: function(id) {
-      this.activeKeys[
-        this.activeKeys.findIndex(element => element.id === id)
-      ].active = !this.activeKeys[
-        this.activeKeys.findIndex(element => element.id === id)
-      ].active;
+   
 
-      if (
-        this.activeKeys[this.activeKeys.findIndex(element => element.id === id)]
-          .active
-      ) {
+      var index = this.activeKeys.findIndex(element => element.id === id);
+      // this.activeKeys[this.activeKeys.findIndex(element => element.id === id)].active =
+      // !this.activeKeys[this.activeKeys.findIndex(element => element.id === id)].active;
+
+      if (this.activeKeys[index].active === false) {
+        this.activeKeys[index].active = true;
         this.$store.dispatch("setFavorite", { n: id });
-      }
-      if (
-        !this.activeKeys[
-          this.activeKeys.findIndex(element => element.id === id)
-        ].active
-      ) {
+      }  else if (this.activeKeys[index].active === true) {
+        this.activeKeys[index].active = false;
         this.$store.dispatch("removeFavorite", { n: id });
       }
     },
-    timesUntil() {
-      for (const i in this.$store.state.posts) {
-        const now = new Date();
-        const then = new Date(this.$store.state.posts[i].end);
-        const difference = then - now + 5 * 60 * 60 * 1000;
-        this.times.push({
-          id: this.$store.state.posts[i].id,
-          date: difference
-        });
-      }
+    timeUntil: function(end) {
+      const now = new Date();
+      const then = new Date(end);
+      const difference = then - now + 5 * 60 * 60 * 1000;
+      return difference;
     }
   }
 };

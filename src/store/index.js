@@ -42,11 +42,11 @@ export default new Vuex.Store({
     favorite(state, n) {
       state.favorites.push(n);
     },
-    unfavorite(state, n) {
-      state.favorites.splice(state.favorites.indexOf(n), 1)
+    unfavorite(state, i) {
+      state.favorites.splice(state.favorites.findIndex((element) => element.n === i.n), 1)
 
     },
-    clear(state){
+    clear(state) {
       state.favorites = [];
     }
   },

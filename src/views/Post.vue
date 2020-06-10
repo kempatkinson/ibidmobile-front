@@ -12,7 +12,7 @@
 
     <div class="row image-row">
       <div class="col d-flex justify-content-center">
-        <img class="card-image-top" src="../assets/sample.jpg" />
+        <img class="card-image-top" v-bind:src="this.image" />
       </div>
     </div>
     <div class="row">
@@ -23,7 +23,17 @@
       </div>
     </div>
 
-    <div class="bidrow">
+    <div class="bidrow" v-if="(post.sold)">Sold out!</div>
+    <div class="bidrow" v-if="(timeUntil(post.end) <= 0)">Auction Over!</div>
+
+    <div class="bidrow" v-if="(timeUntil(post.end)>0 && !post.sold)">
+      <countdown :time="timeUntil(post.end)">
+        <div
+          slot-scope="props"
+          class="card-text"
+          id="date-text"
+        >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+      </countdown>
       <div class="row d-flex justify-content-center" id="postinfo">
         <div class="col">
           <p class="card-text">Value: {{post.value}}</p>
@@ -114,9 +124,11 @@
 import axios from "axios";
 import { mapState } from "vuex";
 import Vue from "vue";
+import cloudinary from "cloudinary-core";
 
 export default {
   beforeRouteUpdate(to, from, next) {
+    this.$route.params.id = to.params.id;
     this.post = this.$store.getters.post(to.params.id);
     this.bid =
       this.$store.getters.post(to.params.id).price +
@@ -125,6 +137,10 @@ export default {
       element => element.id === to.params.id
     );
     this.isActive = this.$store.getters.findFavorite(to.params.id);
+    var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
+
+    this.image = cl.url(this.$store.getters.post(to.params.id).image);
+    next();
   },
   name: "post",
   data() {
@@ -139,18 +155,19 @@ export default {
       cards: [],
       isActive: false,
       rowHeight: 0,
-      heartHeight: {}
+      heartHeight: {},
+      image: ""
     };
   },
   computed: {
     nextId() {
-      if (this.index + 1 <= this.cards.length-1) {
-        return this.index+1;
+      if (this.index + 1 <= this.cards.length - 1) {
+        return this.cards[this.index + 1].id;
       } else return false;
     },
     prevId() {
       if (this.index - 1 >= 0) {
-        return this.index-1;
+        return this.cards[this.index - 1].id;
       } else return false;
     }
   },
@@ -159,8 +176,24 @@ export default {
     this.getCards();
     this.getRowHeight();
     this.initFavorite();
+    this.getImage();
   },
   methods: {
+    timeUntil: function(end) {
+      const now = new Date();
+      const then = new Date(end);
+      const difference = then - now + 5 * 60 * 60 * 1000;
+      return difference;
+    },
+    getImage() {
+      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
+      var tag = cl.url(this.post.image, {
+        height: 200,
+        width: 200,
+        crop: "fill"
+      });
+      this.image = tag;
+    },
     initFavorite() {
       if (this.$store.getters.findFavorite(this.post.id)) {
         this.isActive = true;
@@ -393,36 +426,7 @@ export default {
 .rounded-borders {
   border-radius: 12px;
 }
-.card {
-  width: 90%;
-  border: black 0.5px solid;
-  border-top-right-radius: 12px;
-  background-color: #bfdbf7;
-  background-clip: padding-box;
-  border-top-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
-  color: black;
 
-  .text {
-    position: relative;
-    width: 100%;
-    border-top-right-radius: 12px;
-    border-top-left-radius: 12px;
-    span {
-      font-weight: normal;
-    }
-  }
-}
-.card-body {
-  position: relative;
-  padding: 2.5% 0% 2.5% 0%;
-  border-bottom-right-radius: 12px;
-  border-bottom-left-radius: 12px;
-  span {
-    font-weight: normal;
-  }
-}
 .transition {
   animation: appear 200ms ease-in;
 }
@@ -454,7 +458,7 @@ export default {
   margin-right: 20px;
 }
 .card-text {
-  margin: 0 20px;
+  margin: auto;
 }
 .h2 {
   padding: 2.5% 0% 0% 0%;
@@ -475,7 +479,8 @@ export default {
   margin: 10px;
 }
 
-.btn-primary {
+.btn-primary,
+.btn-primary:active {
   background-color: #1f7a8c;
   margin-top: 5%;
   border-color: #343a40;
@@ -504,6 +509,10 @@ body {
   margin: 0 auto;
 }
 
+#date-text {
+  margin-bottom: 5%;
+  width: 100%;
+}
 // TWITTER HEART
 .heart {
   position: absolute;
