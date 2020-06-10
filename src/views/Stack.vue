@@ -233,7 +233,9 @@ export default {
       return tag;
     },
     initBid() {
-      this.bid = this.current.price + this.current.raise;
+      if (this.current) {
+        this.bid = this.current.price + this.current.raise;
+      }
       if (this.cards[this.index + 1]) {
         this.nextBid =
           this.cards[this.index + 1].price + this.cards[this.index + 1].raise;
@@ -261,9 +263,7 @@ export default {
       if (event == "match") {
         if (!this.$store.getters.findFavorite(this.current.id)) {
           this.$store.dispatch("setFavorite", {
-            n: this.cards[
-              this.cards.findIndex(element => element.id === this.current.id)
-            ].id
+            n: this.current.id
           });
         }
       }
