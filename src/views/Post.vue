@@ -15,6 +15,7 @@
         <img class="card-image-top" v-bind:src="this.image" />
       </div>
     </div>
+
     <div class="row">
       <div class="col d-flex justify-content-center">
         <div>
@@ -22,84 +23,98 @@
         </div>
       </div>
     </div>
+    <div class="row" id="date-text">
+      <div class="col d-flex justify-content-center">
+        <div class="bidrow card-text" v-if="(post.sold)">Sold out!</div>
+        <div class="bidrow card-text" v-if="(timeUntil(post.end) <= 0)">Auction Over!</div>
+        <countdown v-if="(!post.sold) && (timeUntil(post.end) > 0)" :time="timeUntil(post.end)">
+          <div
+            slot-scope="props"
+            class="card-text"
+          >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+        </countdown>
+      </div>
+    </div>
+    <div class="row" id="bid-row">
+      <div class="col d-flex justify-content-center">
+        <div class="bidrow card-text" v-if="(timeUntil(post.end)>0 && !post.sold)">
+          <div class="row d-flex justify-content-center" id="postinfo">
+            <div class="col">
+              <p class="card-text">Value: {{post.value}}</p>
+              <p class="card-text">Current Bid: {{post.price}}</p>
+              <p class="card-text">Minmum raise: {{post.raise}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center">
+              <form>
+                <a v-on:click.prevent="decrement">
+                  <svg
+                    class="bi bi-dash-circle"
+                    width="1.5em"
+                    height="1.5em"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+                <input id="bidinput" type="number" v-model="bid" />
+                <a v-on:click.prevent="increment">
+                  <svg
+                    class="bi bi-plus-circle"
+                    width="1.5em"
+                    height="1.5em"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </a>
+              </form>
+            </div>
+          </div>
 
-    <div class="bidrow" v-if="(post.sold)">Sold out!</div>
-    <div class="bidrow" v-if="(timeUntil(post.end) <= 0)">Auction Over!</div>
-
-    <div class="bidrow" v-if="(timeUntil(post.end)>0 && !post.sold)">
-      <countdown :time="timeUntil(post.end)">
-        <div
-          slot-scope="props"
-          class="card-text"
-          id="date-text"
-        >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-      </countdown>
-      <div class="row d-flex justify-content-center" id="postinfo">
-        <div class="col">
-          <p class="card-text">Value: {{post.value}}</p>
-          <p class="card-text">Current Bid: {{post.price}}</p>
-          <p class="card-text">Minmum raise: {{post.raise}}</p>
+          <div class="row">
+            <div class="col d-flex justify-content-center">
+              <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col d-flex justify-content-center">
-          <form>
-            <a v-on:click.prevent="decrement">
-              <svg
-                class="bi bi-dash-circle"
-                width="1.5em"
-                height="1.5em"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M3.5 8a.5.5 0 01.5-.5h8a.5.5 0 010 1H4a.5.5 0 01-.5-.5z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-            <input id="bidinput" type="number" v-model="bid" />
-            <a v-on:click.prevent="increment">
-              <svg
-                class="bi bi-plus-circle"
-                width="1.5em"
-                height="1.5em"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </a>
-          </form>
-        </div>
-      </div>
 
-      <div class="row">
-        <div class="col d-flex justify-content-center">
-          <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
-        </div>
+      <div class="col d-flex justify-content-center">
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="buyNow"
+          v-on:click.prevent="buyNow"
+        >Buy Now</button>
       </div>
     </div>
 
@@ -156,17 +171,18 @@ export default {
       isActive: false,
       rowHeight: 0,
       heartHeight: {},
-      image: ""
+      image: "",
+      windowWidth: window.innerWidth
     };
   },
   computed: {
     nextId() {
-      if (this.index + 1 <= this.cards.length - 1) {
+      if (this.cards[this.index + 1]) {
         return this.cards[this.index + 1].id;
       } else return false;
     },
     prevId() {
-      if (this.index - 1 >= 0) {
+      if (this.cards[this.index - 1]) {
         return this.cards[this.index - 1].id;
       } else return false;
     }
@@ -179,6 +195,31 @@ export default {
     this.getImage();
   },
   methods: {
+    buyNow() {
+      var r = confirm("Are you sure you want to buy now?");
+
+      if (r) {
+        const url =
+          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+          // "https://localhost:5001/api/BidItems/" +
+          this.post.id;
+        var newPost = this.post;
+        newPost.sold = true;
+        return axios
+          .put(url, newPost, {
+            headers: {
+              "Content-Type": "application/json"
+            }
+          })
+          .then(response => {
+            console.log(response);
+            this.post = newPost;
+          })
+          .catch(error => {
+            alert(error);
+          });
+      }
+    },
     timeUntil: function(end) {
       const now = new Date();
       const then = new Date(end);
@@ -187,10 +228,9 @@ export default {
     },
     getImage() {
       var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
+      var int = this.windowWidth * 0.7;
       var tag = cl.url(this.post.image, {
-        height: 200,
-        width: 200,
-        crop: "fill"
+        height: int
       });
       this.image = tag;
     },
@@ -213,7 +253,7 @@ export default {
     getRowHeight() {
       Vue.nextTick(() => {
         let target = this.$refs.nameRow.clientHeight;
-        let factor = (2.5 * target) / 100;
+        let factor = (2 * target) / 100;
         let string = "scale(" + factor + ")";
         Vue.set(this.heartHeight, "transform", string);
 
@@ -291,14 +331,28 @@ export default {
   }
 
   .btn {
-    font-size: 15px;
+    font-size: 10px;
+    height: 30px;
+  }
+  #name {
+    font-size: 1em;
+  }
+  #date-text {
+    font-size: 0.75em;
   }
 
+  #bid-row {
+    font-size: 12px;
+  }
   .h5 {
     font-size: 0.5em;
   }
   #bidinput {
     height: 60%;
+  }
+  .heart {
+    top: -18%;
+    right: 0%;
   }
 }
 
@@ -321,8 +375,13 @@ export default {
   .card-text {
     font-size: 14px;
   }
+
   .btn {
     font-size: 14px;
+  }
+  .heart {
+    top: -13%;
+    right: 0%;
   }
 }
 @media (min-height: 700px) {
@@ -344,6 +403,10 @@ export default {
       transform: translate(-50%, -50%);
     }
   }
+  .heart {
+    top: -13%;
+    right: 0%;
+  }
 }
 @media (min-height: 900px) {
   // #gap {
@@ -362,16 +425,6 @@ export default {
     padding: 0px;
   }
 
-  .frame {
-    padding: auto;
-    width: 80%;
-    height: 80%;
-    margin: auto;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   .img {
     margin: auto;
   }
@@ -385,9 +438,13 @@ export default {
   .btn {
     font-size: 20px;
   }
-}
-#postinfo {
-  margin-bottom: 5%;
+  #name {
+    font-size: 36px;
+  }
+  .heart {
+    top: -5%;
+    right: 0%;
+  }
 }
 #name {
   position: relative;
@@ -440,13 +497,14 @@ export default {
   }
 }
 
-.bidrow {
+#bid-row {
   position: fixed;
-  width: 100%;
+  width: 90%;
+  margin-left: 10%;
   bottom: 11%;
 }
 #bidinput {
-  width: 50%;
+  width: 40%;
   margin-left: calc(var(--vw, 1vw) * 5);
   margin-right: calc(var(--vw, 1vw) * 5);
 }
@@ -480,7 +538,7 @@ export default {
 }
 
 .btn-primary,
-.btn-primary:active {
+.btn-primary:hover {
   background-color: #1f7a8c;
   margin-top: 5%;
   border-color: #343a40;
@@ -510,14 +568,12 @@ body {
 }
 
 #date-text {
-  margin-bottom: 5%;
   width: 100%;
+  color: red;
 }
 // TWITTER HEART
 .heart {
   position: absolute;
-  top: -16%;
-  right: 0%;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")
@@ -538,5 +594,16 @@ body {
   background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
   color: #fff;
   font: 300 16px/1.5 "Open Sans", sans-serif;
+}
+
+#bid-row {
+  margin-top: 5%;
+}
+#date-text {
+  margin: 5% auto;
+}
+#buyNow {
+  position: fixed;
+  bottom: 11%;
 }
 </style>

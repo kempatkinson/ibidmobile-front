@@ -5,7 +5,6 @@
       class="fixed fixed--center"
       style="z-index: 3"
       :class="{ 'transition': isVisible }"
-      ref="targetCard"
     >
       <Vue2InteractDraggable
         v-if="isVisible"
@@ -23,7 +22,7 @@
       >
         <router-link :to="{ name: 'post', params: {id: current.id}}">
           <h3 ref="nameRow" id="name" class="card-title">{{current.name}}</h3>
-          <img class="card-image" v-bind:src="getImage(current.image)" />
+          <img v-bind:src="getImage(current.image)" />
           <div
             class="heart"
             v-bind:style="this.heartHeight"
@@ -33,7 +32,6 @@
         <div class="card-body">
           <div class="sell-wrapper" v-if="(!current.sold) && (timeUntil(current.end) > 0)">
             <h5>Current Bid: {{current.price}}</h5>
-            <h5>Minimum raise: {{current.raise}}</h5>
             <h5>Value: {{current.value}}</h5>
 
             <router-link
@@ -43,8 +41,19 @@
               <button class="btn btn-primary">Bid Now!</button>
             </router-link>
           </div>
-          <div v-if="(current.sold)">Sold out!</div>
-          <div v-if="(timeUntil(current.end) <= 0)">Auction Over!</div>
+          <div class="cardtext" v-if="(current.sold)">Sold out!</div>
+          <div class="cardtext" v-if="(timeUntil(current.end) <= 0)">Auction Over!</div>
+        </div>
+        <div class="card-footer">
+          <countdown
+            v-if="(!current.sold) && (timeUntil(current.end) > 0)"
+            :time="timeUntil(current.end)"
+          >
+            <div
+              slot-scope="props"
+              class="card-text"
+            >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+          </countdown>
         </div>
       </Vue2InteractDraggable>
     </div>
@@ -63,20 +72,27 @@
           v-bind:class="{amactive: favorited(next.id)}"
         ></div>
 
-        <img class="card-image" v-bind:src="getImage(next.image)" />
+        <img v-bind:src="getImage(next.image)" />
       </div>
       <div class="card-body">
         <div class="sell-wrapper" v-if="(!next.sold) && (timeUntil(next.end) > 0)">
           <h5>Current Bid: {{next.price}}</h5>
-          <h5>Minimum raise: {{next.raise}}</h5>
           <h5>Value: {{next.value}}</h5>
 
           <div v-if="(!next.sold) && (timeUntil(next.end) > 0)">
             <button class="btn btn-primary">Bid Now!</button>
           </div>
         </div>
-        <div v-if="(next.sold)">Sold out!</div>
-        <div v-if="(timeUntil(next.end) <= 0)">Auction Over!</div>
+        <div class="cardtext" v-if="(next.sold)">Sold out!</div>
+        <div class="cardtext" v-if="(timeUntil(next.end) <= 0)">Auction Over!</div>
+      </div>
+      <div class="card-footer">
+        <countdown v-if="(!next.sold) && (timeUntil(next.end) > 0)" :time="timeUntil(next.end)">
+          <div
+            slot-scope="props"
+            class="card-text"
+          >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+        </countdown>
       </div>
     </div>
     <div
@@ -93,20 +109,30 @@
           v-bind:class="{amactive: favorited(nextNext.id)}"
         ></div>
 
-        <img class="card-image" />
+        <img v-bind:src="getImage(nextNext.image)" />
       </div>
       <div class="card-body">
         <div class="sell-wrapper" v-if="(!nextNext.sold) && (timeUntil(nextNext.end) > 0)">
           <h5>Current Bid: {{nextNext.price}}</h5>
-          <h5>Minimum raise: {{nextNext.raise}}</h5>
           <h5>Value: {{nextNext.value}}</h5>
 
           <div v-if="(!next.sold) && (timeUntil(next.end) > 0)">
             <button class="btn btn-primary">Bid Now!</button>
           </div>
         </div>
-        <div v-if="((nextNext.sold))">Sold out!</div>
-        <div v-if="(timeUntil(nextNext.end) <= 0)">Auction Over!</div>
+        <div class="cardtext" v-if="(nextNext.sold)">Sold out!</div>
+        <div class="cardtext" v-if="(timeUntil(nextNext.end) <= 0)">Auction Over!</div>
+      </div>
+      <div class="card-footer">
+        <countdown
+          v-if="(!nextNext.sold) && (timeUntil(nextNext.end) > 0)"
+          :time="timeUntil(nextNext.end)"
+        >
+          <div
+            slot-scope="props"
+            class="card-text"
+          >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+        </countdown>
       </div>
     </div>
 
@@ -115,18 +141,25 @@
       <div>
         <h3 id="name" class="card-title">Hidden Card</h3>
 
-        <img class="card-image" v-bind:src="getImage(sample)" />
+        <img v-bind:src="getImage(sample)" />
       </div>
       <div class="card-body">
         <div class="sell-wrapper">
           <h5>Current Bid: 0</h5>
-          <h5>Minimum raise: 0</h5>
           <h5>Value: 0</h5>
 
           <div>
             <button class="btn btn-primary">Bid Now!</button>
           </div>
         </div>
+      </div>
+      <div class="card-footer">
+        <countdown :time="1000">
+          <div
+            slot-scope="props"
+            class="card-text"
+          >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+        </countdown>
       </div>
     </div>
     <!-- hidden -->
@@ -179,7 +212,8 @@ export default {
       nextBid: 0,
       containerStyle: {},
       heartHeight: {},
-      sample: "sample.jpg"
+      sample: "sample.jpg",
+      windowWidth: window.innerWidth
     };
   },
   mounted() {
@@ -216,7 +250,7 @@ export default {
     getRowHeight() {
       Vue.nextTick(() => {
         let target = this.$refs.nameRow.clientHeight;
-        let factor = (2.5 * target) / 100;
+        let factor = (2 * target) / 100;
         let string = "scale(" + factor + ")";
         Vue.set(this.heartHeight, "transform", string);
       });
@@ -229,7 +263,8 @@ export default {
     },
     getImage: function(image) {
       var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var tag = cl.url(image, { height: 400, width: 400, crop: "fill" });
+      var int = this.windowWidth * 0.7;
+      var tag = cl.url(image, { width: int });
       return tag;
     },
     initBid() {
@@ -243,7 +278,8 @@ export default {
     },
     getHeight() {
       Vue.nextTick(() => {
-        let height = this.$refs.targetCard.clientHeight + "px";
+        let height = this.$refs.targetCard.clientHeight;
+        height += "px";
         Vue.set(this.containerStyle, "height", height);
       });
     },
@@ -313,22 +349,33 @@ export default {
   .card-title {
     font-size: 20px;
   }
-  .cardtext {
-    font-size: 1em;
-  }
+
   .h5 {
     font-size: 0.5em;
+  }
+  .heart {
+    top: -8%;
+    right: -2.5%;
   }
 }
 @media (min-height: 600px) {
   // #gap {
   //   background-color: blue;
+  .heart {
+    top: -6%;
+    right: -2.5%;
+  }
+
   // }
 }
 @media (min-height: 700px) {
   // #gap {
   //   background-color: purple;
   // }
+  .heart {
+    top: -6%;
+    right: -2.5%;
+  }
 }
 @media (min-height: 900px) {
   // #gap {
@@ -345,7 +392,11 @@ export default {
   }
   .cardtext,
   .h5 {
-    font-size: 15px;
+    font-size: 20px;
+  }
+  .heart {
+    top: -1%;
+    right: -2%;
   }
 }
 .btn-primary {
@@ -381,8 +432,8 @@ export default {
   border-bottom-left-radius: 12px;
   color: black;
   img {
-    width: 100%;
     padding: 2%;
+    width: 100%;
   }
   &--one {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 1px rgba(0, 0, 0, 0.14),
@@ -485,8 +536,6 @@ body {
 .heart {
   z-index: 5;
   position: absolute;
-  top: -5%;
-  right: -2.5%;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")

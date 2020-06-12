@@ -23,6 +23,7 @@
 
           <img class="card-image-top" src="../assets/sample.jpg" />
           <div class="card-body">
+          
             <h5>Current Bid: {{data.price}}</h5>
             <h5>Minmum raise: {{data.raise}}</h5>
             <h5>Value: {{data.value}}</h5>

@@ -131,7 +131,7 @@ export default {
         //sizing
         let target = this.$refs.items[0].clientHeight;
         let factor = target / 100;
-        let string = "scale(" + 2 * factor + ")";
+        let string = "scale(" + 2.5 * factor + ")";
         Vue.set(this.heartHeight, "transform", string);
 
         // positioning
@@ -248,7 +248,7 @@ export default {
   }
   .container {
     position: absolute;
-    top: 120px;
+    top: 160px;
   }
 
   .selection {
