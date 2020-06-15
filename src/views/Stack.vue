@@ -350,8 +350,8 @@ export default {
     font-size: 20px;
   }
 
-  .h5 {
-    font-size: 0.5em;
+h5, .btn {
+    font-size: 12px;
   }
   .heart {
     top: -8%;
@@ -382,7 +382,7 @@ export default {
   //   background-color: black;
   // }
   .btn {
-    font-size: 25px;
+    font-size: 20px;
   }
   .card-title {
     font-size: 40px;
@@ -391,7 +391,7 @@ export default {
     font-size: 1.5em;
   }
   .cardtext,
-  .h5 {
+  h5 {
     font-size: 20px;
   }
   .heart {
@@ -405,9 +405,7 @@ export default {
   color: white;
   margin: 5px;
 }
-.svg {
-  padding: 10px;
-}
+
 .flex {
   display: flex;
   &--center {
@@ -487,18 +485,12 @@ export default {
   margin-bottom: calc(var(--vh, 1vh) * 3);
 }
 
-.h2,
+h2,
 .card-title {
   padding: 2.5% 0% 0% 0%;
   margin: 0px;
 }
-.input {
-  margin-bottom: 5px;
-}
 
-.submitrow {
-  margin-bottom: 5%;
-}
 
 .btn-foot {
   background-color: #1f7a8c;

@@ -133,21 +133,9 @@ export default {
         let factor = target / 100;
         let string = "scale(" + 2.5 * factor + ")";
         Vue.set(this.heartHeight, "transform", string);
-
-        // positioning
-        const left =
-          -this.$refs.header[0].getBoundingClientRect().left + target + "px";
-
-        let header = this.$refs.header[0].clientHeight;
-        const top = -this.$refs.header[0].getBoundingClientRect().top + "px";
-        Vue.set(this.heartHeight, "position", "absolute");
-        Vue.set(this.heartHeight, "left", "0%");
-        Vue.set(this.heartHeight, "top", "-100%");
       });
     },
     toggle: function(id) {
-   
-
       var index = this.activeKeys.findIndex(element => element.id === id);
       // this.activeKeys[this.activeKeys.findIndex(element => element.id === id)].active =
       // !this.activeKeys[this.activeKeys.findIndex(element => element.id === id)].active;
@@ -155,7 +143,7 @@ export default {
       if (this.activeKeys[index].active === false) {
         this.activeKeys[index].active = true;
         this.$store.dispatch("setFavorite", { n: id });
-      }  else if (this.activeKeys[index].active === true) {
+      } else if (this.activeKeys[index].active === true) {
         this.activeKeys[index].active = false;
         this.$store.dispatch("removeFavorite", { n: id });
       }
@@ -186,6 +174,13 @@ export default {
     font-size: 14px;
     margin: 0 5% 0 5%;
   }
+  h3 {
+    font-size: 18px;
+  }
+  .heart {
+    left: 75%;
+    top: 25%;
+  }
 }
 
 @media (min-height: 600px) {
@@ -204,6 +199,13 @@ export default {
   }
   .card-title {
     font-size: 18px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  .heart {
+    left: 75%;
+    top: 57.5%;
   }
 }
 @media (min-height: 700px) {
@@ -225,6 +227,13 @@ export default {
   }
   .card-title {
     font-size: 20px;
+  }
+    h3 {
+    font-size: 18px;
+  }
+  .heart {
+    left: 75%;
+    top: 60%;
   }
 }
 @media (min-height: 900px) {
@@ -254,9 +263,16 @@ export default {
   .selection {
     font-size: 24px;
   }
+  h3 {
+    font-size: 30px;
+  }
+  .heart {
+    left: 85%;
+    top: 130%;
+  }
 }
 .card-header {
-  padding: 2.5%;
+  padding: 1%;
   width: 100%;
   margin-bottom: 5%;
 }
@@ -299,6 +315,7 @@ button {
   background-color: #1f7a8c;
   border-color: #343a40;
   color: white;
+  width: 75%;
   margin: 5px;
 }
 
@@ -314,8 +331,6 @@ button {
 .heart {
   position: absolute;
   z-index: 2;
-  // top: -14%;
-  // right: 0%;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")

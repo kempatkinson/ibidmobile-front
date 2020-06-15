@@ -35,9 +35,9 @@
         </countdown>
       </div>
     </div>
-    <div class="row" id="bid-row">
+    <div class="row" id="bid-row" v-if="!post.sold && timeUntil(post.end)>0" >
       <div class="col d-flex justify-content-center">
-        <div class="bidrow card-text" v-if="(timeUntil(post.end)>0 && !post.sold)">
+        <div class="bidrow card-text">
           <div class="row d-flex justify-content-center" id="postinfo">
             <div class="col">
               <p class="card-text">Value: {{post.value}}</p>
@@ -108,7 +108,7 @@
         </div>
       </div>
 
-      <div class="col d-flex justify-content-center">
+      <div class="col d-flex justify-content-center" v-if="post.buyNow">
         <button
           type="button"
           class="btn btn-primary"
@@ -499,8 +499,8 @@ export default {
 
 #bid-row {
   position: fixed;
-  width: 90%;
-  margin-left: 10%;
+  margin: 0 auto;
+  width: 100%;
   bottom: 11%;
 }
 #bidinput {
