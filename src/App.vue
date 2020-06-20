@@ -3,9 +3,9 @@
     <div id="nav" class="navbar-light">
       <ul class="nav nav-justified-start">
         <li>
-          <a v-b-toggle.sidebar-1 class="link">Menu</a>
+          <a v-b-toggle.sidebar-n class="link">Menu</a>
             <b-sidebar
-              id="sidebar-1"
+              id="sidebar-n"
               class="title"
               title="Menu"
               shadow
@@ -79,7 +79,7 @@ body {
   text-align: center;
   color: #2c3e50;
 }
-#sidebar-1 {
+#sidebar-n {
   width: 100% !important;
   background-color: #053c5e !important;
   color: #bfdbf7 !important;

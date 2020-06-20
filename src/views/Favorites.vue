@@ -21,9 +21,8 @@
             v-bind:class="{amactive: amIFavorited(data.id)}"
           ></div>
 
-          <img class="card-image-top" src="../assets/sample.jpg" />
+          <img class="card-image-top" v-bind:src="getImage(data.image)" />
           <div class="card-body">
-          
             <h5>Current Bid: {{data.price}}</h5>
             <h5>Minmum raise: {{data.raise}}</h5>
             <h5>Value: {{data.value}}</h5>
@@ -40,11 +39,14 @@
 <script>
 import { mapState } from "vuex";
 import Vue from "vue";
+import cloudinary from "cloudinary-core";
+
 export default {
   name: "Home",
   data() {
     return {
-      heartHeight: {}
+      heartHeight: {},
+      isDesktop: window.innerWidth > 800
     };
   },
   mounted() {
@@ -64,6 +66,26 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
+    getImage: function(image) {
+      if (!this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = this.windowWidth * 0.7;
+        var tag = cl.url(image, {height: int, width: int });
+        return tag;
+      }
+      if (this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = this.windowWidth * 0.1;
+        var tag = cl.url(image, {height: int, width: int });
+        return tag;
+      }
+    },
     amIFavorited: function(id) {
       if (this.favorites.findIndex(element => element.id === id) != -1) {
         return true;
@@ -92,6 +114,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#favorites {
+  align-content: center;
+
+}
 .card {
   margin-bottom: 10%;
   border: black 0.5px solid;
@@ -124,7 +150,9 @@ button {
   margin: 5px;
 }
 .container {
-  position: absolute;
+  padding-top: 100px;
+  width: 100%;
+  position: static;
   top: 15vh;
 }
 

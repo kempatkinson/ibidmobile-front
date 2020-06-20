@@ -22,7 +22,9 @@
       >
         <router-link :to="{ name: 'post', params: {id: current.id}}">
           <h3 ref="nameRow" id="name" class="card-title">{{current.name}}</h3>
-          <img v-bind:src="getImage(current.image)" />
+          <div class="frame">
+            <img v-bind:src="getImage(current.image)" />
+          </div>
           <div
             class="heart"
             v-bind:style="this.heartHeight"
@@ -42,13 +44,11 @@
             </router-link>
           </div>
           <div class="cardtext" v-if="(current.sold)">Sold out!</div>
-          <div class="cardtext" v-if="(timeUntil(current.end) <= 0)">Auction Over!</div>
         </div>
         <div class="card-footer">
-          <countdown
-            v-if="(!current.sold) && (timeUntil(current.end) > 0)"
-            :time="timeUntil(current.end)"
-          >
+          <div class="cardtext" v-if="(timeUntil(current.end) <= 0)">Auction Over!</div>
+
+          <countdown v-if="(timeUntil(current.end) > 0)" :time="timeUntil(current.end)">
             <div
               slot-scope="props"
               class="card-text"
@@ -84,10 +84,11 @@
           </div>
         </div>
         <div class="cardtext" v-if="(next.sold)">Sold out!</div>
-        <div class="cardtext" v-if="(timeUntil(next.end) <= 0)">Auction Over!</div>
       </div>
       <div class="card-footer">
-        <countdown v-if="(!next.sold) && (timeUntil(next.end) > 0)" :time="timeUntil(next.end)">
+        <div class="cardtext" v-if="(timeUntil(next.end) <= 0)">Auction Over!</div>
+
+        <countdown v-if="(timeUntil(next.end) > 0)" :time="timeUntil(next.end)">
           <div
             slot-scope="props"
             class="card-text"
@@ -124,10 +125,9 @@
         <div class="cardtext" v-if="(timeUntil(nextNext.end) <= 0)">Auction Over!</div>
       </div>
       <div class="card-footer">
-        <countdown
-          v-if="(!nextNext.sold) && (timeUntil(nextNext.end) > 0)"
-          :time="timeUntil(nextNext.end)"
-        >
+        <div class="cardtext" v-if="(timeUntil(nextNext.end) <= 0)">Auction Over!</div>
+
+        <countdown v-if="(timeUntil(nextNext.end) > 0)" :time="timeUntil(nextNext.end)">
           <div
             slot-scope="props"
             class="card-text"
@@ -171,9 +171,9 @@
             type="button"
             class="btn btn-foot"
             v-if="(this.index<this.cards.length-1)"
-            @touchstart="skip"
+            v-on:click="skip"
           >Next item</button>
-          <button class="btn btn-foot" v-if="(this.index>0)" @touchstart="back">Previous item</button>
+          <button class="btn btn-foot" v-on:click="back" v-if="(this.index>0)">Previous item</button>
         </div>
       </div>
     </div>
@@ -213,7 +213,8 @@ export default {
       containerStyle: {},
       heartHeight: {},
       sample: "sample.jpg",
-      windowWidth: window.innerWidth
+      windowWidth: window.innerWidth,
+      isDesktop: window.innerWidth > 800
     };
   },
   mounted() {
@@ -262,10 +263,25 @@ export default {
       return difference;
     },
     getImage: function(image) {
-      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var int = this.windowWidth * 0.7;
-      var tag = cl.url(image, { width: int });
-      return tag;
+      if (!this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = this.windowWidth * 0.5;
+        var tag = cl.url(image, { width: int });
+        return tag;
+      }
+      if (this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = this.windowWidth * 0.1;
+        var tag = cl.url(image, { width: int });
+        return tag;
+        // console.log(tag);
+      }
     },
     initBid() {
       if (this.current) {
@@ -350,7 +366,8 @@ export default {
     font-size: 20px;
   }
 
-h5, .btn {
+  h5,
+  .btn {
     font-size: 12px;
   }
   .heart {
@@ -419,8 +436,17 @@ h5, .btn {
 .rounded-borders {
   border-radius: 12px;
 }
+@media (max-width: 700px) {
+  .card {
+    width: calc(var(--vw, 1vw) * 80);
+  }
+}
+@media (min-width: 700px) {
+  .card {
+    width: calc(var(--vw, 1vw) * 35);
+  }
+}
 .card {
-  width: calc(var(--vw, 1vw) * 80);
   border: black 0.5px solid;
   border-top-right-radius: 12px;
   background-color: #bfdbf7;
@@ -491,7 +517,6 @@ h2,
   margin: 0px;
 }
 
-
 .btn-foot {
   background-color: #1f7a8c;
   border-color: #343a40;
@@ -542,4 +567,7 @@ body {
     background-position: -2800px 0;
   }
 }
-</style>#
+.sell-wrapper {
+  margin-bottom: 8%;
+}
+</style>

@@ -35,7 +35,7 @@
         </countdown>
       </div>
     </div>
-    <div class="row" id="bid-row" v-if="!post.sold && timeUntil(post.end)>0" >
+    <div class="row" id="bid-row" v-if="!post.sold && timeUntil(post.end)>0">
       <div class="col d-flex justify-content-center">
         <div class="bidrow card-text">
           <div class="row d-flex justify-content-center" id="postinfo">
