@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="row" id="date-text">
+    <div id="date-text" class="row card-text">
       <div class="col d-flex justify-content-center">
         <div class="bidrow card-text" v-if="(post.sold)">Sold out!</div>
         <div class="bidrow card-text" v-if="(timeUntil(post.end) <= 0)">Auction Over!</div>
@@ -325,9 +325,8 @@ export default {
     font-size: 12px;
   }
   .container {
-    position: absolute;
-    top: 80px;
-    padding: 0px;
+    padding-top: 80px;
+    padding-left: 0;
   }
 
   .btn {
@@ -338,7 +337,7 @@ export default {
     font-size: 1em;
   }
   #date-text {
-    font-size: 0.75em;
+    font-size: 1em;
   }
 
   #bid-row {
@@ -364,9 +363,8 @@ export default {
     font-size: 24px;
   }
   .container {
-    position: absolute;
-    top: 80px;
-    padding: 0px;
+    padding-top: 80px;
+    padding-left: 0;
   }
   #description {
     font-size: 14px;
@@ -390,9 +388,8 @@ export default {
   // }
 
   .container {
-    position: absolute;
-    top: 100px;
-    padding: 0px;
+    padding-top: 100px;
+    padding-left: 0;
   }
 
   .fixed {
@@ -417,12 +414,11 @@ export default {
   }
 
   .container {
-    position: absolute;
-    top: 160px;
+    padding-top: 160px;
     max-width: 100vw;
     margin-left: auto;
     margin-right: auto;
-    padding: 0px;
+    padding-left: 0;
   }
 
   .img {

@@ -8,7 +8,7 @@
     <br />
     <div class="row" v-for="data in favorites" :key="data.id">
       <div class="col d-flex justify-content-center">
-        <div class="card" style="width: 18rem;" :id="data.id">
+        <div class="card" :id="data.id">
           <router-link :to="{ name: 'post', params: {id: data.id}}">
             <h3 ref="items" class="card-title">{{data.name}}</h3>
           </router-link>
@@ -72,8 +72,8 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = this.windowWidth * 0.7;
-        var tag = cl.url(image, {height: int, width: int });
+        var int = window.innerWidth * 0.5;
+        var tag = cl.url(image, { height: int, width: int });
         return tag;
       }
       if (this.isDesktop) {
@@ -81,15 +81,17 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = this.windowWidth * 0.1;
-        var tag = cl.url(image, {height: int, width: int });
+        var int = window.innerWidth * 0.2;
+        var tag = cl.url(image, { height: int, width: int });
         return tag;
       }
     },
     amIFavorited: function(id) {
-      if (this.favorites.findIndex(element => element.id === id) != -1) {
-        return true;
-      } else return false;
+      if (this.favorites.length > 0) {
+        if (this.favorites.findIndex(element => element.id === id) != -1) {
+          return true;
+        } else return false;
+      }
     },
     getRowHeight() {
       this.$nextTick(() => {
@@ -116,7 +118,6 @@ export default {
 <style lang="scss" scoped>
 #favorites {
   align-content: center;
-
 }
 .card {
   margin-bottom: 10%;

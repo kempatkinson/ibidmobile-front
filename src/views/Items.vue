@@ -82,9 +82,9 @@
                     ></div>
                   </div>
                 </div>
-                <div v-on:click="toggler(data.id)">
-                  <div class="card-body row" v-on:click="select($event)" :id="data.id">
-                    <div class="col-5 d-flex align-items-center">
+                <div class="card-body" v-on:click="toggler(data.id)">
+                  <div class="row" v-on:click="select($event)" :id="data.id">
+                    <div class="col-5">
                       <img class="card-image" v-bind:src="getImage(data.image)" />
                     </div>
                     <div class="col-7">
@@ -99,15 +99,15 @@
                       </div>
                     </div>
                   </div>
-                  <div class="card-footer">
-                    <countdown :time="timeUntil(data.end)" v-if="(timeUntil(data.end) > 0)">
-                      <div
-                        slot-scope="props"
-                        class="date-text"
-                      >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                    </countdown>
-                    <div class="date-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
-                  </div>
+                </div>
+                <div class="card-footer">
+                  <countdown :time="timeUntil(data.end)" v-if="(timeUntil(data.end) > 0)">
+                    <div
+                      slot-scope="props"
+                      class="date-text"
+                    >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+                  </countdown>
+                  <div class="date-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
                 </div>
               </div>
             </div>
@@ -133,89 +133,94 @@
                   <button class="btn btn-primary">Bid Now!</button>
                 </div>
               </div>
-              <div class="card-footer">
-                <countdown :time="100">
-                  <div
-                    slot-scope="props"
-                    class="date-text"
-                  >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                </countdown>
-              </div>
+            </div>
+
+            <div class="card-footer">
+              <countdown :time="100">
+                <div
+                  slot-scope="props"
+                  class="date-text"
+                >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+              </countdown>
             </div>
           </div>
           <!-- hidden -->
         </div>
 
         <div class="col-3">
-          <div v-for="data in filteredPosts" :key="data.id">
-            <b-sidebar :id="'sidebar-' + data.id" right shadow>
-              <div class="px-3 py-2">
-                <div class="container">
-                  <div class="row" id="gap">
-                    <h3 id="name" ref="sidebarName">{{data.name}}</h3>
-                    <div
-                      class="heart"
-                      v-on:click="toggle(data.id)"
-                      v-bind:key=" 'heart: ' + data.id"
-                      v-bind:style="heartHeightDesktopSidebar"
-                      v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.id)].active}"
-                    ></div>
-                  </div>
+          <b-sidebar
+            :id="'sidebar-' + data.id"
+            right
+            shadow
+            v-for="data in filteredPosts"
+            :key="data.id"
+          >
+            <div class="px-3 py-2">
+              <div class="container">
+                <div class="row" id="gap">
+                  <h3 id="name" ref="sidebarName">{{data.name}}</h3>
+                  <div
+                    class="heart"
+                    v-on:click="toggle(data.id)"
+                    v-bind:key=" 'heart: ' + data.id"
+                    v-bind:style="heartHeightDesktopSidebar"
+                    v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.id)].active}"
+                  ></div>
+                </div>
 
-                  <div class="row image-row">
-                    <div class="col d-flex justify-content-center">
-                      <img class="card-image-top" v-bind:src="getImageSidebar(data.image)" />
+                <div class="row image-row">
+                  <div class="col d-flex justify-content-center">
+                    <img class="card-image-top" v-bind:src="getImageSidebar(data.image)" />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col d-flex justify-content-center">
+                    <div>
+                      <p class="bar-text" id="description">{{data.description}}</p>
                     </div>
                   </div>
+                </div>
 
-                  <div class="row">
-                    <div class="col d-flex justify-content-center">
-                      <div>
-                        <p class="bar-text" id="description">{{data.description}}</p>
-                      </div>
-                    </div>
+                <div class="row" id="date-text">
+                  <div class="col d-flex justify-content-center">
+                    <div class="bar-text" v-if="(data.sold)">Sold out!</div>
+                    <div class="bar-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
+                    <countdown
+                      v-if="(!data.sold) && (timeUntil(data.end) > 0)"
+                      :time="timeUntil(data.end)"
+                    >
+                      <div
+                        slot-scope="props"
+                        class="bar-text"
+                      >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+                    </countdown>
                   </div>
-
-                  <div class="row" id="date-text">
-                    <div class="col d-flex justify-content-center">
-                      <div class="bar-text" v-if="(data.sold)">Sold out!</div>
-                      <div class="bar-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
-                      <countdown
-                        v-if="(!data.sold) && (timeUntil(data.end) > 0)"
-                        :time="timeUntil(data.end)"
-                      >
-                        <div
-                          slot-scope="props"
-                          class="bar-text"
-                        >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                      </countdown>
-                    </div>
-                  </div>
-                  <div class="row" id="bid-row" v-if="(!data.sold) && timeUntil(data.end)>0">
-                    <div class="col d-flex justify-content-center">
-                      <div class="bidrow card-text">
-                        <div class="row d-flex justify-content-center" id="postinfo">
-                          <div class="col">
-                            <p class="bar-text">Value: {{data.value}}</p>
-                            <p class="bar-text">Current Bid: {{data.price}}</p>
-                            <p class="bar-text">Minmum raise: {{data.raise}}</p>
-                          </div>
+                </div>
+                <div class="row" id="bid-row" v-if="(!data.sold) && timeUntil(data.end)>0">
+                  <div class="col d-flex justify-content-center">
+                    <div class="bidrow card-text">
+                      <div class="row d-flex justify-content-center" id="postinfo">
+                        <div class="col">
+                          <p class="bar-text">Value: {{data.value}}</p>
+                          <p class="bar-text">Current Bid: {{data.price}}</p>
+                          <p class="bar-text">Minmum raise: {{data.raise}}</p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div
-                    class="row justify-content-center"
-                    v-if="(!data.sold) && timeUntil(data.end)>0"
-                  >
-                    <router-link :to="{ name: 'post', params: {id: data.id}}">
-                      <button class="btn btn-primary bar-button">Bid Now!</button>
-                    </router-link>
-                  </div>
+                </div>
+                <div
+                  class="row justify-content-center"
+                  v-if="(!data.sold) && timeUntil(data.end)>0"
+                >
+                  <router-link :to="{ name: 'post', params: {id: data.id}}">
+                    <button class="btn btn-primary bar-button">Bid Now!</button>
+                  </router-link>
                 </div>
               </div>
-            </b-sidebar>
-          </div>
+            </div>
+          </b-sidebar>
         </div>
       </div>
     </div>
@@ -253,17 +258,17 @@ export default {
       isDesktop: window.innerWidth > 800,
       sample: "sample.jpg",
       sidebarPost: {},
-      sidebar: { status: false, current: "" }
+      sidebar: {}
     };
   },
   mounted() {
     this.$store.dispatch("loadPosts");
     this.getRowHeight();
     this.getRowHeightDesktop();
-
     this.getHeight();
+    this.sidebar = { status: false, current: ""}
+    this.clickToggler();
   },
-
   computed: {
     chunks() {
       return _.chunk(Object.values(this.filteredPosts), 2);
@@ -303,6 +308,18 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
+    clickToggler() {
+      this.$nextTick(() => {
+        $(".close").click(function() {
+          {
+            let sidebar = $(this.offsetParent).attr("id");
+            let id = sidebar.substr(8, sidebar.length - 1);
+            $("#sidebar-" + id).css("display", "none");
+            this.sidebar = { status: false, current: "" }
+          }
+        });
+      });
+    },
     toggler: function(id) {
       if (this.sidebar.status === true && this.sidebar.current === id) {
         this.sidebar.status = false;
@@ -353,7 +370,8 @@ export default {
         let factor2 = target / 100;
         let string2 = "scale(" + 2.5 * factor + ")";
         Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-        Vue.set(this.heartHeightDesktopSidebar, "top", "10px");
+        Vue.set(this.heartHeightDesktopSidebar, "top", "-5px");
+        Vue.set(this.heartHeightDesktopSidebar, "position", "absolute");
       });
     },
     getImage: function(image) {
@@ -369,16 +387,16 @@ export default {
       return tag;
     },
     toggle: function(id) {
-      var index = this.activeKeys.findIndex(element => element.id === id);
-      // this.activeKeys[this.activeKeys.findIndex(element => element.id === id)].active =
-      // !this.activeKeys[this.activeKeys.findIndex(element => element.id === id)].active;
+      if (this.activeKeys.length > 0) {
+        var index = this.activeKeys.findIndex(element => element.id === id);
 
-      if (this.activeKeys[index].active === false) {
-        this.activeKeys[index].active = true;
-        this.$store.dispatch("setFavorite", { n: id });
-      } else if (this.activeKeys[index].active === true) {
-        this.activeKeys[index].active = false;
-        this.$store.dispatch("removeFavorite", { n: id });
+        if (this.activeKeys[index].active === false) {
+          this.activeKeys[index].active = true;
+          this.$store.dispatch("setFavorite", { n: id });
+        } else if (this.activeKeys[index].active === true) {
+          this.activeKeys[index].active = false;
+          this.$store.dispatch("removeFavorite", { n: id });
+        }
       }
     },
     timeUntil: function(end) {
@@ -516,10 +534,6 @@ export default {
   .card {
     margin-right: 20%;
   }
-  .card-footer {
-    padding: 0;
-    margin: 0;
-  }
   .btn {
     font-size: 16px;
   }
@@ -533,7 +547,7 @@ export default {
 .card-body {
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 2.5%;
 }
 .card-footer {
   padding: 0px;

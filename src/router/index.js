@@ -4,20 +4,21 @@ import Items from "../views/Items.vue";
 import Post from "../views/Post.vue";
 import Stack from "../views/Stack.vue";
 import Welcome from "../views/Welcome.vue"
-
 import Favorites from "../views/Favorites.vue"
+import Search from "../views/Search.vue"
+
 
 
 Vue.use(VueRouter);
 const router = new VueRouter({
   mode: "history",
   history: true,
-    routes: [
-      {
-        path: "/",
-        name: "Welcome",
-        component: Welcome
-      },
+  routes: [
+    {
+      path: "/",
+      name: "Welcome",
+      component: Welcome
+    },
     {
       path: "/items",
       name: "Items",
@@ -47,7 +48,20 @@ const router = new VueRouter({
       name: "favorite",
       component: Favorites
     },
+    {
+      path: "/search/:term",
+      name: "search",
+      component: Search
+    }
   ]
 });
+router.beforeEach((to, from, next) => {
+  if (to.query.search) {
+    next("/search/" + to.query.search)
+  } else if (to.query.search === "") {
+    next("/search/" + "_")
 
-export default router;
+  } next()
+})
+
+export default router;  
