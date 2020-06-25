@@ -20,7 +20,6 @@
             v-bind:style="heartHeight"
             v-bind:class="{amactive: amIFavorited(data.id)}"
           ></div>
-
           <img class="card-image-top" v-bind:src="getImage(data.image)" />
           <div class="card-body">
             <h5>Current Bid: {{data.price}}</h5>
@@ -46,7 +45,9 @@ export default {
   data() {
     return {
       heartHeight: {},
-      isDesktop: window.innerWidth > 800
+      isDesktop: window.innerWidth > 800,
+      windowWidth: window.innerWidth,
+      tags: []
     };
   },
   mounted() {
@@ -72,17 +73,18 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = window.innerWidth * 0.5;
-        var tag = cl.url(image, { height: int, width: int });
+        var int = Math.round(this.windowWidth * .6);
+        var tag = cl.url(image, { height: int, width: int, crop: "fill" });
         return tag;
       }
       if (this.isDesktop) {
+        Vue;
         var cl = new cloudinary.Cloudinary({
           cloud_name: "kemp",
           secure: true
         });
-        var int = window.innerWidth * 0.2;
-        var tag = cl.url(image, { height: int, width: int });
+        var int = Math.round(this.windowWidth * .25);
+        var tag = cl.url(image, { width: int, height: int, crop: "fill" });
         return tag;
       }
     },

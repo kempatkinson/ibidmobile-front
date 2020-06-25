@@ -268,7 +268,7 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = this.windowWidth * 0.5;
+        var int = Math.round(this.windowWidth * 0.5)
         var tag = cl.url(image, { width: int });
         return tag;
       }
@@ -277,7 +277,7 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = this.windowWidth * 0.1;
+        var int = Math.round(this.windowWidth * 0.1)
         var tag = cl.url(image, { width: int });
         return tag;
         // console.log(tag);

@@ -381,7 +381,7 @@ export default {
     },
     getImageSidebar: function(image) {
       var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var int = window.innerWidth * 0.2;
+      var int = Math.round(window.innerWidth * 0.2)
       var tag = cl.url(image, { height: int, width: int });
 
       return tag;

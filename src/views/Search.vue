@@ -6,9 +6,8 @@
     <div class="row" v-if="this.term === '_'">
       <h1>You must enter a search term!</h1>
     </div>
-
-    <div class="row" v-for="data in commonTerm" :key="data.id">
-      <div class="col d-flex justify-content-center">
+    <div class="row" v-for="(chunk,index) in chunks" :key="index">
+      <div class="single offset-md-1" v-for="data in chunk" :key="data.id">
         <div class="card" :id="data.id">
           <router-link :to="{ name: 'post', params: {id: data.id}}">
             <h3 ref="items" class="card-title">{{data.name}}</h3>
@@ -55,12 +54,17 @@ export default {
     this.getRowHeight();
   },
   computed: {
+    chunks() {
+      return _.chunk(Object.values(this.commonTerm, 2));
+    },
     commonTerm() {
       var found = [];
+      var reg = new RegExp(this.term, "i");
+      console.log(reg);
       for (let i = 0; i < this.$store.state.posts.length; i++) {
         if (
-          this.$store.state.posts[i].name.match(this.term) ||
-          this.$store.state.posts[i].description.match(this.term)
+          this.$store.state.posts[i].name.match(reg) ||
+          this.$store.state.posts[i].description.match(reg)
         ) {
           found.push(this.$store.state.posts[i]);
         }
@@ -100,8 +104,8 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = window.innerWidth * 0.3;
-        var tag = cl.url(image, { height: int, width: int });
+        var int = Math.round(this.windowWidth * 0.6);
+        var tag = cl.url(image, { height: int, width: int, crop: "fill" });
         return tag;
       }
       if (this.isDesktop) {
@@ -109,7 +113,7 @@ export default {
           cloud_name: "kemp",
           secure: true
         });
-        var int = window.innerWidth * 0.5;
+        var int = Math.round(this.windowWidth * 0.4);
         var tag = cl.url(image, { height: int, width: int });
         return tag;
       }
@@ -122,6 +126,8 @@ export default {
           let factor = target / 100;
           let string = "scale(" + 2 * factor + ")";
           Vue.set(this.heartHeight, "transform", string);
+          Vue.set(this.heartHeight, "position", "absolute");
+          Vue.set(this.heartHeight, "top", "-6.5%");
         }
       });
     },

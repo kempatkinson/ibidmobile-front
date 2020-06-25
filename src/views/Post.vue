@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="page">
     <div class="row" id="gap">
       <h3 id="name" ref="nameRow">{{post.name}}</h3>
       <div
@@ -12,7 +12,8 @@
 
     <div class="row image-row">
       <div class="col d-flex justify-content-center">
-        <img class="card-image-top" v-bind:src="this.image" />
+        <img class="card-image-top" v-if="!this.isDesktop" v-bind:src="this.image" />
+        <img v-if="this.isDesktop" v-bind:src="this.image" />
       </div>
     </div>
 
@@ -153,8 +154,7 @@ export default {
     );
     this.isActive = this.$store.getters.findFavorite(to.params.id);
     var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-
-    this.image = cl.url(this.$store.getters.post(to.params.id).image);
+    this.getImage(this.$store.getters.post(to.params.id).image)
     next();
   },
   name: "post",
@@ -172,7 +172,8 @@ export default {
       rowHeight: 0,
       heartHeight: {},
       image: "",
-      windowWidth: window.innerWidth
+      windowWidth: window.innerWidth,
+      isDesktop: window.innerWidth > 800
     };
   },
   computed: {
@@ -227,13 +228,32 @@ export default {
       return difference;
     },
     getImage() {
-      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var int = this.windowWidth * 0.7;
-      var tag = cl.url(this.post.image, {
-        height: int
-      });
-      this.image = tag;
+      if (!this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = Math.round(this.windowWidth * 0.7);
+        var tag = cl.url(this.post.image, {
+          height: int
+        });
+        this.image = tag;
+      }
+      if (this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = Math.round(this.windowWidth * 0.1);
+        var tag = cl.url(this.post.image, {
+          height: 2*int,
+          width: 2*int,
+          crop: "fill"
+        });
+        this.image = tag;
+      }
     },
+
     initFavorite() {
       if (this.$store.getters.findFavorite(this.post.id)) {
         this.isActive = true;
@@ -324,9 +344,9 @@ export default {
   #description {
     font-size: 12px;
   }
-  .container {
+  .page {
     padding-top: 80px;
-    padding-left: 0;
+    padding-left: 0px;
   }
 
   .btn {
@@ -334,7 +354,7 @@ export default {
     height: 30px;
   }
   #name {
-    font-size: 1em;
+    font-size: 1.5em;
   }
   #date-text {
     font-size: 1em;
@@ -362,9 +382,9 @@ export default {
   #name {
     font-size: 24px;
   }
-  .container {
+  .page {
     padding-top: 80px;
-    padding-left: 0;
+    padding-left: 0px;
   }
   #description {
     font-size: 14px;
@@ -387,9 +407,9 @@ export default {
   //   background-color: purple;
   // }
 
-  .container {
+  .page {
     padding-top: 100px;
-    padding-left: 0;
+    padding-left: 0px;
   }
 
   .fixed {
@@ -413,12 +433,10 @@ export default {
     font-size: 30px;
   }
 
-  .container {
+  .page {
     padding-top: 160px;
-    max-width: 100vw;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 0;
+    padding-left: 0px;
+    width: 100%;
   }
 
   .img {
@@ -595,9 +613,7 @@ body {
 #bid-row {
   margin-top: 5%;
 }
-#date-text {
-  margin: 5% auto;
-}
+
 #buyNow {
   position: fixed;
   bottom: 11%;

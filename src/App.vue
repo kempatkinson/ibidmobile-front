@@ -169,7 +169,16 @@ body {
     font-size: 25px;
   }
 }
+.b-sidebar-header {
+  font-size: 24px !important;
+}
 
+.noHover {
+  font-size: 12px;
+}
+.nav-item {
+  font-size: 16px;
+}
 #sign {
   position: absolute;
   right: 10px;
