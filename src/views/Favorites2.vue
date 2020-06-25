@@ -1,15 +1,14 @@
 <template>
-  <div id="list">
-    <div class="warning row" v-if="(filteredPosts.length<1)&&this.term!='_'">
-      <h1>Nothing was found with the term "{{this.term}}"</h1>
+  <div id="favorites" class="container">
+    <div class="row">
+      <div class="col d-flex justify-content-center">
+        <button v-on:click="empty">empty favorites</button>
+      </div>
     </div>
-    <div class="warning row" v-if="this.term === '_'">
-      <h1>You must enter a search term!</h1>
-    </div>
+    <br />
     <div class="b-container" v-show="!(isDesktop)">
-      <div class="row" v-for="data in filteredPosts" :key="data.id">
+      <div class="row" v-for="data in favorites" :key="data.id">
         <div class="col-1"></div>
-
         <div class="card col-10">
           <div class="card-header" ref="header">
             <div class="card-title" style="position: relative">
@@ -143,7 +142,7 @@
             :id="'sidebar-' + data.id"
             right
             shadow
-            v-for="data in filteredPosts"
+            v-for="data in favorites"
             :key="data.id"
           >
             <div class="px-3 py-2">
@@ -219,7 +218,6 @@
 </template>
 
 <script>
-// Make a request for a user with a given ID
 import datetime from "datetime";
 import { mapState } from "vuex";
 import Vue from "vue";
@@ -228,41 +226,32 @@ import cloudinary from "cloudinary-core";
 import lodash from "lodash";
 import jquery from "jquery";
 
-Vue.component(VueCountdown.name, VueCountdown);
+
 export default {
   name: "Home",
   data() {
     return {
-      term: this.$route.params.term,
-
-      selected: "All Items",
-      options: [
-        { text: "All Items", value: "1" },
-        { text: "Live Items", value: "2" },
-        { text: "Unsold Items", value: "3" },
-        { text: "Items with no bids", value: "4" }
-      ],
-      times: [],
       heartHeight: {},
-      heartHeightDesktop: {},
-      heartHeightDesktopSidebar: {},
-
-      containerStyle: {},
       isDesktop: window.innerWidth > 800,
-      sample: "sample.jpg",
-      sidebarPost: {},
-      sidebar: {}
+      windowWidth: window.innerWidth,
+      tags: []
     };
   },
   mounted() {
     this.$store.dispatch("loadPosts");
     this.getRowHeight();
-    this.getRowHeightDesktop();
     this.getHeight();
-    this.sidebar = { status: false, current: "" };
-    this.clickToggler();
   },
   computed: {
+    favorites() {
+      var favs = [];
+      for (let i = 0; i < this.$store.state.posts.length; i++) {
+        if (this.$store.getters.findFavorite(this.$store.state.posts[i].id)) {
+          favs.push(this.$store.state.posts[i]);
+        }
+      }
+      return favs;
+    },
     chunks() {
       return _.chunk(Object.values(this.filteredPosts), 2);
     },
@@ -278,55 +267,9 @@ export default {
       }
       return array;
     },
-    filteredPosts() {
-      var found = [];
-      var reg = new RegExp(this.term, "i");
-      console.log(reg);
-      for (let i = 0; i < this.$store.state.posts.length; i++) {
-        if (
-          this.$store.state.posts[i].name.match(reg) ||
-          this.$store.state.posts[i].description.match(reg)
-        ) {
-          found.push(this.$store.state.posts[i]);
-        }
-      }
-      return found;
-    },
-
     ...mapState(["posts"])
   },
   methods: {
-    clickToggler() {
-      this.$nextTick(() => {
-        $(".close").click(function() {
-          {
-            let sidebar = $(this.offsetParent).attr("id");
-            let id = sidebar.substr(8, sidebar.length - 1);
-            $("#sidebar-" + id).css("display", "none");
-            this.sidebar = { status: false, current: "" };
-          }
-        });
-      });
-    },
-    toggler: function(id) {
-      if (this.sidebar.status === true && this.sidebar.current === id) {
-        this.sidebar.status = false;
-        this.sidebar.current = "";
-        $("#sidebar-" + id).css("display", "none");
-      } else if (this.sidebar.current !== id) {
-        $("#sidebar-" + id).removeAttr("style");
-        for (let i = 0; i < this.filteredPosts.length; i++) {
-          if (!(id === this.filteredPosts[i].id)) {
-            $("#sidebar-" + this.filteredPosts[i].id).css("display", "none");
-          }
-          if (id === this.filteredPosts[i].id) {
-            $("#sidebar-" + id).removeAttr("style");
-          }
-        }
-        this.sidebar.current = id;
-        this.sidebar.status = true;
-      }
-    },
     getHeight() {
       Vue.nextTick(() => {
         let height = this.$refs.targetCard.clientHeight;
@@ -337,264 +280,102 @@ export default {
         Vue.set(this.containerStyle, "width", width);
       });
     },
+    getImage: function(image) {
+      if (!this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = Math.round(this.windowWidth * 0.6);
+        var tag = cl.url(image, { height: int, width: int, crop: "fill" });
+        return tag;
+      }
+      if (this.isDesktop) {
+        Vue;
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var int = Math.round(this.windowWidth * 0.25);
+        var tag = cl.url(image, { width: int, height: int, crop: "fill" });
+        return tag;
+      }
+    },
+    amIFavorited: function(id) {
+      if (this.favorites.length > 0) {
+        if (this.favorites.findIndex(element => element.id === id) != -1) {
+          return true;
+        } else return false;
+      }
+    },
     getRowHeight() {
       this.$nextTick(() => {
         if (this.$refs.items) {
-          //sizing
           let target = this.$refs.items[0].clientHeight;
           let factor = target / 100;
-          let string = "scale(" + 2.5 * factor + ")";
+          let string = "scale(" + 2 * factor + ")";
           Vue.set(this.heartHeight, "transform", string);
         }
       });
     },
-    getRowHeightDesktop() {
-      this.$nextTick(() => {
-        //sizing
-        if (this.$refs.desktopItems) {
-          let target = this.$refs.desktopItems[0].clientHeight;
-          let factor = target / 100;
-          let string = "scale(" + 2.5 * factor + ")";
-          Vue.set(this.heartHeightDesktop, "transform", string);
-
-          let target2 = this.$refs.sidebarName[0].clientHeight;
-          let factor2 = target / 100;
-          let string2 = "scale(" + 2.5 * factor + ")";
-          Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-          Vue.set(this.heartHeightDesktopSidebar, "top", "-5px");
-          Vue.set(this.heartHeightDesktopSidebar, "position", "absolute");
-        }
-      });
-    },
-    getImage: function(image) {
-      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var tag = cl.url(image, { height: 200, width: 200, crop: "fill" });
-      return tag;
-    },
-    getImageSidebar: function(image) {
-      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var int = Math.round(window.innerWidth * 0.2);
-      var tag = cl.url(image, { height: int, width: int });
-
-      return tag;
-    },
     toggle: function(id) {
-      if (this.activeKeys.length > 0) {
-        var index = this.activeKeys.findIndex(element => element.id === id);
-
-        if (this.activeKeys[index].active === false) {
-          this.activeKeys[index].active = true;
-          this.$store.dispatch("setFavorite", { n: id });
-        } else if (this.activeKeys[index].active === true) {
-          this.activeKeys[index].active = false;
-          this.$store.dispatch("removeFavorite", { n: id });
-        }
-      }
+      this.$store.dispatch("removeFavorite", { n: id });
     },
-    timeUntil: function(end) {
-      const now = new Date();
-      const then = new Date(end);
-      const difference = then - now + 5 * 60 * 60 * 1000;
-      return difference;
+
+    empty() {
+      this.$store.commit("clear");
+      console.log(this.$store.state.favorites);
     }
   }
 };
 </script>
 
-<style scoped  lang="scss">
-@media (max-height: 600px) {
-  #gap {
-    background-color: none;
-  }
-  .b-container {
-    position: absolute;
-    top: 100px;
-  }
-  .card-text {
-    font-size: 14px;
-  }
-  .date-text {
-    font-size: 14px;
-    margin: 0 5% 0 5%;
-  }
-  h3 {
-    font-size: 18px;
-  }
-  .heart {
-    left: 75%;
-    top: 25%;
-  }
-}
-
-@media (min-height: 600px) {
-  #gap {
-    background-color: none;
-  }
-  .card-text {
-    font-size: 14px;
-  }
-  .date-text {
-    font-size: 14px;
-  }
-  .b-container {
-    position: absolute;
-    top: 100px;
-  }
-  .card-title {
-    font-size: 18px;
-  }
-  h3 {
-    font-size: 20px;
-  }
-  .heart {
-    left: 75%;
-    top: 57.5%;
-  }
-}
-@media (min-height: 700px) {
-  #gap {
-    background-color: none;
-  }
-  .b-container {
-    position: absolute;
-    top: 100px;
-  }
-  .card-text {
-    font-size: 14px;
-  }
-  .card-title {
-    font-size: 24px;
-  }
-  .date-text {
-    font-size: 14px;
-  }
-  .card-title {
-    font-size: 20px;
-  }
-  h3 {
-    font-size: 18px;
-  }
-  .heart {
-    left: 75%;
-    top: 60%;
-  }
-}
-@media (min-height: 900px) {
-  #gap {
-    background-color: none;
-  }
-  .btn {
-    font-size: 25px;
-  }
-  .card-title {
-    font-size: 64px;
-  }
-  .card-text {
-    font-size: 24px;
-  }
-  .date-text {
-    font-size: 20px;
-  }
-  // .card {
-  //   width: calc(var(--vh, 1vh) * 40);
-  // }
-  .b-container {
-    position: absolute;
-    top: 160px;
-  }
-
-  .selection {
-    font-size: 24px;
-  }
-  h3 {
-    font-size: 30px;
-  }
-  .heart {
-    left: 85%;
-    top: 130%;
-  }
-}
-
-@media (min-width: 801px) {
-  /* tablet, landscape iPad, lo-res laptops ands desktops */
-  .b-container {
-    width: 100%;
-    justify-content: center;
-    align-content: center;
-  }
-
-  .card {
-    margin-right: 20%;
-  }
-  .btn {
-    font-size: 16px;
-  }
-}
-
-.card-header {
-  padding: 1%;
-  width: 100%;
-  margin-bottom: 5%;
-}
-.card-body {
-  width: 100%;
-  margin: 0;
-  padding: 2.5%;
-}
-.card-footer {
-  padding: 0px;
-  padding-bottom: 2.5%;
-  margin-top: 5%;
+<style lang="scss" scoped>
+#favorites {
   align-content: center;
-  width: 100%;
-}
-.card-title {
-  margin-top: 5%;
-  margin: 0;
 }
 .card {
   margin-bottom: 10%;
-  padding: 0;
   border: black 0.5px solid;
+  align-content: center;
   background-color: #bfdbf7;
 }
 h3,
+h5,
 p {
   color: black;
-  margin-bottom: 0.25em;
 }
 img {
-  width: 100%;
+  margin: 5%;
+}
+p {
+  margin-bottom: 5%;
 }
 
 button {
-  width: 75%;
+  width: 40%;
+}
+.card-title {
+  margin-top: 5%;
 }
 
 .btn-primary {
   background-color: #1f7a8c;
   border-color: #343a40;
   color: white;
-  width: 75%;
   margin: 5px;
 }
-
-.selection {
-  margin-bottom: 10%;
+.container {
+  padding-top: 100px;
+  width: 100%;
+  position: static;
+  top: 15vh;
 }
 
-#dropdown {
-  margin-bottom: 5%;
-}
-
-.warning {
-  padding-top:100px;
-  padding-left: 20px;
-}
-// TWITTER HEART
 .heart {
   position: absolute;
-  z-index: 2;
+  top: -4%;
+  right: -10%;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")
@@ -608,41 +389,5 @@ button {
     transition-duration: 1s;
     background-position: -2800px 0;
   }
-}
-
-#name {
-  margin: 0 auto;
-  margin-bottom: 10px;
-}
-
-// BASIC
-body {
-  background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
-  color: #fff;
-  font: 300 16px/1.5 "Open Sans", sans-serif;
-}
-#description {
-  text-align: left;
-  font-size: 14px;
-  margin: 10px;
-  margin-bottom: 10%;
-}
-
-.name-button {
-  background-color: transparent;
-  border: 0;
-  &:hover {
-    background-color: transparent;
-    border: 0;
-  }
-}
-
-.bar-button {
-  width: 100%;
-}
-.bar-text {
-  font-size: 14px;
-  color: black;
-  align-content: left;
 }
 </style>
