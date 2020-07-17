@@ -3,47 +3,44 @@
     <div class="b-container" v-show="!(isDesktop)">
       <div class="selection" id="gap">
         <select v-model="selected" id="dropdown">
-          <option v-for="option in options" v-bind:key="option.value">{{ option.text }}</option>
+          <option v-for="option in deck" v-bind:key="option.category">{{ option.category }}</option>
         </select>
         <br />
         <span v-if="selected">Selected: {{ selected }}</span>
       </div>
-
-      <div class="row" v-for="data in filteredPosts" :key="data.id">
-        <div class="col-1"></div>
-
-        <div class="card col-10">
+      <div class="row" v-for="data in deck" :key="data.itID">
+        <div class="card col-12">
           <div class="card-header" ref="header">
             <div class="card-title" style="position: relative">
-              <router-link :to="{ name: 'post', params: {id: data.id}}">
+              <router-link :to="{ name: 'post', params: {id: data.itID}}">
                 <h3 ref="items">{{data.name}}</h3>
               </router-link>
               <div
                 class="heart"
-                v-on:click="toggle(data.id)"
-                v-bind:key="data.id"
+                v-on:click="toggle(data.itID)"
+                v-bind:key="data.itID"
                 v-bind:style="heartHeight"
-                v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.id)].active}"
+                v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
               ></div>
             </div>
           </div>
-          <div class="card-body row" v-on:click="select($event)" :id="data.id">
+          <div class="card-body row" v-on:click="select($event)" :id="data.itID">
             <div class="col-5 d-flex align-items-center">
               <img class="card-image" v-bind:src="getImage(data.image)" />
             </div>
             <div class="col-7">
               <p v-if="data.sold" class="card-text">Sold Out!</p>
-              <div v-if="(!data.sold) && (timeUntil(data.end) > 0)">
-                <p v-if="(timeUntil(data.end) > 0 )" class="card-text">Live!</p>
+              <div v-if="(!data.sold) && (timeUntil(data.itEndDate) > 0)">
+                <p v-if="(timeUntil(data.itEndDate) > 0 )" class="card-text">Live!</p>
                 <p class="card-text">Current Bid : {{data.price}}</p>
-                <p class="card-text">Value : {{data.value}}</p>
-                <router-link :to="{ name: 'post', params: {id: data.id}}">
+                <p class="card-text">Value : {{data.itValue}}</p>
+                <router-link :to="{ name: 'post', params: {id: data.itID}}">
                   <button class="btn btn-primary">Bid Now!</button>
                 </router-link>
               </div>
             </div>
           </div>
-          <div class="card-footer">
+          <div class="card-footer" v-if="(timeUntil(data.end) > 0)">
             <countdown :time="timeUntil(data.end)" v-if="(timeUntil(data.end) > 0)">
               <div
                 slot-scope="props"
@@ -53,54 +50,65 @@
             <div class="date-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
           </div>
         </div>
-        <div class="col-1"></div>
       </div>
     </div>
 
     <div class="b-container" v-show="(isDesktop)">
+      <h1>{{event.Description}}</h1>
+
       <div class="row">
-        <div class="col-9">
+        <div class="col-12">
           <div class="selection" id="gap">
             <select v-model="selected" id="dropdown">
-              <option v-for="option in options" v-bind:key="option.value">{{ option.text }}</option>
+              <option
+                v-for="option in categories"
+                v-bind:key="option.category"
+              >{{ option.category }}</option>
             </select>
             <br />
             <span v-if="selected">Selected: {{ selected }}</span>
           </div>
-          <div class="row" v-for="(chunk,index) in chunks" :key="index">
-            <div class="single offset-md-1" v-for="data in chunk" :key="data.id">
+        </div>
+      </div>
+      <div class="row" v-for="category in categories" :key="category.category">
+        <div class="col-9">
+          <h1>{{category.category}}</h1>
+          <br />
+          <div class="row" v-for="(chunk,index) in chunks(category.ids)" :key="index">
+            <div class="single offset-md-1" v-for="data in chunk" :key="data.itID">
               <div class="card" v-bind:style="containerStyle">
                 <div class="card-header" ref="header">
                   <div class="card-title" ref="desktopItems" style="position: relative">
-                    <h3 v-on:click="toggler(data.id)">{{data.name}}</h3>
+                    <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                      <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                    </router-link>
                     <div
                       class="heart"
-                      v-on:click="toggle(data.id)"
-                      v-bind:key=" 'heart: ' + data.id"
+                      v-on:click="toggle(data.itID)"
+                      v-bind:key=" 'heart: ' + data.itID"
                       v-bind:style="heartHeightDesktop"
-                      v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.id)].active}"
+                      v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
                     ></div>
                   </div>
                 </div>
-                <div class="card-body" v-on:click="toggler(data.id)">
-                  <div class="row" v-on:click="select($event)" :id="data.id">
-                    <div class="col-5">
-                      <img class="card-image" v-bind:src="getImage(data.image)" />
+                <div class="card-body" v-on:click="toggler(data.itID)">
+                  <div class="row" v-on:click="select($event)" :id="data.itID">
+                    <div class="col-12">
+                      <img class="card-image" v-bind:src="getImage(sample)" />
                     </div>
-                    <div class="col-7">
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
                       <p v-if="data.sold" class="card-text">Sold Out!</p>
-                      <div v-if="(!data.sold) && (timeUntil(data.end) > 0)">
+                      <div>
                         <p v-if="(timeUntil(data.end) > 0 )" class="card-text">Live!</p>
-                        <p class="card-text">Current Bid : {{data.price}}</p>
-                        <p class="card-text">Value : {{data.value}}</p>
-                        <router-link :to="{ name: 'post', params: {id: data.id}}">
-                          <button class="btn btn-primary">Bid Now!</button>
-                        </router-link>
+                        <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                        <p class="card-text">Value : {{data.itValue}}</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer" v-if="(timeUntil(data.end) > 0)">
                   <countdown :time="timeUntil(data.end)" v-if="(timeUntil(data.end) > 0)">
                     <div
                       slot-scope="props"
@@ -112,117 +120,114 @@
               </div>
             </div>
           </div>
-
-          <!-- hidden -->
-          <div class="card col-4" ref="targetCard" style="visibility: hidden">
-            <div class="card-header" ref="header">
-              <div class="card-title" style="position: relative">
-                <h3>Hidden</h3>
-                <div class="heart" v-bind:style="heartHeight"></div>
-              </div>
-            </div>
-            <div class="card-body row">
-              <div class="col-5 d-flex align-items-center">
-                <img class="card-image" v-bind:src="getImage(sample)" />
-              </div>
-              <div class="col-7">
-                <div>
-                  <p class="card-text">Live!</p>
-                  <p class="card-text">Current Bid : 100</p>
-                  <p class="card-text">Value :100</p>
-                  <button class="btn btn-primary">Bid Now!</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card-footer">
-              <countdown :time="100">
-                <div
-                  slot-scope="props"
-                  class="date-text"
-                >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-              </countdown>
-            </div>
-          </div>
-          <!-- hidden -->
-        </div>
-
-        <div class="col-3">
-          <b-sidebar
-            :id="'sidebar-' + data.id"
-            right
-            shadow
-            v-for="data in filteredPosts"
-            :key="data.id"
-          >
-            <div class="px-3 py-2">
-              <div class="container">
-                <div class="row" id="gap">
-                  <h3 id="name" ref="sidebarName">{{data.name}}</h3>
-                  <div
-                    class="heart"
-                    v-on:click="toggle(data.id)"
-                    v-bind:key=" 'heart: ' + data.id"
-                    v-bind:style="heartHeightDesktopSidebar"
-                    v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.id)].active}"
-                  ></div>
-                </div>
-
-                <div class="row image-row">
-                  <div class="col d-flex justify-content-center">
-                    <img class="card-image-top" v-bind:src="getImageSidebar(data.image)" />
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col d-flex justify-content-center">
-                    <div>
-                      <p class="bar-text" id="description">{{data.description}}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row" id="date-text">
-                  <div class="col d-flex justify-content-center">
-                    <div class="bar-text" v-if="(data.sold)">Sold out!</div>
-                    <div class="bar-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
-                    <countdown
-                      v-if="(!data.sold) && (timeUntil(data.end) > 0)"
-                      :time="timeUntil(data.end)"
-                    >
-                      <div
-                        slot-scope="props"
-                        class="bar-text"
-                      >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                    </countdown>
-                  </div>
-                </div>
-                <div class="row" id="bid-row" v-if="(!data.sold) && timeUntil(data.end)>0">
-                  <div class="col d-flex justify-content-center">
-                    <div class="bidrow card-text">
-                      <div class="row d-flex justify-content-center" id="postinfo">
-                        <div class="col">
-                          <p class="bar-text">Value: {{data.value}}</p>
-                          <p class="bar-text">Current Bid: {{data.price}}</p>
-                          <p class="bar-text">Minmum raise: {{data.raise}}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="row justify-content-center"
-                  v-if="(!data.sold) && timeUntil(data.end)>0"
-                >
-                  <router-link :to="{ name: 'post', params: {id: data.id}}">
-                    <button class="btn btn-primary bar-button">Bid Now!</button>
-                  </router-link>
-                </div>
-              </div>
-            </div>
-          </b-sidebar>
         </div>
       </div>
+    </div>
+
+    <div class="col-3">
+      <b-sidebar
+        :id="'sidebar-' + data.itID"
+        right
+        shadow
+        v-for="data in this.deck"
+        :key="data.itID"
+      >
+        <div class="px-3 py-2">
+          <div class="container">
+            <div class="row" id="gap">
+              <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
+              <div
+                class="heart"
+                v-on:click="toggle(data.itID)"
+                v-bind:key=" 'heart: ' + data.itID"
+                v-bind:style="heartHeightDesktopSidebar"
+                v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+              ></div>
+            </div>
+
+            <div class="row image-row">
+              <div class="col d-flex justify-content-center">
+                <img class="card-image-top" v-bind:src="getImageSidebar(sample)" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col d-flex justify-content-center">
+                <div>
+                  <p class="bar-text" id="description">{{data.itDescription}}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" id="date-text">
+              <div class="col d-flex justify-content-center">
+                <div class="bar-text" v-if="(data.sold)">Sold out!</div>
+                <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
+                <countdown
+                  v-if="(!data.sold) && (timeUntil(data.itEndDate) > 0)"
+                  :time="timeUntil(data.end)"
+                >
+                  <div
+                    slot-scope="props"
+                    class="bar-text"
+                  >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+                </countdown>
+              </div>
+            </div>
+            <div class="row" id="bid-row" v-if="(!data.sold) && timeUntil(data.end)>0">
+              <div class="col d-flex justify-content-center">
+                <div class="bidrow card-text">
+                  <div class="row d-flex justify-content-center" id="postinfo">
+                    <div class="col">
+                      <p class="bar-text">Value: {{data.itValue}}</p>
+                      <p class="bar-text">Current Bid: {{data.itMinBid}}</p>
+                      <p class="bar-text">Minmum raise: {{data.itMinRaise}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center" v-if="(!data.sold) && timeUntil(data.end)>0">
+              <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                <button class="btn btn-primary bar-button">Bid Now!</button>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </b-sidebar>
+    </div>
+    <div class="row">
+      <!-- hidden -->
+      <div class="card col-2" ref="targetCard" style="visibility: hidden">
+        <div class="card-header" ref="header">
+          <div class="card-title" style="position: relative">
+            <h3>Hidden</h3>
+            <div class="heart" v-bind:style="heartHeight"></div>
+          </div>
+        </div>
+        <div class="card-body row">
+          <div class="col-5 d-flex align-items-center">
+            <img class="card-image" v-bind:src="getImage(sample)" />
+          </div>
+          <div class="col-7">
+            <div>
+              <p class="card-text">Live!</p>
+              <p class="card-text">Current Bid : 100</p>
+              <p class="card-text">Value :100</p>
+              <button class="btn btn-primary">Bid Now!</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <countdown :time="100">
+            <div
+              slot-scope="props"
+              class="date-text"
+            >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+          </countdown>
+        </div>
+      </div>
+      <!-- hidden -->
     </div>
   </div>
 </template>
@@ -243,71 +248,96 @@ export default {
   data() {
     return {
       selected: "All Items",
-      options: [
-        { text: "All Items", value: "1" },
-        { text: "Live Items", value: "2" },
-        { text: "Unsold Items", value: "3" },
-        { text: "Items with no bids", value: "4" }
-      ],
+      // options: [
+      //   { text: "All Items", value: "1" },
+      //   { text: "Live Items", value: "2" },
+      //   { text: "Unsold Items", value: "3" },
+      //   { text: "Items with no bids", value: "4" }
+      // ],
       times: [],
       heartHeight: {},
       heartHeightDesktop: {},
       heartHeightDesktopSidebar: {},
-
+      deck: [],
+      event: {},
       containerStyle: {},
       isDesktop: window.innerWidth > 800,
-      sample: "sample.jpg",
+      sample: "hello.jpg",
       sidebarPost: {},
       sidebar: {}
     };
   },
   mounted() {
-    this.$store.dispatch("loadPosts");
+    this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+    this.deck = this.$store.state.posts;
+    this.$store.dispatch("getEvent", this.$route.params.TinyURL);
+    this.event = this.$store.state.event[0];
     this.getRowHeight();
     this.getRowHeightDesktop();
     this.getHeight();
-    this.sidebar = { status: false, current: ""}
+    this.sidebar = { status: false, current: "" };
     this.clickToggler();
   },
   computed: {
-    chunks() {
-      return _.chunk(Object.values(this.filteredPosts), 2);
-    },
     activeKeys() {
       var array = [];
       for (let i = 0; i < this.$store.state.posts.length; i++) {
         array.push({
-          id: this.$store.state.posts[i].id,
+          id: this.$store.state.posts[i].itID,
           active: this.$store.getters.findFavorite(
-            this.$store.state.posts[i].id
+            this.$store.state.posts[i].itID
           )
         });
       }
       return array;
     },
-    filteredPosts() {
-      if (this.selected === "Live Items") {
-        return this.$store.state.posts.filter(
-          post => this.timeUntil(post.end) > 0 === true
-        );
+
+    // filteredPosts() {
+    //   if (this.selected === "Live Items") {
+    //     return this.$store.state.posts.filter(
+    //       post => this.timeUntil(post.end) > 0 === true
+    //     );
+    //   }
+    //   if (this.selected === "Unsold Items") {
+    //     return this.$store.state.posts.filter(
+    //       post => post.sold === false && this.timeUntil(post.end) > 0 === true
+    //     );
+    //   }
+    //   if (this.selected === "Items with no bids") {
+    //     return this.$store.state.posts.filter(
+    //       post =>
+    //         post.price === post.startingPrice &&
+    //         this.timeUntil(post.end) > 0 === true
+    //     );
+    //   } else return this.$store.state.posts;
+    // },
+    categories() {
+      var categories = [];
+      for (var i = 0; i < this.deck.length; i++) {
+        var seen = false;
+        for (var j = 0; j < categories.length; j++) {
+          if (categories[j].category === this.deck[i].itCategory) {
+            seen = true;
+            categories[j].ids.push(this.deck[i]);
+            break;
+          }
+        }
+        if (!seen) {
+          categories.push({
+            category: this.deck[i].itCategory,
+            ids: [this.deck[i]]
+          });
+        }
       }
-      if (this.selected === "Unsold Items") {
-        return this.$store.state.posts.filter(
-          post => post.sold === false && this.timeUntil(post.end) > 0 === true
-        );
-      }
-      if (this.selected === "Items with no bids") {
-        return this.$store.state.posts.filter(
-          post =>
-            post.price === post.startingPrice &&
-            this.timeUntil(post.end) > 0 === true
-        );
-      } else return this.$store.state.posts;
+      return categories;
     },
 
-    ...mapState(["posts"])
+    ...mapState(["posts", "event"])
   },
   methods: {
+    chunks: function(array) {
+      return _.chunk(Object.values(array), 3);
+    },
     clickToggler() {
       this.$nextTick(() => {
         $(".close").click(function() {
@@ -315,26 +345,30 @@ export default {
             let sidebar = $(this.offsetParent).attr("id");
             let id = sidebar.substr(8, sidebar.length - 1);
             $("#sidebar-" + id).css("display", "none");
-            this.sidebar = { status: false, current: "" }
+            this.sidebar = { status: false, current: "" };
           }
         });
       });
     },
     toggler: function(id) {
+      // sidebar is on
+      // id matches
       if (this.sidebar.status === true && this.sidebar.current === id) {
         this.sidebar.status = false;
         this.sidebar.current = "";
         $("#sidebar-" + id).css("display", "none");
-      } else if (this.sidebar.current !== id) {
+      }
+
+      //id does not match
+      else if (this.sidebar.status === true && this.sidebar.current !== id) {
+        $("#sidebar-" + this.sidebar.current).css("display", "none");
+        this.sidebar.status = true;
+        this.sidebar.current = id;
         $("#sidebar-" + id).removeAttr("style");
-        for (let i = 0; i < this.filteredPosts.length; i++) {
-          if (!(id === this.filteredPosts[i].id)) {
-            $("#sidebar-" + this.filteredPosts[i].id).css("display", "none");
-          }
-          if (id === this.filteredPosts[i].id) {
-            $("#sidebar-" + id).removeAttr("style");
-          }
-        }
+      }
+      //side bar is off
+      else if (this.sidebar.status === false) {
+        $("#sidebar-" + id).removeAttr("style");
         this.sidebar.current = id;
         this.sidebar.status = true;
       }
@@ -363,7 +397,7 @@ export default {
         //sizing
         let target = this.$refs.desktopItems[0].clientHeight;
         let factor = target / 100;
-        let string = "scale(" + 2.5 * factor + ")";
+        let string = "scale(" + factor + ")";
         Vue.set(this.heartHeightDesktop, "transform", string);
 
         let target2 = this.$refs.sidebarName[0].clientHeight;
@@ -376,12 +410,12 @@ export default {
     },
     getImage: function(image) {
       var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var tag = cl.url(image, { height: 200, width: 200, crop: "fill" });
+      var tag = cl.url(image, { height: 100, width: 200, crop: "fill" });
       return tag;
     },
     getImageSidebar: function(image) {
       var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var int = Math.round(window.innerWidth * 0.2)
+      var int = Math.round(window.innerWidth * 0.2);
       var tag = cl.url(image, { height: int, width: int });
 
       return tag;
@@ -536,6 +570,10 @@ export default {
   }
   .btn {
     font-size: 16px;
+  }
+  .heart {
+    top: -150%;
+    left: 70%;
   }
 }
 

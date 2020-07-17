@@ -6,6 +6,10 @@ import Stack from "../views/Stack.vue";
 import Welcome from "../views/Welcome.vue"
 import Favorites from "../views/Favorites.vue"
 import Search from "../views/Search.vue"
+import Test from "../views/Test.vue"
+
+import LogIn from "../views/LogIn.vue"
+
 
 
 
@@ -13,6 +17,7 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   mode: "history",
   history: true,
+
   routes: [
     {
       path: "/",
@@ -20,7 +25,12 @@ const router = new VueRouter({
       component: Welcome
     },
     {
-      path: "/items",
+      path: "/test",
+      name: "Test",
+      component: Test
+    },
+    {
+      path: "/v/:TinyURL",
       name: "Items",
       component: Items
     },
@@ -39,7 +49,7 @@ const router = new VueRouter({
       component: Post
     },
     {
-      path: "/stack/:id",
+      path: "/stack/:TinyURL",
       name: "stack",
       component: Stack
     },
@@ -52,6 +62,11 @@ const router = new VueRouter({
       path: "/search/:term",
       name: "search",
       component: Search
+    },
+    {
+      path: "/login/",
+      name: "login",
+      component: LogIn
     }
   ]
 });

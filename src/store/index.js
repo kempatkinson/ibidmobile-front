@@ -12,19 +12,36 @@ export default new Vuex.Store({
   },
 
   actions: {
-    loadPosts({ commit }) {
+    loadPosts({ commit }, id) {
+      console.log(id)
       axios.get(
-        "https://afternoon-taiga-12401.herokuapp.com/api/biditems"
-        // "https://localhost:5001/api/BidItems/"
+        // "https://afternoon-taiga-12401.herokuapp.com/api/biditems"
+        "https://localhost:5001/api/items/" + id
       )
-        .then(response => response.data)
+        .then(response => 
+          response.data)
         .then(posts => {
           commit("GET_POSTS", posts)
         })
         .catch(error => {
           console.log(error);
         });
+
     },
+    getEvent({ commit }, id) {
+      axios.get(
+        // "https://afternoon-taiga-12401.herokuapp.com/api/biditems"
+        "https://localhost:5001/api/events/" + id
+      )
+        .then(response =>  {
+          response.data,
+          commit("SET_EVENT", response.data)
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+    }, 
     setFavorite({ commit }, n) {
       commit("favorite", n);
     },
@@ -39,6 +56,9 @@ export default new Vuex.Store({
     GET_POSTS(state, posts) {
       state.posts = posts;
     },
+    SET_EVENT(state, event) {
+      state.event = event;
+    },
     favorite(state, n) {
       state.favorites.push(n);
     },
@@ -52,7 +72,7 @@ export default new Vuex.Store({
   },
   getters: {
     post: (state) => (id) => {
-      return state.posts.find(p => p.id === id)
+      return state.posts.find(p => p.itID === id)
     },
     findFavorite: (state) => (id) => {
       let seen = false;

@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="row" id="gap">
-      <h3 id="name" ref="nameRow">{{post.name}}</h3>
+      <h3 id="name" ref="nameRow">{{post.itName}}</h3>
       <div
         class="heart"
         v-bind:style="this.heartHeight"
@@ -20,15 +20,15 @@
     <div class="row">
       <div class="col d-flex justify-content-center">
         <div>
-          <p class="card-text" id="description">{{post.description}}</p>
+          <p class="card-text" id="description">{{post.itDescription}}</p>
         </div>
       </div>
     </div>
     <div id="date-text" class="row card-text">
       <div class="col d-flex justify-content-center">
         <div class="bidrow card-text" v-if="(post.sold)">Sold out!</div>
-        <div class="bidrow card-text" v-if="(timeUntil(post.end) <= 0)">Auction Over!</div>
-        <countdown v-if="(!post.sold) && (timeUntil(post.end) > 0)" :time="timeUntil(post.end)">
+        <div class="bidrow card-text" v-if="(timeUntil(post.itEndDate) <= 0)">Auction Over!</div>
+        <countdown v-if="(!post.sold) && (timeUntil(post.itEndDate) > 0)" :time="timeUntil(post.itEndDate)">
           <div
             slot-scope="props"
             class="card-text"
@@ -36,14 +36,14 @@
         </countdown>
       </div>
     </div>
-    <div class="row" id="bid-row" v-if="!post.sold && timeUntil(post.end)>0">
+    <div class="row" id="bid-row">
       <div class="col d-flex justify-content-center">
         <div class="bidrow card-text">
           <div class="row d-flex justify-content-center" id="postinfo">
             <div class="col">
-              <p class="card-text">Value: {{post.value}}</p>
-              <p class="card-text">Current Bid: {{post.price}}</p>
-              <p class="card-text">Minmum raise: {{post.raise}}</p>
+              <p class="card-text">Value: {{post.itValue}}</p>
+              <p class="card-text">Current Bid: {{post.itMinBid}}</p>
+              <p class="card-text">Minmum raise: {{post.itMinRaise}}</p>
             </div>
           </div>
           <div class="row">
@@ -109,7 +109,7 @@
         </div>
       </div>
 
-      <div class="col d-flex justify-content-center" v-if="post.buyNow">
+      <div class="col d-flex justify-content-center" v-if="post.itOwnNow">
         <button
           type="button"
           class="btn btn-primary"
@@ -147,10 +147,10 @@ export default {
     this.$route.params.id = to.params.id;
     this.post = this.$store.getters.post(to.params.id);
     this.bid =
-      this.$store.getters.post(to.params.id).price +
-      this.$store.getters.post(to.params.id).raise;
+      parseInt(this.$store.getters.post(to.params.id).itMinBid) +
+      parseInt(this.$store.getters.post(to.params.id).itMinRaise);
     this.index = this.$store.state.posts.findIndex(
-      element => element.id === to.params.id
+      element => element.itID === to.params.id
     );
     this.isActive = this.$store.getters.findFavorite(to.params.id);
     var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
@@ -162,10 +162,10 @@ export default {
     return {
       post: this.$store.getters.post(this.$route.params.id),
       bid:
-        this.$store.getters.post(this.$route.params.id).price +
-        this.$store.getters.post(this.$route.params.id).raise,
+        parseInt(this.$store.getters.post(this.$route.params.id).itMinBid) +
+        parseInt(this.$store.getters.post(this.$route.params.id).itMinRaise),
       index: this.$store.state.posts.findIndex(
-        element => element.id === this.$route.params.id
+        element => element.itID === this.$route.params.id
       ),
       cards: [],
       isActive: false,
@@ -179,17 +179,17 @@ export default {
   computed: {
     nextId() {
       if (this.cards[this.index + 1]) {
-        return this.cards[this.index + 1].id;
+        return this.cards[this.index + 1].itID;
       } else return false;
     },
     prevId() {
       if (this.cards[this.index - 1]) {
-        return this.cards[this.index - 1].id;
+        return this.cards[this.index - 1].itID;
       } else return false;
     }
   },
   mounted() {
-    this.$store.dispatch("loadPosts");
+    // this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
     this.getCards();
     this.getRowHeight();
     this.initFavorite();
@@ -203,7 +203,7 @@ export default {
         const url =
           "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
           // "https://localhost:5001/api/BidItems/" +
-          this.post.id;
+          this.post.itID;
         var newPost = this.post;
         newPost.sold = true;
         return axios
@@ -284,7 +284,7 @@ export default {
       });
     },
     initBid() {
-      this.bid = this.post.price + this.post.raise;
+      this.bid = this.post.itMinBid + this.post.itMinRaise;
     },
     getCards() {
       this.cards = this.$store.state.posts;
@@ -293,22 +293,22 @@ export default {
       );
     },
     increment() {
-      this.bid = parseInt($("#bidinput").val()) + this.post.raise;
+      this.bid = parseInt($("#bidinput").val()) + this.post.itMinRaise;
     },
     decrement() {
       if (
-        parseInt($("#bidinput").val()) - this.post.raise >=
-        this.post.price + this.post.raise
+        parseInt($("#bidinput").val()) - this.post.itMinRaise >=
+        this.post.itMinBid + this.post.itMinRaise
       ) {
-        this.bid = parseInt($("#bidinput").val()) - this.post.raise;
+        this.bid = parseInt($("#bidinput").val()) - this.post.itMinRaise;
       } else alert("cant do that");
     },
     async submit() {
       this.bid = parseInt($("#bidinput").val());
-      if (parseInt($("#bidinput").val()) >= this.post.price + this.post.raise) {
+      if (parseInt($("#bidinput").val()) >= this.post.itMinBid + this.post.itMinRaise) {
         alert("all good");
         var newPost = this.post;
-        newPost.price = this.bid;
+        newPost.itMinBid = this.bid;
         const url =
           "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
           // "https://localhost:5001/api/BidItems/" +
@@ -320,7 +320,7 @@ export default {
             }
           })
           .then(response => {
-            this.post.price = this.bid;
+            this.post.itMinBid = this.bid;
             this.initBid();
           })
           .catch(error => {
@@ -370,7 +370,7 @@ export default {
     height: 60%;
   }
   .heart {
-    top: -18%;
+    top: 0%;
     right: 0%;
   }
 }
@@ -398,7 +398,7 @@ export default {
     font-size: 14px;
   }
   .heart {
-    top: -13%;
+    top: 9%;
     right: 0%;
   }
 }
@@ -421,7 +421,7 @@ export default {
     }
   }
   .heart {
-    top: -13%;
+    top: 0%;
     right: 0%;
   }
 }

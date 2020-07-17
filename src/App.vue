@@ -34,7 +34,11 @@
           </a>
         </li>
         <li id="sign">
-          <a class="noHover">Sign In</a>
+          <a class="noHover">
+          
+                  <router-link to="/login">Sign In</router-link>
+          
+          </a>
         </li>
       </ul>
       <div class="search-form-wrapper">
@@ -57,7 +61,7 @@ import jquery from "jquery";
 export default {
   data() {
     return {
-      id: this.$store.state.posts[0].id,
+      id: "",
       url: "",
       term: "",
       searchUrl: "",
@@ -65,8 +69,9 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("loadPosts");
-    this.buildUrl();
+    // this.$store.dispatch("loadPosts");
+    // this.buildId();
+    // this.buildUrl();
     $(document).ready(function() {
       $("[data-toggle=search-form]").click(function() {
         $(".search-form-wrapper").toggleClass("open");
@@ -103,12 +108,22 @@ export default {
   },
   methods: {
     buildUrl() {
-      this.url = "/stack/" + this.id;
-      this.searchUrl = "/search/" + this.term;
+      if (this.id && this.term) {
+        this.url = "/stack/" + this.id;
+        this.searchUrl = "/search/" + this.term;
+      }
     },
     buildSearchUrl() {
-      this.searchUrl = "/search/" + this.term;
-    }
+      if (this.term) {
+        this.searchUrl = "/search/" + this.term;
+      }
+    },
+    buildId() {
+      if (this.$store.state.posts[0].id) {
+        this.id = this.$store.state.posts[0].id;
+      }
+    },
+    
   },
   computed: {}
 };
@@ -158,9 +173,7 @@ body {
     font-weight: bold;
     color: #bfdbf7;
 
-    &.router-link-exact-active {
-      color: #1f7a8c;
-    }
+    
   }
 }
 
@@ -208,12 +221,12 @@ body {
 }
 
 .btn-success {
-    background-color: #5cb85c !important;
-    color: #053c5e !important;
+  background-color: #5cb85c !important;
+  color: #053c5e !important;
 }
 
 .btn-danger {
-    background-color: #dc3545 !important;
-    color: #053c5e !important;
+  background-color: #dc3545 !important;
+  color: #053c5e !important;
 }
 </style>

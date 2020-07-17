@@ -20,25 +20,25 @@
         class="rounded-borders card card--one"
         v-bind:style="containerStyle"
       >
-        <router-link :to="{ name: 'post', params: {id: current.id}}">
-          <h3 ref="nameRow" id="name" class="card-title">{{current.name}}</h3>
+        <router-link :to="{ name: 'post', params: {id: current.itID}}">
+          <h3 ref="nameRow" id="name" class="card-title">{{current.itName}}</h3>
           <div class="frame">
             <img v-bind:src="getImage(current.image)" />
           </div>
           <div
             class="heart"
             v-bind:style="this.heartHeight"
-            v-bind:class="{amactive: favorited(current.id)}"
+            v-bind:class="{amactive: favorited(current.itID)}"
           ></div>
         </router-link>
         <div class="card-body">
-          <div class="sell-wrapper" v-if="(!current.sold) && (timeUntil(current.end) > 0)">
-            <h5>Current Bid: {{current.price}}</h5>
-            <h5>Value: {{current.value}}</h5>
+          <div class="sell-wrapper" v-if="(!current.sold) && (timeUntil(current.itEndDate) > 0)">
+            <h5>Current Bid: {{current.itMinBid}}</h5>
+            <h5>Value: {{current.itValue}}</h5>
 
             <router-link
-              :to="{ name: 'post', params: {id: current.id}}"
-              v-if="(!current.sold) && (timeUntil(current.end) > 0)"
+              :to="{ name: 'post', params: {id: current.itID}}"
+              v-if="(!current.sold) && (timeUntil(current.itEndDate) > 0)"
             >
               <button class="btn btn-primary">Bid Now!</button>
             </router-link>
@@ -46,9 +46,9 @@
           <div class="cardtext" v-if="(current.sold)">Sold out!</div>
         </div>
         <div class="card-footer">
-          <div class="cardtext" v-if="(timeUntil(current.end) <= 0)">Auction Over!</div>
+          <div class="cardtext" v-if="(timeUntil(current.itEndDate) <= 0)">Auction Over!</div>
 
-          <countdown v-if="(timeUntil(current.end) > 0)" :time="timeUntil(current.end)">
+          <countdown v-if="(timeUntil(current.itEndDate) > 0)" :time="timeUntil(current.itEndDate)">
             <div
               slot-scope="props"
               class="card-text"
@@ -65,30 +65,30 @@
       v-bind:style="containerStyle"
     >
       <div>
-        <h3 id="name" class="card-title">{{next.name}}</h3>
+        <h3 id="name" class="card-title">{{next.itName}}</h3>
         <div
           class="heart"
           v-bind:style="this.heartHeight"
-          v-bind:class="{amactive: favorited(next.id)}"
+          v-bind:class="{amactive: favorited(next.itID)}"
         ></div>
 
         <img v-bind:src="getImage(next.image)" />
       </div>
       <div class="card-body">
-        <div class="sell-wrapper" v-if="(!next.sold) && (timeUntil(next.end) > 0)">
-          <h5>Current Bid: {{next.price}}</h5>
-          <h5>Value: {{next.value}}</h5>
+        <div class="sell-wrapper" v-if="(!next.sold) && (timeUntil(next.itEndDate) > 0)">
+          <h5>Current Bid: {{next.itMinBid}}</h5>
+          <h5>Value: {{next.itValue}}</h5>
 
-          <div v-if="(!next.sold) && (timeUntil(next.end) > 0)">
+          <div v-if="(!next.sold) && (timeUntil(next.itEndDate) > 0)">
             <button class="btn btn-primary">Bid Now!</button>
           </div>
         </div>
         <div class="cardtext" v-if="(next.sold)">Sold out!</div>
       </div>
       <div class="card-footer">
-        <div class="cardtext" v-if="(timeUntil(next.end) <= 0)">Auction Over!</div>
+        <div class="cardtext" v-if="(timeUntil(next.itEndDate) <= 0)">Auction Over!</div>
 
-        <countdown v-if="(timeUntil(next.end) > 0)" :time="timeUntil(next.end)">
+        <countdown v-if="(timeUntil(next.itEndDate) > 0)" :time="timeUntil(next.itEndDate)">
           <div
             slot-scope="props"
             class="card-text"
@@ -103,31 +103,31 @@
       v-bind:style="containerStyle"
     >
       <div>
-        <h3 id="name" class="card-title">{{nextNext.name}}</h3>
+        <h3 id="name" class="card-title">{{nextNext.itName}}</h3>
         <div
           class="heart"
           v-bind:style="this.heartHeight"
-          v-bind:class="{amactive: favorited(nextNext.id)}"
+          v-bind:class="{amactive: favorited(nextNext.itID)}"
         ></div>
 
         <img v-bind:src="getImage(nextNext.image)" />
       </div>
       <div class="card-body">
-        <div class="sell-wrapper" v-if="(!nextNext.sold) && (timeUntil(nextNext.end) > 0)">
-          <h5>Current Bid: {{nextNext.price}}</h5>
-          <h5>Value: {{nextNext.value}}</h5>
+        <div class="sell-wrapper" v-if="(!nextNext.sold) && (timeUntil(nextNext.itEndDate) > 0)">
+          <h5>Current Bid: {{nextNext.itMinBid}}</h5>
+          <h5>Value: {{nextNext.itValue}}</h5>
 
-          <div v-if="(!next.sold) && (timeUntil(next.end) > 0)">
+          <div v-if="(!next.sold) && (timeUntil(next.itEndDate) > 0)">
             <button class="btn btn-primary">Bid Now!</button>
           </div>
         </div>
         <div class="cardtext" v-if="(nextNext.sold)">Sold out!</div>
-        <div class="cardtext" v-if="(timeUntil(nextNext.end) <= 0)">Auction Over!</div>
+        <div class="cardtext" v-if="(timeUntil(nextNext.itEndDate) <= 0)">Auction Over!</div>
       </div>
       <div class="card-footer">
-        <div class="cardtext" v-if="(timeUntil(nextNext.end) <= 0)">Auction Over!</div>
+        <div class="cardtext" v-if="(timeUntil(nextNext.itEndDate) <= 0)">Auction Over!</div>
 
-        <countdown v-if="(timeUntil(nextNext.end) > 0)" :time="timeUntil(nextNext.end)">
+        <countdown v-if="(timeUntil(nextNext.itEndDate) > 0)" :time="timeUntil(nextNext.itEndDate)">
           <div
             slot-scope="props"
             class="card-text"
@@ -198,9 +198,7 @@ export default {
 
   data() {
     return {
-      index: this.$store.state.posts.findIndex(
-        x => x.id === this.$route.params.id
-      ),
+      index: 0,
       isVisible: true,
       interactEventBus: {
         draggedRight: EVENTS.MATCH,
@@ -218,7 +216,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("loadPosts");
+    this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
     this.getCards();
     this.initBid();
     this.getHeight();
@@ -285,11 +283,11 @@ export default {
     },
     initBid() {
       if (this.current) {
-        this.bid = this.current.price + this.current.raise;
+        this.bid = this.current.itMinBid + this.current.itMinRaise;
       }
       if (this.cards[this.index + 1]) {
         this.nextBid =
-          this.cards[this.index + 1].price + this.cards[this.index + 1].raise;
+          this.cards[this.index + 1].itMinBid + this.cards[this.index + 1].itMinRaise;
       }
     },
     getHeight() {
@@ -313,17 +311,17 @@ export default {
     },
     emitAndNext(event) {
       if (event == "match") {
-        if (!this.$store.getters.findFavorite(this.current.id)) {
+        if (!this.$store.getters.findFavorite(this.current.itID)) {
           this.$store.dispatch("setFavorite", {
-            n: this.current.id
+            n: this.current.itID
           });
         }
       }
       if (event == "reject") {
         this.$store.dispatch("removeFavorite", {
           n: this.cards[
-            this.cards.findIndex(element => element.id === this.current.id)
-          ].id
+            this.cards.findIndex(element => element.itID === this.current.itID)
+          ].itID
         });
       }
 
@@ -338,9 +336,7 @@ export default {
     },
     getCards() {
       this.cards = this.$store.state.posts;
-      this.index = this.$store.state.posts.findIndex(
-        x => x.id === this.$route.params.id
-      );
+      this.index = 0
     }
   }
 };
