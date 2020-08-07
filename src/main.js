@@ -16,6 +16,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 
+import VueScrollTo from 'vue-scrollto'
+Vue.use(VueScrollTo)
+
 import GAuth from 'vue-google-oauth2'
 const gauthOption = {
   clientId: '9321549724-chat4k60iqcbafk0p64i7h3r82b84uat.apps.googleusercontent.com',

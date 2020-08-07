@@ -1,233 +1,419 @@
 <template>
   <div id="list">
-    <div class="b-container" v-show="!(isDesktop)">
-      <div class="selection" id="gap">
-        <select v-model="selected" id="dropdown">
-          <option v-for="option in deck" v-bind:key="option.category">{{ option.category }}</option>
-        </select>
-        <br />
-        <span v-if="selected">Selected: {{ selected }}</span>
-      </div>
-      <div class="row" v-for="data in deck" :key="data.itID">
-        <div class="card col-12">
-          <div class="card-header" ref="header">
-            <div class="card-title" style="position: relative">
-              <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                <h3 ref="items">{{data.name}}</h3>
-              </router-link>
-              <div
-                class="heart"
-                v-on:click="toggle(data.itID)"
-                v-bind:key="data.itID"
-                v-bind:style="heartHeight"
-                v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-              ></div>
+    <div class="b-container" v-if="!(isDesktop)">
+      <div id="filter">
+        <b-row>
+          <b-col>
+            <div class="selection" id="gap">
+              <select v-model="selected" id="dropdown" @change="scrollPage()">
+                <option v-for="option in categories" v-bind:key="option.category">{{ option.name }}</option>
+              </select>
             </div>
-          </div>
-          <div class="card-body row" v-on:click="select($event)" :id="data.itID">
-            <div class="col-5 d-flex align-items-center">
-              <img class="card-image" v-bind:src="getImage(data.image)" />
-            </div>
-            <div class="col-7">
-              <p v-if="data.sold" class="card-text">Sold Out!</p>
-              <div v-if="(!data.sold) && (timeUntil(data.itEndDate) > 0)">
-                <p v-if="(timeUntil(data.itEndDate) > 0 )" class="card-text">Live!</p>
-                <p class="card-text">Current Bid : {{data.price}}</p>
-                <p class="card-text">Value : {{data.itValue}}</p>
-                <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                  <button class="btn btn-primary">Bid Now!</button>
-                </router-link>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer" v-if="(timeUntil(data.end) > 0)">
-            <countdown :time="timeUntil(data.end)" v-if="(timeUntil(data.end) > 0)">
-              <div
-                slot-scope="props"
-                class="date-text"
-              >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-            </countdown>
-            <div class="date-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="b-container" v-show="(isDesktop)">
-      <h1>{{event.Description}}</h1>
-
-      <div class="row">
-        <div class="col-12">
-          <div class="selection" id="gap">
-            <select v-model="selected" id="dropdown">
-              <option
-                v-for="option in categories"
-                v-bind:key="option.category"
-              >{{ option.category }}</option>
-            </select>
-            <br />
-            <span v-if="selected">Selected: {{ selected }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="row" v-for="category in categories" :key="category.category">
-        <div class="col-9">
-          <h1>{{category.category}}</h1>
-          <br />
-          <div class="row" v-for="(chunk,index) in chunks(category.ids)" :key="index">
-            <div class="single offset-md-1" v-for="data in chunk" :key="data.itID">
-              <div class="card" v-bind:style="containerStyle">
-                <div class="card-header" ref="header">
-                  <div class="card-title" ref="desktopItems" style="position: relative">
-                    <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                      <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
-                    </router-link>
-                    <div
-                      class="heart"
-                      v-on:click="toggle(data.itID)"
-                      v-bind:key=" 'heart: ' + data.itID"
-                      v-bind:style="heartHeightDesktop"
-                      v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-                    ></div>
-                  </div>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col>
+            <a class="search-form-trigger btn btn-success" data-toggle="search-form" id="toggler">
+              <i id="opener" class="fa fa-search" aria-hidden="true"></i>
+              <i id="closer" class="fa fa-window-close" style="display: none"></i>
+            </a>
+            <div class="search-form-wrapper">
+              <b-form class="search-form">
+                <div class="input-group">
+                  <b-input type="text" name="search" id="searchInput" v-model="term" />
+                  <button class="input-group-addon btn-primary" id="basic-addon2">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                  </button>
                 </div>
-                <div class="card-body" v-on:click="toggler(data.itID)">
-                  <div class="row" v-on:click="select($event)" :id="data.itID">
-                    <div class="col-12">
-                      <img class="card-image" v-bind:src="getImage(sample)" />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-12">
-                      <p v-if="data.sold" class="card-text">Sold Out!</p>
-                      <div>
-                        <p v-if="(timeUntil(data.end) > 0 )" class="card-text">Live!</p>
-                        <p class="card-text">Current Bid : {{data.itMinBid}}</p>
-                        <p class="card-text">Value : {{data.itValue}}</p>
+              </b-form>
+            </div>
+          </b-col>
+        </b-row>
+      </div>
+      <b-row id="EventHeader">
+        <b-col>
+          <h1>Welcome to the {{event.Name}}</h1>
+          <h2>{{event.Description}}</h2>
+
+          <countdown :time="timeUntil(event.EndDate)">
+            <div slot-scope="props">
+              <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
+            </div>
+          </countdown>
+        </b-col>
+      </b-row>
+
+      <div v-if="!searchBar">
+        <b-row class="allData" v-for="category in categories" :key="category.category">
+          <b-col>
+            <b-row>
+              <b-col>
+                <h2 class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col>
+                <b-row
+                  class="cardData"
+                  v-for="(chunk,index) in chunks(category.ids)"
+                  :data-count="(chunk.length)"
+                  :key="index"
+                >
+                  <div class="single" v-for="data in chunk" :key="data.itID">
+                    <div class="card" v-bind:style="containerStyle">
+                      <b-row>
+                        <b-col>
+                          <p class="idMobile">1101</p>
+                          <p class="closedMobile" v-if="(data.itStatus === 4)">CLOSED</p>
+                        </b-col>
+                      </b-row>
+                      <div class="card-body" v-on:click="toggler(data.itID)">
+                        <b-row v-on:click="select($event)" :id="data.itID">
+                          <b-col>
+                            <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
+                          </b-col>
+                        </b-row>
+                        <b-row>
+                          <b-col>
+                            <div class="card-title" style="position: relative" href="items">
+                              <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                                <h3 ref="items" v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                              </router-link>
+                            </div>
+                            <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                          </b-col>
+                        </b-row>
+                        <b-row>
+                          <b-col>
+                            <div
+                              class="heart"
+                              v-on:click="toggle(data.itID)"
+                              v-bind:key=" 'heart: ' + data.itID"
+                              v-bind:style="heartHeight"
+                              v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                            ></div>
+                          </b-col>
+                        </b-row>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="card-footer" v-if="(timeUntil(data.end) > 0)">
-                  <countdown :time="timeUntil(data.end)" v-if="(timeUntil(data.end) > 0)">
-                    <div
-                      slot-scope="props"
-                      class="date-text"
-                    >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                  </countdown>
-                  <div class="date-text" v-if="(timeUntil(data.end) <= 0)">Auction Over!</div>
-                </div>
-              </div>
+                </b-row>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+      </div>
+
+      <div v-if="searchBar">
+        <b-row>
+          <b-col>
+            <h2 id="searchResults">Search Results</h2>
+          </b-col>
+        </b-row>
+        <b-row class="allData">
+          <b-col>
+            <b-row>
+              <b-col>
+                <b-row
+                  class="cardData"
+                  v-for="(chunk,index) in chunks(activeCards)"
+                  :data-count="(chunk.length)"
+                  :key="index"
+                >
+                  <div class="single" v-for="data in chunk" :key="data.itID">
+                    <div class="card" v-bind:style="containerStyle">
+                      <p class="idMobile">1101</p>
+                      <p class="closedMobile" v-if="(data.itStatus === 4)">CLOSED</p>
+
+                      <div class="card-body" v-on:click="toggler(data.itID)">
+                        <b-row v-on:click="select($event)" :id="data.itID">
+                          <b-col>
+                            <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
+                          </b-col>
+                        </b-row>
+                        <b-row>
+                          <b-col>
+                            <div class="card-title" style="position: relative">
+                              <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                                <h3
+                                  ref="desktopItems"
+                                  v-on:click="toggler(data.itID)"
+                                >{{data.itName}}</h3>
+                              </router-link>
+                            </div>
+                            <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                          </b-col>
+                        </b-row>
+                        <b-row>
+                          <b-col>
+                            <div
+                              class="heart"
+                              v-on:click="toggle(data.itID)"
+                              v-bind:key=" 'heart: ' + data.itID"
+                              v-bind:style="heartHeight"
+                              v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                            ></div>
+                          </b-col>
+                        </b-row>
+                      </div>
+                    </div>
+                  </div>
+                </b-row>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+      </div>
+      <b-row id="element" ref="targetCardMobile">
+        <div class="card" style="visibility:hidden">
+          <div class="card-header" ref="header">
+            <div class="card-title" style="position: relative">
+              <h3>HiddenHidden</h3>
+              <h3>HiddenHidden</h3>
             </div>
           </div>
+          <div class="card-body row d-flex align-items-center">
+            <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
+          </div>
         </div>
-      </div>
+      </b-row>
     </div>
+    <div class="b-container" v-if="(isDesktop)">
+      <b-row id="filter">
+        <b-col>
+          <div class="selection" id="gap">
+            <select v-model="selected" id="dropdown" @change="scrollPage()">
+              <option v-for="option in categories" v-bind:key="option.category">{{ option.name }}</option>
+            </select>
+          </div>
+        </b-col>
 
-    <div class="col-3">
-      <b-sidebar
-        :id="'sidebar-' + data.itID"
-        right
-        shadow
-        v-for="data in this.deck"
-        :key="data.itID"
-      >
-        <div class="px-3 py-2">
-          <div class="container">
-            <div class="row" id="gap">
-              <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
-              <div
-                class="heart"
-                v-on:click="toggle(data.itID)"
-                v-bind:key=" 'heart: ' + data.itID"
-                v-bind:style="heartHeightDesktopSidebar"
-                v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-              ></div>
+        <b-col>
+          <a class="search-form-trigger btn btn-success" data-toggle="search-form" id="toggler">
+            <i id="opener" class="fa fa-search" aria-hidden="true"></i>
+            <i id="closer" class="fa fa-window-close" style="display: none"></i>
+          </a>
+          <div class="search-form-wrapper">
+            <div class="input-group search-form" method="none">
+              <b-input type="text" name="search" id="searchInput" v-model="term" />
+              <button class="input-group-addon btn-primary" id="basic-addon2">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
             </div>
+          </div>
+        </b-col>
+      </b-row>
+      <b-row id="EventHeader">
+        <b-col>
+          <h1>Welcome to the {{event.Name}}</h1>
+          <h2>{{event.Description}}</h2>
 
-            <div class="row image-row">
-              <div class="col d-flex justify-content-center">
-                <img class="card-image-top" v-bind:src="getImageSidebar(sample)" />
+          <countdown :time="timeUntil(event.EndDate)">
+            <div slot-scope="props">
+              <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
+            </div>
+          </countdown>
+        </b-col>
+      </b-row>
+
+      <div v-if="!searchBar">
+        <b-row class="allData" v-for="category in categories" :key="category.category">
+          <b-col>
+            <b-row>
+              <div class="col-12">
+                <h2 class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
               </div>
-            </div>
+            </b-row>
 
-            <div class="row">
-              <div class="col d-flex justify-content-center">
-                <div>
-                  <p class="bar-text" id="description">{{data.itDescription}}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="row" id="date-text">
-              <div class="col d-flex justify-content-center">
-                <div class="bar-text" v-if="(data.sold)">Sold out!</div>
-                <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
-                <countdown
-                  v-if="(!data.sold) && (timeUntil(data.itEndDate) > 0)"
-                  :time="timeUntil(data.end)"
+            <b-row>
+              <b-col>
+                <b-row
+                  class="cardData"
+                  v-for="(chunk,index) in chunks(category.ids)"
+                  :data-count="(chunk.length)"
+                  :key="index"
                 >
-                  <div
-                    slot-scope="props"
-                    class="bar-text"
-                  >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                </countdown>
-              </div>
-            </div>
-            <div class="row" id="bid-row" v-if="(!data.sold) && timeUntil(data.end)>0">
-              <div class="col d-flex justify-content-center">
-                <div class="bidrow card-text">
-                  <div class="row d-flex justify-content-center" id="postinfo">
-                    <div class="col">
-                      <p class="bar-text">Value: {{data.itValue}}</p>
-                      <p class="bar-text">Current Bid: {{data.itMinBid}}</p>
-                      <p class="bar-text">Minmum raise: {{data.itMinRaise}}</p>
+                  <div class="single" ref="desktopCards" v-for="data in chunk" :key="data.itID">
+                    <div class="card" v-bind:style="containerStyle">
+                      <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
+                      <p class="idDesktop">1102</p>
+                      <div
+                        class="heart"
+                        v-on:click="toggle(data.itID)"
+                        v-bind:key=" 'heart: ' + data.itID"
+                        v-bind:style="heartHeightDesktop"
+                        v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                      ></div>
+
+                      <div class="card-body" v-on:click="toggler(data.itID)">
+                        <b-row v-on:click="select($event)" :id="data.itID">
+                          <b-col>
+                            <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
+                            <div class="card-title" ref="desktopItems" style="position: relative">
+                              <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                                <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                              </router-link>
+                            </div>
+                          </b-col>
+                        </b-row>
+                        <b-row>
+                          <b-col>
+                            <div v-if="!(data.itStatus === 4)">
+                              <p class="date-text">Current Bid : {{data.itMinBid}}</p>
+                            </div>
+                            <div v-if="(data.itStatus === 4)">
+                              <p class="date-text">Sold for : {{data.itMinBid}}</p>
+                            </div>
+                          </b-col>
+                        </b-row>
+                      </div>
                     </div>
+                  </div>
+                </b-row>
+              </b-col>
+            </b-row>
+          </b-col>
+        </b-row>
+      </div>
+
+      <div v-if="searchBar">
+        <b-row>
+          <b-col>
+            <h2 id="searchResults">Search Results</h2>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col>
+            <b-row
+              class="cardData"
+              v-for="(chunk,index) in chunks(activeCards)"
+              :data-count="(chunk.length)"
+              :key="index"
+            >
+              <div class="single" ref="desktopCards" v-for="data in chunk" :key="data.itID">
+                <div class="card" v-bind:style="containerStyle">
+                  <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
+                  <p class="idDesktop">1102</p>
+                  <div
+                    class="heart"
+                    v-on:click="toggle(data.itID)"
+                    v-bind:key=" 'heart: ' + data.itID"
+                    v-bind:style="heartHeightDesktop"
+                    v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                  ></div>
+
+                  <div class="card-body" v-on:click="toggler(data.itID)">
+                    <b-row v-on:click="select($event)" :id="data.itID">
+                      <b-col>
+                        <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
+                        <div class="card-title" ref="desktopItems" style="position: relative">
+                          <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                            <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                          </router-link>
+                        </div>
+                      </b-col>
+                    </b-row>
+                    <b-row>
+                      <b-col>
+                        <div v-if="!(data.itStatus === 4)">
+                          <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                        </div>
+                      </b-col>
+                    </b-row>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="row justify-content-center" v-if="(!data.sold) && timeUntil(data.end)>0">
-              <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                <button class="btn btn-primary bar-button">Bid Now!</button>
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </b-sidebar>
-    </div>
-    <div class="row">
-      <!-- hidden -->
-      <div class="card col-2" ref="targetCard" style="visibility: hidden">
-        <div class="card-header" ref="header">
-          <div class="card-title" style="position: relative">
-            <h3>Hidden</h3>
-            <div class="heart" v-bind:style="heartHeight"></div>
-          </div>
-        </div>
-        <div class="card-body row">
-          <div class="col-5 d-flex align-items-center">
-            <img class="card-image" v-bind:src="getImage(sample)" />
-          </div>
-          <div class="col-7">
-            <div>
-              <p class="card-text">Live!</p>
-              <p class="card-text">Current Bid : 100</p>
-              <p class="card-text">Value :100</p>
-              <button class="btn btn-primary">Bid Now!</button>
+            </b-row>
+          </b-col>
+        </b-row>
+      </div>
+
+      <b-row id="element">
+        <b-col class="card" ref="targetCard" style="visibility:hidden">
+          <div class="card-header" ref="header">
+            <div class="card-title" style="position: relative">
+              <h3>Hidden</h3>
             </div>
           </div>
-        </div>
-        <div class="card-footer">
-          <countdown :time="100">
-            <div
-              slot-scope="props"
-              class="date-text"
-            >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-          </countdown>
+          <div class="card-body row">
+            <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
+            <p class="card-text">Value :100</p>
+          </div>
+        </b-col>
+      </b-row>
+      <div class="row">
+        <div class="col-9"></div>
+        <div class="col-3">
+          <b-sidebar
+            :id="'sidebar-' + data.itID"
+            right
+            shadow
+            v-for="data in this.deck"
+            :key="data.itID"
+          >
+            <b-container>
+              <b-row id="gap">
+                <b-col class="d-flex justify-content-center">
+                  <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
+                  <p class="closedSidebar" v-if="(data.itStatus === 4)">CLOSED</p>
+                  <p class="idDesktopSidebar">1102</p>
+
+                  <div
+                    class="heart"
+                    v-on:click="toggle(data.itID)"
+                    v-bind:key=" 'heart: ' + data.itID"
+                    v-bind:style="heartHeightDesktopSidebar"
+                    v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                  ></div>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col class="d-flex justify-content-center">
+                  <img class="imgDesktop" v-bind:src="getImageSidebar(sample)" />
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col class="d-flex justify-content-center">
+                  <div>
+                    <p class="bar-text">Donated By: {{data.itDonor}}</p>
+
+                    <p class="bar-text" id="description">{{data.itDescription}}</p>
+                    <p class="bar-text">Value: {{data.itValue}}</p>
+                    <p
+                      v-if="!(data.itStatus === 4)"
+                      class="date-text"
+                    >Current Bid : {{data.itMinBid}}</p>
+
+                    <p v-if="(data.itStatus === 4)" class="date-text">Sold for : {{data.itMinBid}}</p>
+                    <p class="bar-text">Minmum raise: {{data.itMinRaise}}</p>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row class="justify-content-center">
+                <router-link :to="{ name: 'post', params: {id: data.itID}}">
+                  <button class="btn btn-primary bar-button">Bid Now!</button>
+                </router-link>
+              </b-row>
+              <b-row id="date-text">
+                <b-col class="d-flex justify-content-center">
+                  <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
+
+                  <countdown :time="timeUntil(data.itEndDate)">
+                    <div
+                      slot-scope="props"
+                      class="bar-text"
+                    >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+                  </countdown>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-sidebar>
         </div>
       </div>
-      <!-- hidden -->
     </div>
   </div>
 </template>
@@ -254,17 +440,23 @@ export default {
       //   { text: "Unsold Items", value: "3" },
       //   { text: "Items with no bids", value: "4" }
       // ],
+      anchor: {},
       times: [],
       heartHeight: {},
       heartHeightDesktop: {},
       heartHeightDesktopSidebar: {},
+      cardWidth: 274,
       deck: [],
       event: {},
       containerStyle: {},
-      isDesktop: window.innerWidth > 800,
       sample: "hello.jpg",
       sidebarPost: {},
-      sidebar: {}
+      sidebar: {},
+      searchBarBool: false,
+      windowWidth: window.innerWidth,
+      id: "",
+      url: "",
+      term: ""
     };
   },
   mounted() {
@@ -272,13 +464,79 @@ export default {
     this.deck = this.$store.state.posts;
     this.$store.dispatch("getEvent", this.$route.params.TinyURL);
     this.event = this.$store.state.event[0];
-    this.getRowHeight();
-    this.getRowHeightDesktop();
-    this.getHeight();
     this.sidebar = { status: false, current: "" };
     this.clickToggler();
+    window.addEventListener("resize", () => {
+      this.windowWidth = window.innerWidth;
+      this.getHeight();
+      this.getRowHeight();
+    });
+    this.windowWidth = window.innerWidth;
+    this.getHeight();
+    this.getRowHeight();
+    $("#toggler").on("click", evt => {
+      this.searchBarBool = !this.searchBarBool;
+      $(".search-form-wrapper").toggleClass("open");
+      $(".search-form-wrapper .search").focus();
+      $("html").toggleClass("search-form-open");
+      if (this.searchBarBool) {
+        $("#opener").css("display", "none");
+        $("#closer").removeAttr("style");
+        $("#toggler").removeClass("btn-success");
+        $("#toggler").addClass("btn-danger");
+      } else if (!this.searchBarBool) {
+        $("#closer").css("display", "none");
+        $("#opener").removeAttr("style");
+
+        $("#toggler").addClass("btn-success");
+        $("#toggler").removeClass("btn-danger");
+        $("#searchInput").val("");
+        this.term = "";
+      }
+    });
+
+    $("#searchInput").addEventListener("keyup", function(event) {
+      // Number 13 is the "Enter" key on the keyboard
+      if (event.keyCode === 13) {
+        // Cancel the default action, if needed
+        console.log("nevermind");
+      }
+    });
   },
   computed: {
+    isDesktop() {
+      return this.windowWidth > 768;
+    },
+    searchBar() {
+      if (this.term.length > 0) {
+        return true;
+      } else return false;
+      this.getRowHeight();
+    },
+    activeCards() {
+      var found = [];
+      var reg = new RegExp(this.term, "gi");
+      for (let i = 0; i < this.deck.length; i++) {
+        var description = false;
+
+        if (this.deck[i].itDescription) {
+          description = true;
+        }
+        if (description) {
+          if (
+            this.deck[i].itName.match(reg) ||
+            this.deck[i].itDescription.match(reg)
+          ) {
+            found.push(this.deck[i]);
+          }
+        } else if (!description) {
+          if (this.deck[i].itName.match(reg)) {
+            found.push(this.deck[i]);
+          }
+        }
+      }
+      return found;
+    },
     activeKeys() {
       var array = [];
       for (let i = 0; i < this.$store.state.posts.length; i++) {
@@ -292,25 +550,6 @@ export default {
       return array;
     },
 
-    // filteredPosts() {
-    //   if (this.selected === "Live Items") {
-    //     return this.$store.state.posts.filter(
-    //       post => this.timeUntil(post.end) > 0 === true
-    //     );
-    //   }
-    //   if (this.selected === "Unsold Items") {
-    //     return this.$store.state.posts.filter(
-    //       post => post.sold === false && this.timeUntil(post.end) > 0 === true
-    //     );
-    //   }
-    //   if (this.selected === "Items with no bids") {
-    //     return this.$store.state.posts.filter(
-    //       post =>
-    //         post.price === post.startingPrice &&
-    //         this.timeUntil(post.end) > 0 === true
-    //     );
-    //   } else return this.$store.state.posts;
-    // },
     categories() {
       var categories = [];
       for (var i = 0; i < this.deck.length; i++) {
@@ -324,6 +563,7 @@ export default {
         }
         if (!seen) {
           categories.push({
+            name: this.deck[i].icTitle,
             category: this.deck[i].itCategory,
             ids: [this.deck[i]]
           });
@@ -332,12 +572,37 @@ export default {
       return categories;
     },
 
-    ...mapState(["posts", "event"])
+    ...mapState(["posts"])
   },
   methods: {
-    chunks: function(array) {
-      return _.chunk(Object.values(array), 3);
+    scrollPage: function() {
+      this.scrollTo("#" + this.selected);
     },
+
+    myEventHandler(e) {
+      this.windowWidth = e.srcElement.window.innerWidth;
+      this.isDesktop();
+      this.getHeight();
+      this.getRowHeight();
+    },
+    chunks: function(array) {
+      if (this.isDesktop) {
+        return _.chunk(
+          Object.values(array),
+          Math.floor(this.windowWidth / this.cardWidth)
+        );
+      }
+      if (!this.isDesktop) {
+        return _.chunk(Object.values(array), 2);
+      }
+    },
+    scrollTo(element) {
+      this.$scrollTo("#anchor-" + element.substring(1), 500, {
+        onStart: this.myMethod,
+        offset: -135
+      });
+    },
+
     clickToggler() {
       this.$nextTick(() => {
         $(".close").click(function() {
@@ -352,14 +617,13 @@ export default {
     },
     toggler: function(id) {
       // sidebar is on
-      // id matches
+      // on and id matches
       if (this.sidebar.status === true && this.sidebar.current === id) {
         this.sidebar.status = false;
         this.sidebar.current = "";
         $("#sidebar-" + id).css("display", "none");
       }
-
-      //id does not match
+      //on but id does not match
       else if (this.sidebar.status === true && this.sidebar.current !== id) {
         $("#sidebar-" + this.sidebar.current).css("display", "none");
         this.sidebar.status = true;
@@ -374,44 +638,73 @@ export default {
       }
     },
     getHeight() {
-      Vue.nextTick(() => {
-        let height = this.$refs.targetCard.clientHeight;
-        height += "px";
-        Vue.set(this.containerStyle, "height", height);
-        let width = this.$refs.targetCard.clientWidth;
-        width += "px";
-        Vue.set(this.containerStyle, "width", width);
+      this.$nextTick(() => {
+        if (this.isDesktop) {
+          let height = this.$refs.targetCard.clientHeight;
+          height += "px";
+          Vue.set(this.containerStyle, "height", height);
+          let width = this.$refs.targetCard.clientWidth;
+          width += "px";
+          Vue.set(this.containerStyle, "width", width);
+        }
+        if (!this.isDesktop) {
+          let height = this.$refs.targetCardMobile.clientHeight;
+          height += "px";
+          Vue.set(this.containerStyle, "height", height);
+          let width = this.$refs.targetCardMobile.clientWidth;
+          width += "px";
+          Vue.set(this.containerStyle, "width", width);
+        }
       });
     },
     getRowHeight() {
-      this.$nextTick(() => {
-        //sizing
-        let target = this.$refs.items[0].clientHeight;
-        let factor = target / 100;
-        let string = "scale(" + 2.5 * factor + ")";
-        Vue.set(this.heartHeight, "transform", string);
-      });
-    },
-    getRowHeightDesktop() {
-      this.$nextTick(() => {
-        //sizing
-        let target = this.$refs.desktopItems[0].clientHeight;
-        let factor = target / 100;
-        let string = "scale(" + factor + ")";
-        Vue.set(this.heartHeightDesktop, "transform", string);
+      if (!this.isDesktop) {
+        this.$nextTick(() => {
+          //sizing
+          let target = this.$refs.items[0].clientHeight;
+          let factor = target / 100;
+          let string = "scale(" + 2 * factor + ")";
+          Vue.set(this.heartHeight, "transform", string);
+          Vue.set(this.heartHeight, "bottom", "50px");
+          Vue.set(this.heartHeight, "left", "-20px");
+        });
+      } else if (this.isDesktop) {
+        this.$nextTick(() => {
+          //sizing
 
-        let target2 = this.$refs.sidebarName[0].clientHeight;
-        let factor2 = target / 100;
-        let string2 = "scale(" + 2.5 * factor + ")";
-        Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-        Vue.set(this.heartHeightDesktopSidebar, "top", "-5px");
-        Vue.set(this.heartHeightDesktopSidebar, "position", "absolute");
-      });
+          let target = this.$refs.desktopItems[0].clientHeight;
+          let factor = target / 100;
+          let string = "scale(" + 3 * factor + ")";
+          Vue.set(this.heartHeightDesktop, "bottom", "10%");
+          Vue.set(this.heartHeightDesktop, "left", "-30px");
+
+          Vue.set(this.heartHeightDesktop, "transform", string);
+
+          let target2 = this.$refs.sidebarName[0].clientHeight;
+          let factor2 = target / 100;
+          let string2 = "scale(" + 2.5 * factor + ")";
+          Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
+          Vue.set(this.heartHeightDesktopSidebar, "top", "1800%");
+          Vue.set(this.heartHeightDesktopSidebar, "right", "-10px");
+        });
+      }
     },
     getImage: function(image) {
-      var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-      var tag = cl.url(image, { height: 100, width: 200, crop: "fill" });
-      return tag;
+      if (this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var tag = cl.url(image, { height: 198, width: 198, crop: "fill" });
+        return tag;
+      } else if (!this.isDesktop) {
+        var cl = new cloudinary.Cloudinary({
+          cloud_name: "kemp",
+          secure: true
+        });
+        var tag = cl.url(image, { height: 100, width: 100, crop: "fill" });
+        return tag;
+      }
     },
     getImageSidebar: function(image) {
       var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
@@ -434,10 +727,12 @@ export default {
       }
     },
     timeUntil: function(end) {
-      const now = new Date();
-      const then = new Date(end);
-      const difference = then - now + 5 * 60 * 60 * 1000;
-      return difference;
+      if (end) {
+        const now = new Date();
+        const then = new Date(end);
+        const difference = then - now + 5 * 60 * 60 * 1000;
+        return difference;
+      }
     }
   }
 };
@@ -448,10 +743,7 @@ export default {
   #gap {
     background-color: none;
   }
-  .b-container {
-    position: absolute;
-    top: 100px;
-  }
+
   .card-text {
     font-size: 14px;
   }
@@ -461,10 +753,6 @@ export default {
   }
   h3 {
     font-size: 18px;
-  }
-  .heart {
-    left: 75%;
-    top: 25%;
   }
 }
 
@@ -478,29 +766,19 @@ export default {
   .date-text {
     font-size: 14px;
   }
-  .b-container {
-    position: absolute;
-    top: 100px;
-  }
+
   .card-title {
     font-size: 18px;
   }
   h3 {
     font-size: 20px;
   }
-  .heart {
-    left: 75%;
-    top: 57.5%;
-  }
 }
 @media (min-height: 700px) {
   #gap {
     background-color: none;
   }
-  .b-container {
-    position: absolute;
-    top: 100px;
-  }
+
   .card-text {
     font-size: 14px;
   }
@@ -515,10 +793,6 @@ export default {
   }
   h3 {
     font-size: 18px;
-  }
-  .heart {
-    left: 75%;
-    top: 60%;
   }
 }
 @media (min-height: 900px) {
@@ -537,23 +811,12 @@ export default {
   .date-text {
     font-size: 20px;
   }
-  // .card {
-  //   width: calc(var(--vh, 1vh) * 40);
-  // }
-  .b-container {
-    position: absolute;
-    top: 160px;
-  }
 
   .selection {
     font-size: 24px;
   }
   h3 {
     font-size: 30px;
-  }
-  .heart {
-    left: 85%;
-    top: 130%;
   }
 }
 
@@ -571,12 +834,81 @@ export default {
   .btn {
     font-size: 16px;
   }
-  .heart {
-    top: -150%;
-    left: 70%;
-  }
 }
 
+#element {
+  position: absolute;
+  bottom: 200px;
+}
+#list {
+  background-color: blue;
+}
+h1 {
+  margin-bottom: 0%;
+}
+#searchResults {
+  color: white;
+}
+
+.allData {
+  background-color: blue;
+}
+#toggler {
+  margin-bottom: 10px;
+}
+.catAnchor {
+  background-color: orange;
+  text-align: left;
+  padding: 5px 10px 5px;
+  color: white;
+}
+
+#EventHeader {
+  h1 {
+    background-color: orange;
+    text-align: left;
+    padding-left: 10%;
+    padding-top: 150px;
+  }
+  h2 {
+    margin-bottom: 0%;
+  }
+  background-color: blue;
+  color: white;
+  font-size: 24px;
+}
+// DROPDOWN/ SEARCH BAR
+.selection {
+  padding: 5px 0px;
+}
+
+#dropdown {
+  margin: 10px 0px;
+}
+#filter {
+  background-color: white;
+  width: 100%;
+  margin: 0 auto;
+  position: fixed;
+  z-index: 100;
+  top: 50px;
+  border-bottom: black solid 2px;
+}
+#searchInput {
+  width: 40%;
+}
+#basic-addon2 {
+  width: 20%;
+}
+
+.row {
+  display: block !important;
+}
+.single {
+  display: inline-block;
+}
+
+//CARDS
 .card-header {
   padding: 1%;
   width: 100%;
@@ -585,7 +917,7 @@ export default {
 .card-body {
   width: 100%;
   margin: 0;
-  padding: 2.5%;
+  padding: 0px;
 }
 .card-footer {
   padding: 0px;
@@ -600,17 +932,31 @@ export default {
 }
 .card {
   margin-bottom: 10%;
-  padding: 0;
   border: black 0.5px solid;
-  background-color: #bfdbf7;
+  border-radius: 4px;
+  background-color: white;
 }
-h3,
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 0em;
+  color: black;
+}
+
 p {
   color: black;
-  margin-bottom: 0.25em;
+  font-size: 12px;
+  margin-bottom: 0em;
 }
-img {
-  width: 100%;
+.imgDesktop {
+  height: 198px;
+  margin: 3px 30px 5px;
+}
+
+.imgMobile {
+  width: 98px;
+  height: 98px;
+  margin: 3px 30px 5px;
 }
 
 button {
@@ -625,18 +971,90 @@ button {
   margin: 5px;
 }
 
-.selection {
-  margin-bottom: 10%;
+.closed {
+  background-color: black;
+  width: auto;
+  right: 0%;
+  position: absolute;
+  font-size: 14px;
 }
 
-#dropdown {
-  margin-bottom: 5%;
+.closedMobile {
+  background-color: black;
+  width: auto;
+  right: 8%;
+  font-size: 8px;
+}
+.idMobile {
+  background-color: orange;
+  width: auto;
+  float: left;
+  font-size: 8px;
+}
+.idDesktop {
+  background-color: orange;
+  width: 20%;
+  float: left;
+  font-size: 14px;
+}
+
+.closed,
+.closedMobile,
+.idDesktop,
+.idMobile {
+  position: absolute;
+  z-index: 5;
+  padding: 3px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  z-index: 5;
+  color: white;
+  font-weight: bold;
+}
+//SIDEBAR
+
+.idDesktopSidebar,
+.closedSidebar {
+  top: 0%;
+  position: absolute;
+  font-size: 14px;
+  z-index: 5;
+  padding: 3px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  z-index: 5;
+  color: white;
+  font-weight: bold;
+}
+
+.idDesktopSidebar {
+  background-color: orange;
+  margin-right: 250px;
+}
+.closedSidebar {
+  background-color: black;
+  margin-left: 250px;
+}
+
+.bar-button {
+  width: 50%;
+}
+.bar-text {
+  font-size: 14px;
+  color: black;
+  align-content: left;
+}
+
+#description {
+  font-size: 14px;
+  margin: 10px;
+  margin-bottom: 10%;
 }
 
 // TWITTER HEART
 .heart {
-  position: absolute;
   z-index: 2;
+  position: absolute;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")
@@ -651,40 +1069,23 @@ button {
     background-position: -2800px 0;
   }
 }
+// SEARCH BAR
 
-#name {
-  margin: 0 auto;
-  margin-bottom: 10px;
+.search-form-wrapper {
+  display: none;
+
+  padding: 10px 10px;
+  background: white;
+  border: 2px black solid;
+}
+.search-form-wrapper.open {
+  display: block;
 }
 
 // BASIC
-body {
-  background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
-  color: #fff;
-  font: 300 16px/1.5 "Open Sans", sans-serif;
-}
-#description {
-  text-align: left;
-  font-size: 14px;
-  margin: 10px;
-  margin-bottom: 10%;
-}
-
-.name-button {
-  background-color: transparent;
-  border: 0;
-  &:hover {
-    background-color: transparent;
-    border: 0;
-  }
-}
-
-.bar-button {
-  width: 100%;
-}
-.bar-text {
-  font-size: 14px;
-  color: black;
-  align-content: left;
-}
+// body {
+//   background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
+//   color: inherit;
+//   font: 300 16px/1.5 "Open Sans", sans-serif;
+// }
 </style>

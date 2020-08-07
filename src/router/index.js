@@ -5,8 +5,6 @@ import Post from "../views/Post.vue";
 import Stack from "../views/Stack.vue";
 import Welcome from "../views/Welcome.vue"
 import Favorites from "../views/Favorites.vue"
-import Search from "../views/Search.vue"
-import Test from "../views/Test.vue"
 
 import LogIn from "../views/LogIn.vue"
 
@@ -23,11 +21,6 @@ const router = new VueRouter({
       path: "/",
       name: "Welcome",
       component: Welcome
-    },
-    {
-      path: "/test",
-      name: "Test",
-      component: Test
     },
     {
       path: "/v/:TinyURL",
@@ -59,24 +52,12 @@ const router = new VueRouter({
       component: Favorites
     },
     {
-      path: "/search/:term",
-      name: "search",
-      component: Search
-    },
-    {
       path: "/login/",
       name: "login",
       component: LogIn
     }
   ]
 });
-router.beforeEach((to, from, next) => {
-  if (to.query.search) {
-    next("/search/" + to.query.search)
-  } else if (to.query.search === "") {
-    next("/search/" + "_")
 
-  } next()
-})
 
 export default router;  
