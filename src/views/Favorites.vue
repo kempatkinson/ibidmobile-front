@@ -18,7 +18,7 @@
               <i id="closer" class="fa fa-window-close" style="display: none"></i>
             </a>
             <div class="search-form-wrapper">
-              <b-form class="search-form" method="post">
+              <b-form class="search-form">
                 <div class="input-group">
                   <b-input type="text" name="search" id="searchInput" v-model="term" />
                   <button class="input-group-addon btn-primary" id="basic-addon2">
@@ -86,13 +86,13 @@
                         </b-row>
                         <b-row>
                           <b-col>
-                            <!--  <div
+                            <div
                               class="heart"
                               v-on:click="toggle(data.itID)"
                               v-bind:key=" 'heart: ' + data.itID"
                               v-bind:style="heartHeight"
                               v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-                            ></div>-->
+                            ></div>
                           </b-col>
                         </b-row>
                       </div>
@@ -136,7 +136,7 @@
                           <b-col>
                             <div class="card-title" style="position: relative">
                               <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <h3 ref="items" v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                                <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
                               </router-link>
                             </div>
                             <p class="card-text">Current Bid : {{data.itMinBid}}</p>
@@ -144,13 +144,13 @@
                         </b-row>
                         <b-row>
                           <b-col>
-                            <!--  <div
+                            <div
                               class="heart"
                               v-on:click="toggle(data.itID)"
                               v-bind:key=" 'heart: ' + data.itID"
                               v-bind:style="heartHeight"
                               v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-                            ></div>-->
+                            ></div>
                           </b-col>
                         </b-row>
                       </div>
@@ -162,25 +162,6 @@
           </b-col>
         </b-row>
       </div>
-      <b-row id="element">
-        <div class="card" ref="targetCard" style="visibility:hidden">
-          <div class="card-header" ref="header">
-            <div class="card-title" style="position: relative">
-              <h3>HiddenHidden</h3>
-              <h3>HiddenHidden</h3>
-            </div>
-          </div>
-          <div class="card-body row d-flex align-items-center">
-            <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
-          </div>
-          <div>
-            <div>
-              <p class="card-text">Live!</p>
-              <p class="card-text">Acitve!</p>
-            </div>
-          </div>
-        </div>
-      </b-row>
     </div>
     <div class="b-container" v-if="(isDesktop)">
       <b-row id="filter">
@@ -198,14 +179,12 @@
             <i id="closer" class="fa fa-window-close" style="display: none"></i>
           </a>
           <div class="search-form-wrapper">
-            <b-form class="search-form" method="post">
-              <div class="input-group">
-                <b-input type="text" name="search" id="searchInput" v-model="term" />
-                <button class="input-group-addon btn-primary" id="basic-addon2">
-                  <i class="fa fa-search" aria-hidden="true"></i>
-                </button>
-              </div>
-            </b-form>
+            <div class="input-group search-form" method="none">
+              <b-input type="text" name="search" id="searchInput" v-model="term" />
+              <button class="input-group-addon btn-primary" id="basic-addon2">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </b-col>
       </b-row>
@@ -239,17 +218,17 @@
                   :data-count="(chunk.length)"
                   :key="index"
                 >
-                  <div class="single" ref="desktopCards" v-for="data in chunk" :key="data.itID">
+                  <div class="single" v-for="data in chunk" :key="data.itID">
                     <div class="card" v-bind:style="containerStyle">
                       <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
                       <p class="idDesktop">1102</p>
-                      <!-- <div
-                            class="heart"
-                            v-on:click="toggle(data.itID)"
-                            v-bind:key=" 'heart: ' + data.itID"
-                            v-bind:style="heartHeightDesktop"
-                            v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-                      ></div>-->
+                      <div
+                        class="heart"
+                        v-on:click="toggle(data.itID)"
+                        v-bind:key=" 'heart: ' + data.itID"
+                        v-bind:style="heartHeightDesktop"
+                        v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                      ></div>
 
                       <div class="card-body" v-on:click="toggler(data.itID)">
                         <b-row v-on:click="select($event)" :id="data.itID">
@@ -273,18 +252,6 @@
                           </b-col>
                         </b-row>
                       </div>
-                      <!-- <div class="card-footer" v-if="(timeUntil(data.itEndDate) > 0)">
-                        <countdown
-                          :time="timeUntil(data.itEndDate)"
-                          v-if="(timeUntil(data.itEndDate) > 0)"
-                        >
-                          <div
-                            slot-scope="props"
-                            class="date-text"
-                          >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                        </countdown>
-                        <div class="date-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
-                      </div>-->
                     </div>
                   </div>
                 </b-row>
@@ -309,23 +276,23 @@
               :data-count="(chunk.length)"
               :key="index"
             >
-              <div class="single" ref="desktopCards" v-for="data in chunk" :key="data.itID">
+              <div class="single" v-for="data in chunk" :key="data.itID">
                 <div class="card" v-bind:style="containerStyle">
                   <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
                   <p class="idDesktop">1102</p>
-                  <!-- <div
-                            class="heart"
-                            v-on:click="toggle(data.itID)"
-                            v-bind:key=" 'heart: ' + data.itID"
-                            v-bind:style="heartHeightDesktop"
-                            v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
-                  ></div>-->
+                  <div
+                    class="heart"
+                    v-on:click="toggle(data.itID)"
+                    v-bind:key=" 'heart: ' + data.itID"
+                    v-bind:style="heartHeightDesktop"
+                    v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
+                  ></div>
 
                   <div class="card-body" v-on:click="toggler(data.itID)">
                     <b-row v-on:click="select($event)" :id="data.itID">
                       <b-col>
                         <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
-                        <div class="card-title" ref="desktopItems" style="position: relative">
+                        <div class="card-title" style="position: relative">
                           <router-link :to="{ name: 'post', params: {id: data.itID}}">
                             <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
                           </router-link>
@@ -340,18 +307,6 @@
                       </b-col>
                     </b-row>
                   </div>
-                  <!-- <div class="card-footer" v-if="(timeUntil(data.itEndDate) > 0)">
-                    <countdown
-                      :time="timeUntil(data.itEndDate)"
-                      v-if="(timeUntil(data.itEndDate) > 0)"
-                    >
-                      <div
-                        slot-scope="props"
-                        class="date-text"
-                      >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-                    </countdown>
-                    <div class="date-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
-                  </div>-->
                 </div>
               </div>
             </b-row>
@@ -359,19 +314,6 @@
         </b-row>
       </div>
 
-      <b-row id="element">
-        <b-col class="card" ref="targetCard" style="visibility:hidden">
-          <div class="card-header" ref="header">
-            <div class="card-title" style="position: relative">
-              <h3>Hidden</h3>
-            </div>
-          </div>
-          <div class="card-body row">
-            <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
-            <p class="card-text">Value :100</p>
-          </div>
-        </b-col>
-      </b-row>
       <div class="row">
         <div class="col-9"></div>
         <div class="col-3">
@@ -386,6 +328,9 @@
               <b-row id="gap">
                 <b-col class="d-flex justify-content-center">
                   <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
+                  <p class="closedSidebar" v-if="(data.itStatus === 4)">CLOSED</p>
+                  <p class="idDesktopSidebar">1102</p>
+
                   <div
                     class="heart"
                     v-on:click="toggle(data.itID)"
@@ -405,6 +350,8 @@
               <b-row>
                 <b-col class="d-flex justify-content-center">
                   <div>
+                    <p class="bar-text">Donated By: {{data.itDonor}}</p>
+
                     <p class="bar-text" id="description">{{data.itDescription}}</p>
                     <p class="bar-text">Value: {{data.itValue}}</p>
                     <p
@@ -424,10 +371,9 @@
               </b-row>
               <b-row id="date-text">
                 <b-col class="d-flex justify-content-center">
-                  <div class="bar-text" v-if="(data.itStatus === 4)">Sold out!</div>
                   <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
 
-                  <countdown>
+                  <countdown :time="timeUntil(data.itEndDate)">
                     <div
                       slot-scope="props"
                       class="bar-text"
@@ -465,22 +411,20 @@ export default {
       //   { text: "Unsold Items", value: "3" },
       //   { text: "Items with no bids", value: "4" }
       // ],
+      anchor: {},
       times: [],
       heartHeight: {},
-      anchor: {},
       heartHeightDesktop: {},
       heartHeightDesktopSidebar: {},
       cardWidth: 274,
       deck: [],
       event: {},
       containerStyle: {},
-      isDesktop: window.innerWidth > 800,
       sample: "hello.jpg",
       sidebarPost: {},
       sidebar: {},
       searchBarBool: false,
       windowWidth: window.innerWidth,
-
       id: "",
       url: "",
       term: ""
@@ -488,24 +432,30 @@ export default {
   },
   mounted() {
     this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
-
+    this.$store.dispatch("getEvent", this.$route.params.TinyURL);
     for (let i = 0; i < this.$store.state.posts.length; i++) {
       if (this.$store.getters.findFavorite(this.$store.state.posts[i].itID)) {
         this.deck.push(this.$store.state.posts[i]);
       }
     }
-
-    this.$store.dispatch("getEvent", this.$route.params.TinyURL);
     this.event = this.$store.state.event[0];
-    this.getRowHeight();
-    this.getRowHeightDesktop();
-    this.getHeight();
     this.sidebar = { status: false, current: "" };
-    this.clickToggler();
-    window.addEventListener("resize", this.myEventHandler);
+    this.$nextTick(() => {
+      this.windowWidth = window.innerWidth;
+      this.getHeight();
+      this.getRowHeight();
+    });
+
+    //listeners
+    window.addEventListener("resize", () => {
+      this.windowWidth = window.innerWidth;
+      // this.getHeight();
+
+      this.getRowHeight();
+    });
+
     $("#toggler").on("click", evt => {
       this.searchBarBool = !this.searchBarBool;
-      console.log(this.searchBarBool);
       $(".search-form-wrapper").toggleClass("open");
       $(".search-form-wrapper .search").focus();
       $("html").toggleClass("search-form-open");
@@ -523,22 +473,25 @@ export default {
         $("#searchInput").val("");
         this.term = "";
       }
-      this.$nextTick(() => {
-        this.spacing(
-          Math.floor(this.windowWidth / this.$refs.targetCard.clientWidth),
-          this.$refs.targetCard.clientWidth
-        );
-        this.cardWidth = this.$refs.targetCard.clientWidth;
-      });
-      //
+    });
+
+    $(".close").click(function() {
+      {
+        let sidebar = $(this.offsetParent).attr("id");
+        let id = sidebar.substr(8, sidebar.length - 1);
+        $("#sidebar-" + id).css("display", "none");
+        this.sidebar = { status: false, current: "" };
+      }
     });
   },
   computed: {
+    isDesktop() {
+      return this.windowWidth > 768;
+    },
     searchBar() {
       if (this.term.length > 0) {
         return true;
       } else return false;
-      this.getRowHeightDesktop();
       this.getRowHeight();
     },
     activeCards() {
@@ -563,13 +516,6 @@ export default {
           }
         }
       }
-      this.$nextTick(() => {
-        this.spacing(
-          Math.floor(this.windowWidth / this.$refs.targetCard.clientWidth),
-          this.$refs.targetCard.clientWidth
-        );
-        this.cardWidth = this.$refs.targetCard.clientWidth;
-      });
       return found;
     },
     activeKeys() {
@@ -616,11 +562,9 @@ export default {
 
     myEventHandler(e) {
       this.windowWidth = e.srcElement.window.innerWidth;
-      if (this.windowWidth > 800) {
-        this.isDesktop = true;
-        this.getHeight();
-      }
-      this.getRowHeightDesktop();
+      this.isDesktop();
+      this.getHeight();
+      this.getRowHeight();
     },
     chunks: function(array) {
       if (this.isDesktop) {
@@ -633,59 +577,13 @@ export default {
         return _.chunk(Object.values(array), 2);
       }
     },
-    spacing: function(maxCards, cardWidth) {
-      this.$nextTick(() => {
-        var window = this.windowWidth;
-
-        $(".cardData").each(function() {
-          $(this).css("marginLeft", function() {
-            if ($(this).attr("data-count") === "1") {
-              return (window - $(this)[0].children[0].clientWidth) / 2 + "px";
-            }
-            if ($(this).attr("data-count") === "2") {
-              return (
-                (window - 2 * $(this)[0].children[0].clientWidth) / 2 + "px"
-              );
-            }
-            if ($(this).attr("data-count") === "3") {
-              return (
-                (window - 3 * $(this)[0].children[0].clientWidth) / 2 + "px"
-              );
-            }
-            if ($(this).attr("data-count") === "4") {
-              return (
-                (window - 4 * $(this)[0].children[0].clientWidth) / 2 + "px"
-              );
-            }
-            if ($(this).attr("data-count") === "5") {
-              return (
-                (window - 5 * $(this)[0].children[0].clientWidth) / 2 + "px"
-              );
-            }
-          });
-        });
-      });
-    },
     scrollTo(element) {
-      // console.log($("#anchor-" + element.substring(1)));
       this.$scrollTo("#anchor-" + element.substring(1), 500, {
         onStart: this.myMethod,
         offset: -135
       });
     },
 
-    clickToggler() {
-      this.$nextTick(() => {
-        $(".close").click(function() {
-          {
-            let sidebar = $(this.offsetParent).attr("id");
-            let id = sidebar.substr(8, sidebar.length - 1);
-            $("#sidebar-" + id).css("display", "none");
-            this.sidebar = { status: false, current: "" };
-          }
-        });
-      });
-    },
     toggler: function(id) {
       // sidebar is on
       // on and id matches
@@ -709,60 +607,49 @@ export default {
       }
     },
     getHeight() {
-      this.$nextTick(() => {
-        let height = this.$refs.targetCard.clientHeight;
-        height += "px";
-        Vue.set(this.containerStyle, "height", height);
-        let width = this.$refs.targetCard.clientWidth;
-        width += "px";
-        Vue.set(this.containerStyle, "width", width);
-      });
+      // if (this.isDesktop) {
+      //   let height = this.$refs.targetCard.clientHeight;
+      //   height += "px";
+      //   Vue.set(this.containerStyle, "height", height);
+      //   let width = $("#element")[0].clientWidth;
+      //   console.log(width);
+      //   width += "px";
+      //   Vue.set(this.containerStyle, "width", "274px");
+      // }
+      // if (!this.isDesktop) {
+      //   let height = this.$refs.targetCardMobile.clientHeight;
+      //   height += "px";
+      //   Vue.set(this.containerStyle, "height", height);
+      //   let width = this.$refs.targetCardMobile.clientWidth;
+      //   width += "px";
+      //   Vue.set(this.containerStyle, "width", width);
+      // }
     },
     getRowHeight() {
       if (!this.isDesktop) {
-        this.$nextTick(() => {
-          //sizing
-          let target = this.$refs.items[0].clientHeight;
-          let factor = target / 100;
-          let string = "scale(" + 2 * factor + ")";
-          Vue.set(this.heartHeight, "transform", string);
-          Vue.set(this.heartHeight, "margin", "0 auto");
-          Vue.set(this.heartHeight, "padding-bottom", "40px");
+        // heart sizing
+        let target = this.$refs.items[0].clientHeight;
+        let factor = target / 100;
+        let string = "scale(" + 2 * factor + ")";
+        Vue.set(this.heartHeight, "transform", string);
+        Vue.set(this.heartHeight, "bottom", "50px");
+        Vue.set(this.heartHeight, "left", "-20px");
+      } else if (this.isDesktop) {
+        // heart sizing
+        let target = this.$refs.desktopItems[0].clientHeight;
+        let factor = target / 100;
+        let string = "scale(" + 3 * factor + ")";
+        Vue.set(this.heartHeightDesktop, "top", "5%");
+        Vue.set(this.heartHeightDesktop, "left", "-14%");
+        Vue.set(this.heartHeightDesktop, "transform", string);
 
-          this.$nextTick(() => {
-            this.spacing(
-              Math.floor(this.windowWidth / this.$refs.targetCard.clientWidth),
-              this.$refs.targetCard.clientWidth
-            );
-            this.cardWidth = this.$refs.targetCard.clientWidth;
-          });
-        });
-      }
-    },
-    getRowHeightDesktop() {
-      if (this.isDesktop) {
-        this.$nextTick(() => {
-          //sizing
-
-          let target = this.$refs.desktopItems[0].clientHeight;
-          let factor = target / 100;
-          let string = "scale(" + factor + ")";
-          Vue.set(this.heartHeightDesktop, "transform", string);
-
-          let target2 = this.$refs.sidebarName[0].clientHeight;
-          let factor2 = target / 100;
-          let string2 = "scale(" + 2.5 * factor + ")";
-          Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-          Vue.set(this.heartHeightDesktopSidebar, "top", "-5px");
-          Vue.set(this.heartHeightDesktopSidebar, "position", "absolute");
-          this.$nextTick(() => {
-            this.spacing(
-              Math.floor(this.windowWidth / this.$refs.targetCard.clientWidth),
-              this.$refs.targetCard.clientWidth
-            );
-            this.cardWidth = this.$refs.targetCard.clientWidth;
-          });
-        });
+        // sidebar heart sizing
+        let target2 = this.$refs.sidebarName[0].clientHeight;
+        let factor2 = target / 100;
+        let string2 = "scale(" + 2.5 * factor + ")";
+        Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
+        Vue.set(this.heartHeightDesktopSidebar, "top", "1800%");
+        Vue.set(this.heartHeightDesktopSidebar, "right", "-10px");
       }
     },
     getImage: function(image) {
@@ -904,9 +791,6 @@ export default {
     align-content: center;
   }
 
-  .card {
-    margin-right: 20%;
-  }
   .btn {
     font-size: 16px;
   }
@@ -977,14 +861,19 @@ h1 {
   width: 20%;
 }
 
+.row {
+  display: block !important;
+}
+.single {
+  display: inline-block;
+}
+
 //CARDS
 .card-header {
   padding: 1%;
-  width: 100%;
   margin-bottom: 5%;
 }
 .card-body {
-  width: 100%;
   margin: 0;
   padding: 0px;
 }
@@ -993,13 +882,13 @@ h1 {
   padding-bottom: 2.5%;
   margin-top: 5%;
   align-content: center;
-  width: 100%;
 }
 .card-title {
   margin-top: 5%;
   margin: 0;
 }
 .card {
+  max-width: 274px;
   margin-bottom: 10%;
   border: black 0.5px solid;
   border-radius: 4px;
@@ -1082,8 +971,31 @@ button {
 }
 //SIDEBAR
 
+.idDesktopSidebar,
+.closedSidebar {
+  top: 0%;
+  position: absolute;
+  font-size: 14px;
+  z-index: 5;
+  padding: 3px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  z-index: 5;
+  color: white;
+  font-weight: bold;
+}
+
+.idDesktopSidebar {
+  background-color: orange;
+  margin-right: 250px;
+}
+.closedSidebar {
+  background-color: black;
+  margin-left: 250px;
+}
+
 .bar-button {
-  width: 100%;
+  width: 50%;
 }
 .bar-text {
   font-size: 14px;
@@ -1100,6 +1012,7 @@ button {
 // TWITTER HEART
 .heart {
   z-index: 2;
+  position: absolute;
   width: 100px;
   height: 100px;
   background: url("https://cssanimation.rocks/images/posts/steps/heart.png")

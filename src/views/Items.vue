@@ -76,7 +76,7 @@
                         </b-row>
                         <b-row>
                           <b-col>
-                            <div class="card-title" style="position: relative" href="items">
+                            <div class="card-title" style="position: relative">
                               <router-link :to="{ name: 'post', params: {id: data.itID}}">
                                 <h3 ref="items" v-on:click="toggler(data.itID)">{{data.itName}}</h3>
                               </router-link>
@@ -136,10 +136,7 @@
                           <b-col>
                             <div class="card-title" style="position: relative">
                               <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <h3
-                                  ref="desktopItems"
-                                  v-on:click="toggler(data.itID)"
-                                >{{data.itName}}</h3>
+                                <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
                               </router-link>
                             </div>
                             <p class="card-text">Current Bid : {{data.itMinBid}}</p>
@@ -165,19 +162,6 @@
           </b-col>
         </b-row>
       </div>
-      <b-row id="element" ref="targetCardMobile">
-        <div class="card" style="visibility:hidden">
-          <div class="card-header" ref="header">
-            <div class="card-title" style="position: relative">
-              <h3>HiddenHidden</h3>
-              <h3>HiddenHidden</h3>
-            </div>
-          </div>
-          <div class="card-body row d-flex align-items-center">
-            <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
-          </div>
-        </div>
-      </b-row>
     </div>
     <div class="b-container" v-if="(isDesktop)">
       <b-row id="filter">
@@ -234,7 +218,7 @@
                   :data-count="(chunk.length)"
                   :key="index"
                 >
-                  <div class="single" ref="desktopCards" v-for="data in chunk" :key="data.itID">
+                  <div class="single" v-for="data in chunk" :key="data.itID">
                     <div class="card" v-bind:style="containerStyle">
                       <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
                       <p class="idDesktop">1102</p>
@@ -292,7 +276,7 @@
               :data-count="(chunk.length)"
               :key="index"
             >
-              <div class="single" ref="desktopCards" v-for="data in chunk" :key="data.itID">
+              <div class="single" v-for="data in chunk" :key="data.itID">
                 <div class="card" v-bind:style="containerStyle">
                   <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
                   <p class="idDesktop">1102</p>
@@ -308,7 +292,7 @@
                     <b-row v-on:click="select($event)" :id="data.itID">
                       <b-col>
                         <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
-                        <div class="card-title" ref="desktopItems" style="position: relative">
+                        <div class="card-title" style="position: relative">
                           <router-link :to="{ name: 'post', params: {id: data.itID}}">
                             <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
                           </router-link>
@@ -330,19 +314,6 @@
         </b-row>
       </div>
 
-      <b-row id="element">
-        <b-col class="card" ref="targetCard" style="visibility:hidden">
-          <div class="card-header" ref="header">
-            <div class="card-title" style="position: relative">
-              <h3>Hidden</h3>
-            </div>
-          </div>
-          <div class="card-body row">
-            <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
-            <p class="card-text">Value :100</p>
-          </div>
-        </b-col>
-      </b-row>
       <div class="row">
         <div class="col-9"></div>
         <div class="col-3">
@@ -448,7 +419,7 @@ export default {
       cardWidth: 274,
       deck: [],
       event: {},
-      containerStyle: {},
+      containerStyle: { },
       sample: "hello.jpg",
       sidebarPost: {},
       sidebar: {},
@@ -465,15 +436,19 @@ export default {
     this.$store.dispatch("getEvent", this.$route.params.TinyURL);
     this.event = this.$store.state.event[0];
     this.sidebar = { status: false, current: "" };
-    this.clickToggler();
-    window.addEventListener("resize", () => {
+    this.$nextTick(() => {
       this.windowWidth = window.innerWidth;
       this.getHeight();
       this.getRowHeight();
     });
-    this.windowWidth = window.innerWidth;
-    this.getHeight();
-    this.getRowHeight();
+    //listeners
+    window.addEventListener("resize", () => {
+      this.windowWidth = window.innerWidth;
+      // this.getHeight();
+
+      this.getRowHeight();
+    });
+
     $("#toggler").on("click", evt => {
       this.searchBarBool = !this.searchBarBool;
       $(".search-form-wrapper").toggleClass("open");
@@ -495,11 +470,12 @@ export default {
       }
     });
 
-    $("#searchInput").addEventListener("keyup", function(event) {
-      // Number 13 is the "Enter" key on the keyboard
-      if (event.keyCode === 13) {
-        // Cancel the default action, if needed
-        console.log("nevermind");
+    $(".close").click(function() {
+      {
+        let sidebar = $(this.offsetParent).attr("id");
+        let id = sidebar.substr(8, sidebar.length - 1);
+        $("#sidebar-" + id).css("display", "none");
+        this.sidebar = { status: false, current: "" };
       }
     });
   },
@@ -603,18 +579,6 @@ export default {
       });
     },
 
-    clickToggler() {
-      this.$nextTick(() => {
-        $(".close").click(function() {
-          {
-            let sidebar = $(this.offsetParent).attr("id");
-            let id = sidebar.substr(8, sidebar.length - 1);
-            $("#sidebar-" + id).css("display", "none");
-            this.sidebar = { status: false, current: "" };
-          }
-        });
-      });
-    },
     toggler: function(id) {
       // sidebar is on
       // on and id matches
@@ -638,55 +602,49 @@ export default {
       }
     },
     getHeight() {
-      this.$nextTick(() => {
-        if (this.isDesktop) {
-          let height = this.$refs.targetCard.clientHeight;
-          height += "px";
-          Vue.set(this.containerStyle, "height", height);
-          let width = this.$refs.targetCard.clientWidth;
-          width += "px";
-          Vue.set(this.containerStyle, "width", width);
-        }
-        if (!this.isDesktop) {
-          let height = this.$refs.targetCardMobile.clientHeight;
-          height += "px";
-          Vue.set(this.containerStyle, "height", height);
-          let width = this.$refs.targetCardMobile.clientWidth;
-          width += "px";
-          Vue.set(this.containerStyle, "width", width);
-        }
-      });
+      // if (this.isDesktop) {
+      //   let height = this.$refs.targetCard.clientHeight;
+      //   height += "px";
+      //   Vue.set(this.containerStyle, "height", height);
+      //   let width = $("#element")[0].clientWidth;
+      //   console.log(width);
+      //   width += "px";
+      //   Vue.set(this.containerStyle, "width", "274px");
+      // }
+      // if (!this.isDesktop) {
+      //   let height = this.$refs.targetCardMobile.clientHeight;
+      //   height += "px";
+      //   Vue.set(this.containerStyle, "height", height);
+      //   let width = this.$refs.targetCardMobile.clientWidth;
+      //   width += "px";
+      //   Vue.set(this.containerStyle, "width", width);
+      // }
     },
     getRowHeight() {
       if (!this.isDesktop) {
-        this.$nextTick(() => {
-          //sizing
-          let target = this.$refs.items[0].clientHeight;
-          let factor = target / 100;
-          let string = "scale(" + 2 * factor + ")";
-          Vue.set(this.heartHeight, "transform", string);
-          Vue.set(this.heartHeight, "bottom", "50px");
-          Vue.set(this.heartHeight, "left", "-20px");
-        });
+        // heart sizing
+        let target = this.$refs.items[0].clientHeight;
+        let factor = target / 100;
+        let string = "scale(" + 2 * factor + ")";
+        Vue.set(this.heartHeight, "transform", string);
+        Vue.set(this.heartHeight, "bottom", "50px");
+        Vue.set(this.heartHeight, "left", "-20px");
       } else if (this.isDesktop) {
-        this.$nextTick(() => {
-          //sizing
+        // heart sizing
+        let target = this.$refs.desktopItems[0].clientHeight;
+        let factor = target / 100;
+        let string = "scale(" + 3 * factor + ")";
+        Vue.set(this.heartHeightDesktop, "top", "5%");
+        Vue.set(this.heartHeightDesktop, "left", "-14%");
+        Vue.set(this.heartHeightDesktop, "transform", string);
 
-          let target = this.$refs.desktopItems[0].clientHeight;
-          let factor = target / 100;
-          let string = "scale(" + 3 * factor + ")";
-          Vue.set(this.heartHeightDesktop, "bottom", "10%");
-          Vue.set(this.heartHeightDesktop, "left", "-30px");
-
-          Vue.set(this.heartHeightDesktop, "transform", string);
-
-          let target2 = this.$refs.sidebarName[0].clientHeight;
-          let factor2 = target / 100;
-          let string2 = "scale(" + 2.5 * factor + ")";
-          Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-          Vue.set(this.heartHeightDesktopSidebar, "top", "1800%");
-          Vue.set(this.heartHeightDesktopSidebar, "right", "-10px");
-        });
+        // sidebar heart sizing
+        let target2 = this.$refs.sidebarName[0].clientHeight;
+        let factor2 = target / 100;
+        let string2 = "scale(" + 2.5 * factor + ")";
+        Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
+        Vue.set(this.heartHeightDesktopSidebar, "top", "1800%");
+        Vue.set(this.heartHeightDesktopSidebar, "right", "-10px");
       }
     },
     getImage: function(image) {
@@ -828,9 +786,6 @@ export default {
     align-content: center;
   }
 
-  .card {
-    margin-right: 20%;
-  }
   .btn {
     font-size: 16px;
   }
@@ -911,11 +866,9 @@ h1 {
 //CARDS
 .card-header {
   padding: 1%;
-  width: 100%;
   margin-bottom: 5%;
 }
 .card-body {
-  width: 100%;
   margin: 0;
   padding: 0px;
 }
@@ -924,13 +877,13 @@ h1 {
   padding-bottom: 2.5%;
   margin-top: 5%;
   align-content: center;
-  width: 100%;
 }
 .card-title {
   margin-top: 5%;
   margin: 0;
 }
 .card {
+  max-width: 274px;
   margin-bottom: 10%;
   border: black 0.5px solid;
   border-radius: 4px;

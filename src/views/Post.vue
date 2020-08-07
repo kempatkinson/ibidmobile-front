@@ -16,24 +16,23 @@
         v-bind:class="{amactive: isActive}"
       ></div>
     </div>
+     <div>
+      <router-link :to="{ name: 'Items', params: {TinyURL: backToEvent}}">
+        <button type="button" class="btn btn-foot">Back to Event</button>
+      </router-link>
+    </div>
     <div class="Details">
       <img class="imgDetails" v-bind:src="getImage(sample)" />
-      <p class="textDetails">{{post.itDescription}}</p>
-      <p class="textDetails">Donated By: {{post.itDonor}}</p>
+      <p class="textDetails"> {{post.itDescription}}</p>
+      <p class="textDetails"> Donated By: {{post.itDonor}}</p>
 
-      <!--  <div id="date-text" class="row card-text">
-        <div class="col d-flex justify-content-center">
-          <countdown
-            v-if="(!post.sold) && (timeUntil(post.itEndDate) > 0)"
-            :time="timeUntil(post.itEndDate)"
-          >
-            <div
-              slot-scope="props"
-              class="card-text"
-            >Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
-          </countdown>
-        </div>
-      </div>-->
+      <p class="textDetails">
+        <countdown :time="timeUntil(post.itEndDate)">
+          <div
+            slot-scope="props"
+          > Bidding for this item closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+        </countdown>
+      </p>
       <div class="row" id="bid-row">
         <div class="col d-flex justify-content-center">
           <div class="bidrow card-text">
@@ -117,11 +116,7 @@
         </div>
       </div>
     </div>
-    <div>
-      <router-link :to="{ name: 'Items', params: {TinyURL: backToEvent}}">
-        <button type="button" class="btn btn-foot">Back to Event</button>
-      </router-link>
-    </div>
+   
     <div id="bidHistory" class="row Details">
       <div class="table">
         <thead>
@@ -374,7 +369,6 @@ export default {
             alert(error);
           });
       } else {
-        console.log(this.bid);
         alert("your bid is not high enough");
         this.initBid();
       }
@@ -523,6 +517,8 @@ export default {
 }
 .textDetails {
   float: none;
+  text-align: left;
+  font-size: 12px;
 }
 
 .Details {
