@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <b-navbar id="nav" class="navbar-light header" fixed="top" fill="true">
-      <b-navbar-brand id="logo" >
+      <b-navbar-brand id="logo">
         <img src="./assets/logo.png" />
       </b-navbar-brand>
 
@@ -16,7 +16,6 @@
           <a v-b-toggle.sidebar-n class="link noHover">Menu</a>
         </b-nav-item>
       </b-navbar-nav>
-
     </b-navbar>
     <b-sidebar id="sidebar-n" class="title" title="Menu" shadow text-variant="light">
       <div class="px-4 py-2">
@@ -40,7 +39,7 @@
         </ul>
       </div>
     </b-sidebar>
-    <router-view />
+    <router-view v-bind:key="$route.fullPath"></router-view>
   </div>
 </template>
 

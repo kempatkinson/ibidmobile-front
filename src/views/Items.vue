@@ -64,7 +64,7 @@
                     <div class="card" v-bind:style="containerStyle">
                       <b-row>
                         <b-col>
-                          <p class="idMobile">1101</p>
+                          <p class="idMobile">{{data.itCatalogNum}}</p>
                           <p class="closedMobile" v-if="(data.itStatus === 4)">CLOSED</p>
                         </b-col>
                       </b-row>
@@ -123,7 +123,7 @@
                 >
                   <div class="single" v-for="data in chunk" :key="data.itID">
                     <div class="card" v-bind:style="containerStyle">
-                      <p class="idMobile">1101</p>
+                      <p class="idMobile">{{data.itCatalogNum}}</p>
                       <p class="closedMobile" v-if="(data.itStatus === 4)">CLOSED</p>
 
                       <div class="card-body" v-on:click="toggler(data.itID)">
@@ -221,7 +221,7 @@
                   <div class="single" v-for="data in chunk" :key="data.itID">
                     <div class="card" v-bind:style="containerStyle">
                       <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
-                      <p class="idDesktop">1102</p>
+                      <p class="idDesktop">{{data.itCatalogNum}}</p>
                       <div
                         class="heart"
                         v-on:click="toggle(data.itID)"
@@ -279,7 +279,7 @@
               <div class="single" v-for="data in chunk" :key="data.itID">
                 <div class="card" v-bind:style="containerStyle">
                   <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
-                  <p class="idDesktop">1102</p>
+                  <p class="idDesktop">{{data.itCatalogNum}}</p>
                   <div
                     class="heart"
                     v-on:click="toggle(data.itID)"
@@ -329,7 +329,7 @@
                 <b-col class="d-flex justify-content-center">
                   <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
                   <p class="closedSidebar" v-if="(data.itStatus === 4)">CLOSED</p>
-                  <p class="idDesktopSidebar">1102</p>
+                  <p class="idDesktopSidebar">{{data.itCatalogNum}}</p>
 
                   <div
                     class="heart"

@@ -439,7 +439,7 @@ export default {
       }
     }
     this.event = this.$store.state.event[0];
-    this.sidebar = { status: false, current: "" };
+    this.sidebar = { snptatus: false, current: "" };
     this.$nextTick(() => {
       this.windowWidth = window.innerWidth;
       this.getHeight();

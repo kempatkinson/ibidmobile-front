@@ -2,11 +2,15 @@
   <div class="page">
     <div class="row card topDetails">
       <p class="closed" v-if="(post.itStatus === 4)">CLOSED</p>
-      <p class="idLabel">1102</p>
+      <p class="idLabel">{{post.itCatalogNum}}</p>
 
       <h3 id="name" ref="nameRow">{{post.itName}}</h3>
-      <h3>Value: {{post.itValue}}</h3>
-      <h3>Current Bidder: {{post.CurrentBidder}} at ${{post.itMinBid}}</h3>
+      <h3>Value: ${{post.itValue}}</h3>
+      <h3
+        v-if="(post.CurrentBidder)"
+      >Current Bidder: {{post.CurrentBidder[0].guFirstName}} {{post.CurrentBidder[0].guLastName}}</h3>
+      <h3>Current Bid Price: ${{post.itMinBid}}</h3>
+
       <h3>Minimum Raise: ${{post.itMinRaise}}</h3>
 
       <div
@@ -16,21 +20,21 @@
         v-bind:class="{amactive: isActive}"
       ></div>
     </div>
-     <div>
+    <div>
       <router-link :to="{ name: 'Items', params: {TinyURL: backToEvent}}">
         <button type="button" class="btn btn-foot">Back to Event</button>
       </router-link>
     </div>
     <div class="Details">
       <img class="imgDetails" v-bind:src="getImage(sample)" />
-      <p class="textDetails"> {{post.itDescription}}</p>
-      <p class="textDetails"> Donated By: {{post.itDonor}}</p>
+      <p class="textDetails">{{post.itDescription}}</p>
+      <p class="textDetails">Donated By: {{post.itDonor}}</p>
 
       <p class="textDetails">
         <countdown :time="timeUntil(post.itEndDate)">
           <div
             slot-scope="props"
-          > Bidding for this item closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+          >Bidding for this item closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
         </countdown>
       </p>
       <div class="row" id="bid-row">
@@ -112,12 +116,12 @@
             class="btn btn-primary"
             id="buyNow"
             v-on:click.prevent="buyNow"
-          >Buy Now</button>
+          >Buy Now for {{post.BuyItNowPrice}}</button>
         </div>
       </div>
     </div>
-   
-    <div id="bidHistory" class="row Details">
+
+    <div id="bidHistory" class="row Details" v-if="post.BidHistory">
       <div class="table">
         <thead>
           <th>Bidder</th>
@@ -125,35 +129,15 @@
           <th>Timestamp</th>
         </thead>
         <tbody>
-          <tr>
-            <td>Geroge</td>
-            <td>100</td>
+          <tr v-for="bidder in post.BidHistory" v-bind:key="bidder">
+            <td
+              v-if="(bidder.Bidder)"
+            >{{bidder.Bidder[0].guFirstName}} {{bidder.Bidder[0].guLastName}}</td>
+            <td v-if="!(bidder.Bidder)">Unlisted</td>
 
-            <td>8/1/2020</td>
-          </tr>
-          <tr>
-            <td>Geroge</td>
-            <td>100</td>
+            <td>{{bidder.BidAmount}}</td>
 
-            <td>8/1/2020</td>
-          </tr>
-          <tr>
-            <td>Geroge</td>
-            <td>100</td>
-
-            <td>8/1/2020</td>
-          </tr>
-          <tr>
-            <td>Geroge</td>
-            <td>100</td>
-
-            <td>8/1/2020</td>
-          </tr>
-          <tr>
-            <td>Geroge</td>
-            <td>100</td>
-
-            <td>8/1/2020</td>
+            <td>{{bidder.BidTime}}</td>
           </tr>
         </tbody>
       </div>
@@ -185,6 +169,7 @@ export default {
   beforeRouteUpdate(to, from, next) {
     this.$route.params.id = to.params.id;
     this.post = this.$store.getters.post(to.params.id);
+    console.log(this.post);
     this.bid =
       parseInt(this.$store.getters.post(to.params.id).itMinBid) +
       parseInt(this.$store.getters.post(to.params.id).itMinRaise);
@@ -613,7 +598,7 @@ export default {
 }
 #bidHistory {
   margin: auto;
-  padding-bottom: 50px;
+  padding-bottom: 100px;
 }
 #bid-row {
   margin: 0 auto;
@@ -715,10 +700,5 @@ body {
 
 #bid-row {
   margin-top: 5%;
-}
-
-#buyNow {
-  position: fixed;
-  bottom: 11%;
 }
 </style>
