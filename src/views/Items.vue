@@ -112,7 +112,7 @@
       </div>
 
       <div v-if="searchBar">
-        <b-row >
+        <b-row>
           <b-col>
             <h2 id="searchResults">Search Results</h2>
           </b-col>
@@ -212,7 +212,7 @@
       <div v-if="!searchBar">
         <b-row class="allData" v-for="category in categories" :key="category.category">
           <b-col>
-            <b-row >
+            <b-row>
               <div class="col-12">
                 <h2
                   v-bind:style="{'background-color': categoryColor}"
@@ -256,10 +256,12 @@
                         <b-row>
                           <b-col>
                             <div v-if="!(data.itStatus === 4)">
-                              <p class="date-text">Current Bid : {{data.itMinBid}}</p>
+                              <label for="price" class="date-text">Current Bid:</label>
+                              <span id="price" class="date-text">{{data.itMinBid}}</span>
                             </div>
                             <div v-if="(data.itStatus === 4)">
-                              <p class="date-text">Sold for : {{data.itMinBid}}</p>
+                              <label for="price" class="date-text">Sold:</label>
+                              <span id="price" class="date-text">{{data.itMinBid}}</span>
                             </div>
                           </b-col>
                         </b-row>
@@ -314,7 +316,14 @@
                     <b-row>
                       <b-col>
                         <div v-if="!(data.itStatus === 4)">
-                          <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                          <div v-if="!(data.itStatus === 4)">
+                            <label for="price">Current Bid:</label>
+                            <span id="price" class="date-text">{{data.itMinBid}}</span>
+                          </div>
+                          <div v-if="(data.itStatus === 4)">
+                            <label for="price">Sold:</label>
+                            <span id="price" class="date-text">{{data.itMinBid}}</span>
+                          </div>
                         </div>
                       </b-col>
                     </b-row>
@@ -838,9 +847,21 @@ h1 {
 .selection {
   padding: 5px 0px;
 }
-
+.date-text {
+  font-size: 80%;
+  color: black;
+}
 #dropdown {
-  margin: 10px 0px;
+  font-size: 1em;
+  background-color: #fff;
+  /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAGCAYAAADOic7aAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTZBOTk1RjMxRjZCMTFFMUFDRjA5NUJCNzg2QTA1OEYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTZBOTk1RjQxRjZCMTFFMUFDRjA5NUJCNzg2QTA1OEYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxNkE5OTVGMTFGNkIxMUUxQUNGMDk1QkI3ODZBMDU4RiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxNkE5OTVGMjFGNkIxMUUxQUNGMDk1QkI3ODZBMDU4RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PtOZMNcAAABeSURBVHjaYmBgYJgGxP8J4JkMIMb//zgxCDAD8XY8hhwAYjZiDAIBfiC+hMWQh0AsClNEjEEgIA3ET5AM+QbEusgKiDWIAarxM9SgEHRJUgwCAT8grsMmgc8ggAADAGY/m1aWUowGAAAAAElFTkSuQmCC) no-repeat 95% 50%; */
+  box-sizing: border-box;
+  border: 1px solid darkGrey;
+  padding: 0.25em 0.6em;
+  height: 2.2em;
+  width: 90%;
+  border-radius: 5px;
+  margin: 0px;
 }
 #filter {
   background-color: white;
