@@ -10,23 +10,9 @@
               </select>
             </div>
           </b-col>
-        </b-row>
-        <b-row>
+
           <b-col>
-            <a class="search-form-trigger btn btn-success" data-toggle="search-form" id="toggler">
-              <i id="opener" class="fa fa-search" aria-hidden="true"></i>
-              <i id="closer" class="fa fa-window-close" style="display: none"></i>
-            </a>
-            <div class="search-form-wrapper">
-              <b-form class="search-form">
-                <div class="input-group">
-                  <b-input type="text" name="search" id="searchInput" v-model="term" />
-                  <button class="input-group-addon btn-primary" id="basic-addon2">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                  </button>
-                </div>
-              </b-form>
-            </div>
+            <b-input type="text" name="search" id="searchInput" v-model="term" />
           </b-col>
         </b-row>
       </div>
@@ -35,13 +21,15 @@
           <h1
             v-bind:style="{'background-color': categoryColor}"
           >Welcome to the {{event.EventInfo[0].Name}}</h1>
-          <h2>{{event.EventInfo[0].Description}}</h2>
 
-          <countdown :time="timeUntil(event.EventInfo[0].EndDate)">
-            <div slot-scope="props">
-              <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
-            </div>
-          </countdown>
+          <div id="descriptionCountdown">
+            <p>{{event.EventInfo[0].Description}}</p>
+            <countdown :time="returnDate(event.EventInfo[0].EndDate)">
+              <div slot-scope="props">
+                <p>Auction Closes: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</p>
+              </div>
+            </countdown>
+          </div>
         </b-col>
       </b-row>
 
@@ -84,10 +72,14 @@
                           <b-col>
                             <div class="card-title" style="position: relative">
                               <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <h3 ref="items" v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                                <h3
+                                  class="name"
+                                  ref="items"
+                                  v-on:click="toggler(data.itID)"
+                                >{{data.itName}}</h3>
                               </router-link>
                             </div>
-                            <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                            <p class="card-text">Current Bid: ${{data.itMinBid}}</p>
                           </b-col>
                         </b-row>
                         <b-row>
@@ -142,10 +134,14 @@
                           <b-col>
                             <div class="card-title" style="position: relative">
                               <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                                <h3
+                                  class="name"
+                                  v-on:click="toggler(data.itID)"
+                                  ref="items"
+                                >{{data.itName}}</h3>
                               </router-link>
                             </div>
-                            <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                            <p class="bar-text">Current Bid : ${{data.itMinBid}}</p>
                           </b-col>
                         </b-row>
                         <b-row>
@@ -180,18 +176,7 @@
         </b-col>
 
         <b-col>
-          <a class="search-form-trigger btn btn-success" data-toggle="search-form" id="toggler">
-            <i id="opener" class="fa fa-search" aria-hidden="true"></i>
-            <i id="closer" class="fa fa-window-close" style="display: none"></i>
-          </a>
-          <div class="search-form-wrapper">
-            <div class="input-group search-form" method="none">
-              <b-input type="text" name="search" id="searchInput" v-model="term" />
-              <button class="input-group-addon btn-primary" id="basic-addon2">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
+          <b-input type="text" name="search" id="searchInput" v-model="term" value="Search" />
         </b-col>
       </b-row>
       <b-row id="EventHeader">
@@ -199,13 +184,10 @@
           <h1
             v-bind:style="{'background-color': categoryColor}"
           >Welcome to the {{event.EventInfo[0].Name}}</h1>
-          <h2>{{event.EventInfo[0].Description}}</h2>
-
-          <countdown :time="timeUntil(event.EventInfo[0].EndDate)">
-            <div slot-scope="props">
-              <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
-            </div>
-          </countdown>
+          <div id="descriptionCountdown">
+            <p>{{event.EventInfo[0].Description}}</p>
+            <p>Auction Closes: {{returnDate(event.EventInfo[0].EndDate)}}</p>
+          </div>
         </b-col>
       </b-row>
 
@@ -242,13 +224,17 @@
                         v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"
                       ></div>
 
-                      <div class="card-body" v-on:click="toggler(data.itID)">
+                      <div v-on:click="toggler(data.itID)">
                         <b-row v-on:click="select($event)" :id="data.itID">
                           <b-col>
                             <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
-                            <div class="card-title" ref="desktopItems" style="position: relative">
+                            <div class="card-title" style="position: relative">
                               <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                                <h3
+                                  class="name"
+                                  v-on:click="toggler(data.itID)"
+                                  ref="desktopItems"
+                                >{{data.itName}}</h3>
                               </router-link>
                             </div>
                           </b-col>
@@ -257,11 +243,11 @@
                           <b-col>
                             <div v-if="!(data.itStatus === 4)">
                               <label for="price" class="date-text">Current Bid:</label>
-                              <span id="price" class="date-text">{{data.itMinBid}}</span>
+                              <span id="price" class="date-text">${{data.itMinBid}}</span>
                             </div>
                             <div v-if="(data.itStatus === 4)">
                               <label for="price" class="date-text">Sold:</label>
-                              <span id="price" class="date-text">{{data.itMinBid}}</span>
+                              <span id="price" class="date-text">${{data.itMinBid}}</span>
                             </div>
                           </b-col>
                         </b-row>
@@ -308,7 +294,7 @@
                         <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
                         <div class="card-title" style="position: relative">
                           <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                            <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                            <h3 class="name" v-on:click="toggler(data.itID)">{{data.itName}}</h3>
                           </router-link>
                         </div>
                       </b-col>
@@ -342,7 +328,7 @@
             <b-container>
               <b-row id="gap">
                 <b-col class="d-flex justify-content-center">
-                  <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
+                  <h3 class="name" id="nameSidebar" ref="sidebarName">{{data.itName}}</h3>
                   <p class="closedSidebar" v-if="(data.itStatus === 4)">CLOSED</p>
                   <p class="idDesktopSidebar">{{data.itCatalogNum}}</p>
 
@@ -367,14 +353,14 @@
                   <div>
                     <p class="bar-text">Donated By: {{data.itDonor}}</p>
 
-                    <p class="bar-text" id="description">{{data.itDescription}}</p>
+                    <p class="bar-text" >{{data.itDescription}}</p>
                     <p class="bar-text">Value: {{data.itValue}}</p>
                     <p
                       v-if="!(data.itStatus === 4)"
-                      class="date-text"
+                      class="bar-text"
                     >Current Bid : {{data.itMinBid}}</p>
 
-                    <p v-if="(data.itStatus === 4)" class="date-text">Sold for : {{data.itMinBid}}</p>
+                    <p v-if="(data.itStatus === 4)" class="bar-text">Sold for : {{data.itMinBid}}</p>
                     <p class="bar-text">Minmum raise: {{data.itMinRaise}}</p>
                   </div>
                 </b-col>
@@ -384,7 +370,7 @@
                   <button class="btn btn-primary bar-button">Bid Now!</button>
                 </router-link>
               </b-row>
-              <b-row id="date-text">
+              <b-row >
                 <b-col class="d-flex justify-content-center">
                   <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
 
@@ -413,6 +399,7 @@ import VueCountdown from "@chenfengyuan/vue-countdown";
 import cloudinary from "cloudinary-core";
 import lodash from "lodash";
 import jquery from "jquery";
+import moment from "moment";
 
 Vue.component(VueCountdown.name, VueCountdown);
 export default {
@@ -459,26 +446,6 @@ export default {
       this.getRowHeight();
     });
 
-    $("#toggler").on("click", evt => {
-      this.searchBarBool = !this.searchBarBool;
-      $(".search-form-wrapper").toggleClass("open");
-      $(".search-form-wrapper .search").focus();
-      $("html").toggleClass("search-form-open");
-      if (this.searchBarBool) {
-        $("#opener").css("display", "none");
-        $("#closer").removeAttr("style");
-        $("#toggler").removeClass("btn-success");
-        $("#toggler").addClass("btn-danger");
-      } else if (!this.searchBarBool) {
-        $("#closer").css("display", "none");
-        $("#opener").removeAttr("style");
-
-        $("#toggler").addClass("btn-success");
-        $("#toggler").removeClass("btn-danger");
-        $("#searchInput").val("");
-        this.term = "";
-      }
-    });
     this.$nextTick(() => {
       $(".close").on("click", evt => {
         {
@@ -496,6 +463,7 @@ export default {
       });
     });
   },
+
   computed: {
     categoryColor() {
       return this.event.EventSettings[0].eCategoryColor;
@@ -571,6 +539,10 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
+    returnDate: function(datetime) {
+      const format1 = "LLLL";
+      return moment(datetime).format(format1);
+    },
     getStyle: function() {
       Vue.set(
         this.categoryStyle,
@@ -651,18 +623,18 @@ export default {
         // desktop heart sizing
         let target = this.$refs.desktopItems[0].clientHeight;
         let factor = target / 100;
-        let string = "scale(" + 3 * factor + ")";
-        Vue.set(this.heartHeightDesktop, "top", "5%");
-        Vue.set(this.heartHeightDesktop, "left", "-14%");
+        let string = "scale(" + factor + ")";
+        Vue.set(this.heartHeightDesktop, "top", "0%");
+        Vue.set(this.heartHeightDesktop, "left", "-13.5%");
         Vue.set(this.heartHeightDesktop, "transform", string);
 
         // sidebar heart sizing
         let target2 = this.$refs.sidebarName[0].clientHeight;
         let factor2 = target / 100;
-        let string2 = "scale(" + 4 * factor + ")";
+        let string2 = "scale(" + 1 * factor + ")";
         Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-        Vue.set(this.heartHeightDesktopSidebar, "top", "-10%");
-        Vue.set(this.heartHeightDesktopSidebar, "left", "-11%");
+        Vue.set(this.heartHeightDesktopSidebar, "top", "-5%");
+        Vue.set(this.heartHeightDesktopSidebar, "left", "-7%");
       }
     },
     getImage: function(image) {
@@ -835,8 +807,8 @@ h1 {
   display: block !important;
   h1 {
     text-align: left;
-    padding-left: 10%;
-    padding-top: 150px;
+
+    padding-top: 90px;
   }
   h2 {
     margin-bottom: 0%;
@@ -850,6 +822,21 @@ h1 {
 .date-text {
   font-size: 80%;
   color: black;
+}
+
+#descriptionCountdown {
+  text-align: center;
+  color: white !important;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 14px;
+  line-height: 1.428571429;
+}
+.image {
+  width: auto;
+  height: auto;
+  max-height: 100%;
 }
 #dropdown {
   font-size: 1em;
@@ -866,13 +853,24 @@ h1 {
 #filter {
   background-color: white;
   width: 100%;
+  border-bottom: 1px black solid;
   margin: 0 auto;
   position: fixed;
+  padding-bottom: 5px;
   z-index: 100;
   top: 50px;
 }
 #searchInput {
-  width: 40%;
+  background: #fff;
+  background: rgba(255, 255, 255, 0.5);
+  box-sizing: border-box;
+  border: 1px solid darkGrey;
+  /* border-radius: 5px; */
+  padding: 0.25em 0.6em;
+  /* float: left; */
+  height: 2em;
+  font-size: 16px;
+  text-align: center;
 }
 #basic-addon2 {
   width: 20%;
@@ -898,16 +896,15 @@ h1 {
   margin-bottom: 25px;
 }
 
-h3 {
-  font-size: 16px;
-  margin-bottom: 0em;
+.name {
+  overflow: hidden;
   color: black;
-}
-
-p {
-  color: black;
-  font-size: 12px;
-  margin-bottom: 0em;
+  white-space: normal;
+  text-overflow: ellipsis;
+  height: 60px;
+  display: inline-block;
+  word-wrap: normal;
+  margin: 0;
 }
 .imgDesktop {
   height: 198px;
@@ -972,20 +969,22 @@ button {
 
 .idDesktopSidebar,
 .closedSidebar {
-  top: 0%;
-  position: absolute;
-  font-size: 14px;
-  z-index: 5;
-  padding: 3px;
-  border-top-right-radius: 4px;
-  border-bottom-left-radius: 4px;
-  z-index: 5;
-  color: white;
+  width: auto;
+  color: #ffffff;
+  font-size: 14px !important;
+
   font-weight: bold;
+  padding: 3px;
+  position: absolute;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: inset 0px 24px 20px -15px rgba(255, 255, 255, 0.1),
+    inset 0px 0px 10px rgba(0, 0, 0, 0.4), 0px 0px 30px rgba(255, 255, 255, 0.4);
+  z-index: 5;
 }
 
 .idDesktopSidebar {
-  background-color: orange;
+  background-color: #e4450a;
   margin-right: 250px;
 }
 .closedSidebar {
@@ -997,7 +996,7 @@ button {
   width: auto;
 }
 .bar-text {
-  font-size: 14px;
+  font-size: 120%;
   color: black;
   align-content: left;
 }
@@ -1005,6 +1004,7 @@ button {
 #description {
   font-size: 14px;
   margin: 10px;
+
   margin-bottom: 10%;
 }
 
@@ -1039,6 +1039,10 @@ button {
   display: block;
 }
 
+* {
+  font-family: "Verdana", "Calibri", "Trebuchet MS", "Helvetica Neue", "Arial",
+    sans-serif !important;
+}
 // BASIC
 // body {
 //   background: linear-gradient(135deg, #121721 0%, #000000 100%) fixed;
