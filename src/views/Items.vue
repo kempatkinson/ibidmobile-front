@@ -1,5 +1,5 @@
 <template>
-  <div id="list">
+  <div id="list" v-bind:style="this.backgroundStyle">
     <div class="b-container" v-if="!(isDesktop)">
       <div id="filter">
         <b-row>
@@ -32,10 +32,12 @@
       </div>
       <b-row id="EventHeader">
         <b-col>
-          <h1>Welcome to the {{event.Name}}</h1>
-          <h2>{{event.Description}}</h2>
+          <h1
+            v-bind:style="{'background-color': categoryColor}"
+          >Welcome to the {{event.EventInfo[0].Name}}</h1>
+          <h2>{{event.EventInfo[0].Description}}</h2>
 
-          <countdown :time="timeUntil(event.EndDate)">
+          <countdown :time="timeUntil(event.EventInfo[0].EndDate)">
             <div slot-scope="props">
               <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
             </div>
@@ -48,14 +50,18 @@
           <b-col>
             <b-row>
               <b-col>
-                <h2 class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
+                <h2
+                  v-bind:style="{'background-color': categoryColor}"
+                  class="catAnchor"
+                  v-bind:id="'anchor-'+category.name"
+                >{{category.name}}</h2>
               </b-col>
             </b-row>
 
             <b-row>
               <b-col>
                 <b-row
-                  class="cardData"
+                  class="cardData allData"
                   v-for="(chunk,index) in chunks(category.ids)"
                   :data-count="(chunk.length)"
                   :key="index"
@@ -106,7 +112,7 @@
       </div>
 
       <div v-if="searchBar">
-        <b-row>
+        <b-row >
           <b-col>
             <h2 id="searchResults">Search Results</h2>
           </b-col>
@@ -116,7 +122,7 @@
             <b-row>
               <b-col>
                 <b-row
-                  class="cardData"
+                  class="cardData allData"
                   v-for="(chunk,index) in chunks(activeCards)"
                   :data-count="(chunk.length)"
                   :key="index"
@@ -190,10 +196,12 @@
       </b-row>
       <b-row id="EventHeader">
         <b-col>
-          <h1>Welcome to the {{event.Name}}</h1>
-          <h2>{{event.Description}}</h2>
+          <h1
+            v-bind:style="{'background-color': categoryColor}"
+          >Welcome to the {{event.EventInfo[0].Name}}</h1>
+          <h2>{{event.EventInfo[0].Description}}</h2>
 
-          <countdown :time="timeUntil(event.EndDate)">
+          <countdown :time="timeUntil(event.EventInfo[0].EndDate)">
             <div slot-scope="props">
               <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
             </div>
@@ -204,23 +212,27 @@
       <div v-if="!searchBar">
         <b-row class="allData" v-for="category in categories" :key="category.category">
           <b-col>
-            <b-row>
+            <b-row >
               <div class="col-12">
-                <h2 class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
+                <h2
+                  v-bind:style="{'background-color': categoryColor}"
+                  class="catAnchor"
+                  v-bind:id="'anchor-'+category.name"
+                >{{category.name}}</h2>
               </div>
             </b-row>
 
             <b-row>
               <b-col>
                 <b-row
-                  class="cardData"
+                  class="cardData allData"
                   v-for="(chunk,index) in chunks(category.ids)"
                   :data-count="(chunk.length)"
                   :key="index"
                 >
                   <div class="single" v-for="data in chunk" :key="data.itID">
                     <div class="card" v-bind:style="containerStyle">
-                      <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
+                      <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
                       <p class="idDesktop">{{data.itCatalogNum}}</p>
                       <div
                         class="heart"
@@ -271,14 +283,14 @@
         <b-row>
           <b-col>
             <b-row
-              class="cardData"
+              class="cardData allData"
               v-for="(chunk,index) in chunks(activeCards)"
               :data-count="(chunk.length)"
               :key="index"
             >
               <div class="single" v-for="data in chunk" :key="data.itID">
                 <div class="card" v-bind:style="containerStyle">
-                  <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
+                  <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
                   <p class="idDesktop">{{data.itCatalogNum}}</p>
                   <div
                     class="heart"
@@ -317,13 +329,7 @@
       <div class="row">
         <div class="col-9"></div>
         <div class="col-3">
-          <b-sidebar
-            :id="'sidebar-' + data.itID"
-            right
-            shadow
-            v-for="data in this.deck"
-            :key="data.itID"
-          >
+          <b-sidebar :id="'sidebar-' + data.itID" right v-for="data in this.deck" :key="data.itID">
             <b-container>
               <b-row id="gap">
                 <b-col class="d-flex justify-content-center">
@@ -405,12 +411,7 @@ export default {
   data() {
     return {
       selected: "All Items",
-      // options: [
-      //   { text: "All Items", value: "1" },
-      //   { text: "Live Items", value: "2" },
-      //   { text: "Unsold Items", value: "3" },
-      //   { text: "Items with no bids", value: "4" }
-      // ],
+
       anchor: {},
       times: [],
       heartHeight: {},
@@ -419,10 +420,11 @@ export default {
       cardWidth: 274,
       deck: [],
       event: {},
-      containerStyle: { },
+      containerStyle: {},
       sample: "hello.jpg",
-      sidebarPost: {},
       sidebar: {},
+      categoryStyle: {},
+      backgroundStyle: {},
       searchBarBool: false,
       windowWidth: window.innerWidth,
       id: "",
@@ -435,16 +437,15 @@ export default {
     this.deck = this.$store.state.posts;
     this.$store.dispatch("getEvent", this.$route.params.TinyURL);
     this.event = this.$store.state.event[0];
+    this.getStyle();
     this.sidebar = { status: false, current: "" };
     this.$nextTick(() => {
       this.windowWidth = window.innerWidth;
-      this.getHeight();
       this.getRowHeight();
     });
     //listeners
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
-      // this.getHeight();
 
       this.getRowHeight();
     });
@@ -469,17 +470,27 @@ export default {
         this.term = "";
       }
     });
-
-    $(".close").click(function() {
-      {
-        let sidebar = $(this.offsetParent).attr("id");
-        let id = sidebar.substr(8, sidebar.length - 1);
-        $("#sidebar-" + id).css("display", "none");
-        this.sidebar = { status: false, current: "" };
-      }
+    this.$nextTick(() => {
+      $(".close").on("click", evt => {
+        {
+          console.log("hllo");
+          let sidebar = $(evt.target)
+            .parent()
+            .parent()
+            .parent()
+            .attr("id");
+          console.log(sidebar);
+          let id = sidebar.substr(8, sidebar.length - 1);
+          $("#sidebar-" + id).css("display", "none");
+          this.sidebar = { status: false, current: "" };
+        }
+      });
     });
   },
   computed: {
+    categoryColor() {
+      return this.event.EventSettings[0].eCategoryColor;
+    },
     isDesktop() {
       return this.windowWidth > 768;
     },
@@ -551,6 +562,23 @@ export default {
     ...mapState(["posts"])
   },
   methods: {
+    getStyle: function() {
+      Vue.set(
+        this.categoryStyle,
+        "background-color",
+        this.event.EventSettings[0].eCategoryColor
+      );
+      Vue.set(
+        this.backgroundStyle,
+        "background-color",
+        this.event.EventSettings[0].eBackgroundColor
+      );
+      Vue.set(
+        this.backgroundStyle,
+        "color",
+        this.event.EventSettings[0].eFontColor
+      );
+    },
     scrollPage: function() {
       this.scrollTo("#" + this.selected);
     },
@@ -558,7 +586,6 @@ export default {
     myEventHandler(e) {
       this.windowWidth = e.srcElement.window.innerWidth;
       this.isDesktop();
-      this.getHeight();
       this.getRowHeight();
     },
     chunks: function(array) {
@@ -601,28 +628,10 @@ export default {
         this.sidebar.status = true;
       }
     },
-    getHeight() {
-      // if (this.isDesktop) {
-      //   let height = this.$refs.targetCard.clientHeight;
-      //   height += "px";
-      //   Vue.set(this.containerStyle, "height", height);
-      //   let width = $("#element")[0].clientWidth;
-      //   console.log(width);
-      //   width += "px";
-      //   Vue.set(this.containerStyle, "width", "274px");
-      // }
-      // if (!this.isDesktop) {
-      //   let height = this.$refs.targetCardMobile.clientHeight;
-      //   height += "px";
-      //   Vue.set(this.containerStyle, "height", height);
-      //   let width = this.$refs.targetCardMobile.clientWidth;
-      //   width += "px";
-      //   Vue.set(this.containerStyle, "width", width);
-      // }
-    },
+
     getRowHeight() {
       if (!this.isDesktop) {
-        // heart sizing
+        // mobile heart sizing
         let target = this.$refs.items[0].clientHeight;
         let factor = target / 100;
         let string = "scale(" + 2 * factor + ")";
@@ -630,7 +639,7 @@ export default {
         Vue.set(this.heartHeight, "bottom", "50px");
         Vue.set(this.heartHeight, "left", "-20px");
       } else if (this.isDesktop) {
-        // heart sizing
+        // desktop heart sizing
         let target = this.$refs.desktopItems[0].clientHeight;
         let factor = target / 100;
         let string = "scale(" + 3 * factor + ")";
@@ -641,10 +650,10 @@ export default {
         // sidebar heart sizing
         let target2 = this.$refs.sidebarName[0].clientHeight;
         let factor2 = target / 100;
-        let string2 = "scale(" + 2.5 * factor + ")";
+        let string2 = "scale(" + 4 * factor + ")";
         Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-        Vue.set(this.heartHeightDesktopSidebar, "top", "1800%");
-        Vue.set(this.heartHeightDesktopSidebar, "right", "-10px");
+        Vue.set(this.heartHeightDesktopSidebar, "top", "-10%");
+        Vue.set(this.heartHeightDesktopSidebar, "left", "-11%");
       }
     },
     getImage: function(image) {
@@ -795,32 +804,27 @@ export default {
   position: absolute;
   bottom: 200px;
 }
-#list {
-  background-color: blue;
-}
+
 h1 {
   margin-bottom: 0%;
 }
-#searchResults {
-  color: white;
-}
 
-.allData {
-  background-color: blue;
-}
 #toggler {
   margin-bottom: 10px;
 }
 .catAnchor {
-  background-color: orange;
+  min-height: 36px;
+  vertical-align: middle;
+  font-weight: bold;
+  width: 100%;
   text-align: left;
-  padding: 5px 10px 5px;
-  color: white;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 #EventHeader {
+  display: block !important;
   h1 {
-    background-color: orange;
     text-align: left;
     padding-left: 10%;
     padding-top: 150px;
@@ -828,8 +832,6 @@ h1 {
   h2 {
     margin-bottom: 0%;
   }
-  background-color: blue;
-  color: white;
   font-size: 24px;
 }
 // DROPDOWN/ SEARCH BAR
@@ -847,7 +849,6 @@ h1 {
   position: fixed;
   z-index: 100;
   top: 50px;
-  border-bottom: black solid 2px;
 }
 #searchInput {
   width: 40%;
@@ -856,38 +857,24 @@ h1 {
   width: 20%;
 }
 
-.row {
+.allData {
   display: block !important;
 }
 .single {
   display: inline-block;
-}
-
-//CARDS
-.card-header {
-  padding: 1%;
-  margin-bottom: 5%;
-}
-.card-body {
-  margin: 0;
-  padding: 0px;
-}
-.card-footer {
-  padding: 0px;
-  padding-bottom: 2.5%;
-  margin-top: 5%;
-  align-content: center;
-}
-.card-title {
-  margin-top: 5%;
-  margin: 0;
-}
-.card {
+  z-index: 5;
   max-width: 274px;
-  margin-bottom: 10%;
-  border: black 0.5px solid;
-  border-radius: 4px;
+  height: auto;
   background-color: white;
+  -moz-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+  -webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+  box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+  font-size: 14px;
+  margin: 2px;
+  cursor: pointer;
+  position: relative;
+  border-radius: 4px;
+  margin-bottom: 25px;
 }
 
 h3 {
@@ -924,46 +911,42 @@ button {
   margin: 5px;
 }
 
-.closed {
-  background-color: black;
-  width: auto;
-  right: 0%;
-  position: absolute;
-  font-size: 14px;
-}
-
+.closedTag,
 .closedMobile {
-  background-color: black;
-  width: auto;
-  right: 8%;
-  font-size: 8px;
-}
-.idMobile {
-  background-color: orange;
-  width: auto;
-  float: left;
-  font-size: 8px;
-}
-.idDesktop {
-  background-color: orange;
-  width: 20%;
-  float: left;
-  font-size: 14px;
-}
-
-.closed,
-.closedMobile,
-.idDesktop,
-.idMobile {
-  position: absolute;
-  z-index: 5;
+  right: 0;
+  top: 0;
+  font-size: 14px !important;
   padding: 3px;
+  height: auto;
+  z-index: 5;
+  width: auto;
+  text-decoration: none;
   border-top-right-radius: 4px;
   border-bottom-left-radius: 4px;
-  z-index: 5;
-  color: white;
   font-weight: bold;
+  position: absolute;
+  color: #ffffff;
+  background-color: black;
+  z-index: 5;
 }
+
+.idMobile,
+.idDesktop {
+  width: auto;
+  background-color: #e4450a;
+  color: #ffffff;
+  font-size: 14px !important;
+
+  font-weight: bold;
+  padding: 3px;
+  position: absolute;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  box-shadow: inset 0px 24px 20px -15px rgba(255, 255, 255, 0.1),
+    inset 0px 0px 10px rgba(0, 0, 0, 0.4), 0px 0px 30px rgba(255, 255, 255, 0.4);
+  z-index: 5;
+}
+
 //SIDEBAR
 
 .idDesktopSidebar,
@@ -990,7 +973,7 @@ button {
 }
 
 .bar-button {
-  width: 50%;
+  width: auto;
 }
 .bar-text {
   font-size: 14px;

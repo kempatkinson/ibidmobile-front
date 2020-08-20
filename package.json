@@ -19,6 +19,7 @@
     "eslint-loader": "^2.1.2",
     "interact.js": "^1.2.8",
     "jquery": "^3.5.0",
+    "moment": "^2.27.0",
     "nodemon": "^2.0.4",
     "vue": "^2.6.11",
     "vue-countdown": "^1.0.4",

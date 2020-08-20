@@ -1,14 +1,15 @@
 <template>
-  <div class="page">
+  <div class="page" v-bind:style="backgroundStyle">
     <div class="row card topDetails">
-      <p class="closed" v-if="(post.itStatus === 4)">CLOSED</p>
+      <p class="closed" v-show="(post.itStatus === 4)">CLOSED</p>
       <p class="idLabel">{{post.itCatalogNum}}</p>
-
+      <br />
       <h3 id="name" ref="nameRow">{{post.itName}}</h3>
       <h3>Value: ${{post.itValue}}</h3>
       <h3
         v-if="(post.CurrentBidder)"
       >Current Bidder: {{post.CurrentBidder[0].guFirstName}} {{post.CurrentBidder[0].guLastName}}</h3>
+      <h3 v-show="!(post.CurrentBidder)" id="HideName">Hide</h3>
       <h3>Current Bid Price: ${{post.itMinBid}}</h3>
 
       <h3>Minimum Raise: ${{post.itMinRaise}}</h3>
@@ -104,13 +105,18 @@
 
             <div class="row">
               <div class="col d-flex justify-content-center">
-                <button type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
+                <button
+                  id="submitButton"
+                  type="button"
+                  class="btn btn-primary"
+                  v-on:click.prevent="submit"
+                >Submit Bid</button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col d-flex justify-content-center" v-if="post.itOwnNow">
+        <div class="col d-flex justify-content-center" v-if="(post.BuyItNowPrice > 0)">
           <button
             type="button"
             class="btn btn-primary"
@@ -122,7 +128,9 @@
     </div>
 
     <div id="bidHistory" class="row Details" v-if="post.BidHistory">
-      <div class="table">
+      <h3 id="historyLabel">Bid History</h3>
+
+      <div class="table" id="bidTable">
         <thead>
           <th>Bidder</th>
           <th>Amount</th>
@@ -134,10 +142,8 @@
               v-if="(bidder.Bidder)"
             >{{bidder.Bidder[0].guFirstName}} {{bidder.Bidder[0].guLastName}}</td>
             <td v-if="!(bidder.Bidder)">Unlisted</td>
-
             <td>{{bidder.BidAmount}}</td>
-
-            <td>{{bidder.BidTime}}</td>
+            <td>{{returnDate(bidder.BidTime)}}</td>
           </tr>
         </tbody>
       </div>
@@ -164,6 +170,7 @@ import axios from "axios";
 import { mapState } from "vuex";
 import Vue from "vue";
 import cloudinary from "cloudinary-core";
+import moment from "moment";
 
 export default {
   beforeRouteUpdate(to, from, next) {
@@ -199,7 +206,8 @@ export default {
       heartHeight: {},
       image: "",
       windowWidth: window.innerWidth,
-      isDesktop: window.innerWidth > 800
+      isDesktop: window.innerWidth > 800,
+      backgroundStyle: {}
     };
   },
   computed: {
@@ -221,18 +229,34 @@ export default {
   mounted() {
     // this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
     this.event = this.$store.state.event[0];
-
+    this.getStyle();
     this.getCards();
     this.getRowHeight();
     this.initFavorite();
   },
   methods: {
+    returnDate: function(datetime) {
+      const format1 = "YYYY-MM-DD hh:mm a";
+      return moment(datetime).format(format1);
+    },
+    getStyle: function() {
+      Vue.set(
+        this.backgroundStyle,
+        "background-color",
+        this.event.EventSettings[0].eBackgroundColor
+      );
+      Vue.set(
+        this.backgroundStyle,
+        "color",
+        this.event.EventSettings[0].eFontColor
+      );
+    },
     buyNow() {
       var r = confirm("Are you sure you want to buy now?");
 
       if (r) {
         const url =
-          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+          "https://-taiga-12401.herokuapp.com/api/biditems/" +
           // "https://localhost:5001/api/BidItems/" +
           this.post.itID;
         var newPost = this.post;
@@ -337,9 +361,8 @@ export default {
         var newPost = this.post;
         newPost.itMinBid = this.bid;
         const url =
-          "https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
-          // "https://localhost:5001/api/BidItems/" +
-          this.post.id;
+          //"https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+          "https://localhost:5001/api/BidItems/" + this.post.id;
         return axios
           .put(url, newPost, {
             headers: {
@@ -486,12 +509,22 @@ export default {
     right: 0%;
   }
 }
+.page {
+  padding-bottom: 100px;
+}
 #name {
+  font-weight: bold;
   position: relative;
   width: 100%;
   align-content: center;
   padding: 0em;
   margin: 0;
+}
+
+#historyLabel {
+  font-weight: bold;
+  margin: 0 auto;
+  padding-bottom: 10px;
 }
 
 .imgDetails {
@@ -507,14 +540,15 @@ export default {
 }
 
 .Details {
+  width: 90%;
   max-width: 700px;
   min-width: 300px;
-  width: 90%;
   padding: 10px;
   background: #eee;
   color: #333;
   margin: 10px auto;
-  position: relative;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 
 .topDetails {
@@ -527,6 +561,7 @@ export default {
   margin: 10px auto;
   position: relative;
   text-align: left;
+  border-radius: 5px;
 }
 
 .image-row {
@@ -542,31 +577,34 @@ export default {
   padding: 10px;
 }
 .idLabel {
-  background-color: orange;
-  right: 0%;
-  top: 0%;
-  font-size: 14px;
+  font-size: 14px !important;
+  top: 0px;
+  left: 0px;
+  padding: 2px;
   position: absolute;
-  z-index: 5;
-  padding: 3px;
-  border-top-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  z-index: 5;
-  color: white;
-  font-weight: bold;
+  border-top-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  background: #fefefe;
+  /* box-shadow: inset 0px 24px 20px -15px rgba(255, 255, 255, 0.1), inset 0px 0px 10px rgba(0,0,0,0.4), 0px 0px 30px rgba(255,255,255,0.4); */
+  margin-bottom: 10px;
+  color: #000;
 }
 
 .closed {
-  background-color: black;
-  width: auto;
-  color: white;
-  right: 0%;
-  top: 21%;
+  top: 0px;
+  font-size: 14px !important;
+  background: #aa0000;
+  padding: 1px 5px;
   position: absolute;
-  font-size: 14px;
-  padding: 3px;
-  border-top-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  font-family: Arial, sans-serif;
+  height: auto;
+  width: auto;
+  color: #fff;
+  text-decoration: none;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  font-weight: bold;
+  right: 0;
 }
 
 .flex {
@@ -596,14 +634,28 @@ export default {
     transform: translate(-50%, -50%);
   }
 }
+
+#buyNow {
+  margin: auto;
+}
 #bidHistory {
   margin: auto;
   padding-bottom: 100px;
+  width: 100%;
+  align-content: center;
+}
+#bidTable {
+  margin-left: auto;
+  display: inline-table;
 }
 #bid-row {
   margin: 0 auto;
   width: 100%;
-  bottom: 11%;
+  padding-bottom: 20%;
+}
+#submitButton {
+  margin: auto;
+  margin-top: 10px;
 }
 #bidinput {
   width: 40%;
@@ -672,6 +724,10 @@ body {
 #date-text {
   width: 100%;
   color: red;
+}
+
+#HideName {
+  opacity: 0;
 }
 // TWITTER HEART
 .heart {

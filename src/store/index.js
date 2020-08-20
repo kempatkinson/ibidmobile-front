@@ -2,6 +2,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from 'axios';
 import createPresistedState from "vuex-persistedstate";
+import event from '../assets/events.json';
+import deck from '../assets/items.json';
 
 Vue.use(Vuex);
 
@@ -13,35 +15,36 @@ export default new Vuex.Store({
 
   actions: {
     loadPosts({ commit }, id) {
-      console.log(id)
-      axios.get(
-        "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-        // "https://localhost:5001/api/items/" + id
-      )
-        .then(response => 
-          response.data)
-        .then(posts => {
-          commit("GET_POSTS", posts)
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
+      // console.log(id)
+      // axios.get(
+      //   //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+      //    "https://localhost:5001/api/items/" + id
+      // )
+      //   .then(response => 
+      //     response.data)
+      //   .then(posts => {
+      //     commit("GET_POSTS", posts)
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
+      commit("GET_POSTS", deck)
     },
     getEvent({ commit }, id) {
-      axios.get(
-        "https://afternoon-taiga-12401.herokuapp.com/api/events/" + id
-        // "https://localhost:5001/api/events/" + id
-      )
-        .then(response =>  {
-          response.data,
-          commit("SET_EVENT", response.data)
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      // axios.get(
+      //   // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+      //   "https://localhost:5001/api/events/" + id
+      // )
+      //   .then(response => {
+      //     response.data,
+      //       commit("SET_EVENT", response.data)
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
 
-    }, 
+      commit("SET_EVENT", event)
+    },
     setFavorite({ commit }, n) {
       commit("favorite", n);
     },
