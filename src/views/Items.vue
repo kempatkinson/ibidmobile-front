@@ -445,7 +445,6 @@ export default {
                 Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
                 Vue.set(this.heartHeightDesktopSidebar, "left", "0px");
                 Vue.set(this.heartHeightDesktopSidebar, "bottom", "-15px");
-
             }
         },
         getImage: function (image) {
@@ -511,6 +510,12 @@ export default {
     .single {
         width: 146px;
     }
+
+    #EventHeader {
+        h1 {
+            padding-top: 130px;
+        }
+    }
 }
 
 @media (min-width: 400px) {
@@ -521,6 +526,12 @@ export default {
     .single {
         width: 190px;
     }
+
+    #EventHeader {
+        h1 {
+            padding-top: 130px;
+        }
+    }
 }
 
 @media (min-width: 600px) {
@@ -530,6 +541,12 @@ export default {
 
     .single {
         width: 280px;
+    }
+
+    #EventHeader {
+        h1 {
+            padding-top: 135px;
+        }
     }
 }
 
@@ -561,8 +578,6 @@ h1 {
 
     h1 {
         text-align: left;
-
-        padding-top: 90px;
     }
 
     h2 {
