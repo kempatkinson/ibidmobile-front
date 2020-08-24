@@ -8,9 +8,8 @@
       <h3>Value: ${{post.itValue}}</h3>
       <h3
         v-if="(post.CurrentBidder)"
-      >Current Bidder: {{post.CurrentBidder[0].guFirstName}} {{post.CurrentBidder[0].guLastName}}</h3>
-      <h3 v-show="!(post.CurrentBidder)" id="HideName">Hide</h3>
-      <h3>Current Bid Price: ${{post.itMinBid}}</h3>
+        style="font-weight: bold"
+      >Bidder: {{post.CurrentBidder[0].guFirstName}} {{post.CurrentBidder[0].guLastName}} at ${{post.itMinBid}}</h3>
 
       <h3>Minimum Raise: ${{post.itMinRaise}}</h3>
 
@@ -641,7 +640,9 @@ export default {
 #bidHistory {
   margin: auto;
   padding-bottom: 100px;
-  width: 100%;
+  width: 90%;
+  max-width: 700px;
+  min-width: 300px;
   align-content: center;
 }
 #bidTable {
@@ -651,7 +652,8 @@ export default {
 #bid-row {
   margin: 0 auto;
   width: 100%;
-  padding-bottom: 20%;
+  padding-top: 5%;
+  padding-bottom: 10%;
 }
 #submitButton {
   margin: auto;
