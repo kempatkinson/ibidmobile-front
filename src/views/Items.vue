@@ -5,7 +5,7 @@
             <b-col md="8">
                 <div class="selection" id="gap">
                     <select v-model="selected" id="dropdown" @change="scrollPage()">
-                        <option ref="option" v-for="option in categories" v-bind:key="option.category" v-bind:value="option.name">{{ option.name }}</option>
+                        <option ref="option" v-for="option in categories" v-bind:key="option.category" v-bind:value="option.name">{{ option.name.toUpperCase()}}</option>
                     </select>
                 </div>
             </b-col>
@@ -29,7 +29,7 @@
                 <b-col>
                     <b-row>
                         <div class="col-12">
-                            <h2 v-bind:style="{'background-color': categoryColor}" class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
+                            <h2 v-bind:style="{'background-color': categoryColor}" class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name.toUpperCase()}}</h2>
                         </div>
                     </b-row>
 
@@ -50,7 +50,7 @@
 
                                                     <div class="card-title" style="position: relative">
                                                         <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                            <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName}}</h3>
+                                                            <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                         </router-link>
                                                     </div>
                                                     <div style="position: relative; width: 0; height: 0">
@@ -61,12 +61,12 @@
                                             <b-row>
                                                 <b-col>
                                                     <div v-if="!(data.itStatus === 4)">
-                                                        <label for="price" class="date-text">Current Bid:</label>
-                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                                        <label for="price" class="date-text">Current Bid: </label>
+                                                        <span id="price" class="date-text"> ${{data.itMinBid}}</span>
                                                     </div>
                                                     <div v-if="(data.itStatus === 4)">
                                                         <label for="price" class="date-text">Sold:</label>
-                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                                        <span id="price" class="date-text"> ${{data.itMinBid}}</span>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -210,7 +210,6 @@ export default {
 
             anchor: {},
             times: [],
-            heartHeight: {},
             heartHeightDesktop: {},
             heartHeightDesktopSidebar: {},
             cardWidth: 274,
@@ -255,13 +254,11 @@ export default {
         this.$nextTick(() => {
             $(".close").on("click", evt => {
                 {
-                    console.log("hllo");
                     let sidebar = $(evt.target)
                         .parent()
                         .parent()
                         .parent()
                         .attr("id");
-                    console.log(sidebar);
                     let id = sidebar.substr(8, sidebar.length - 1);
                     $("#sidebar-" + id).css("display", "none");
                     this.sidebar = {
@@ -278,7 +275,7 @@ export default {
             return this.event.EventSettings[0].eCategoryColor;
         },
         isDesktop() {
-            return this.windowWidth > 600;
+            return this.windowWidth > 800;
         },
         searchBar() {
             if (this.term.length > 0) {
@@ -375,7 +372,7 @@ export default {
 
         myEventHandler(e) {
             this.windowWidth = e.srcElement.window.innerWidth;
-            this.isDesktop();
+            this.isDesktop;
             this.getRowHeight();
         },
         chunks: function (array) {
@@ -399,40 +396,33 @@ export default {
         toggler: function (id) {
             // sidebar is on
             // on and id matches
-            if (this.sidebar.status === true && this.sidebar.current === id) {
-                this.sidebar.status = false;
-                this.sidebar.current = "";
-                $("#sidebar-" + id).css("display", "none");
-            }
-            //on but id does not match
-            else if (this.sidebar.status === true && this.sidebar.current !== id) {
-                $("#sidebar-" + this.sidebar.current).css("display", "none");
-                this.sidebar.status = true;
-                this.sidebar.current = id;
-                $("#sidebar-" + id).removeAttr("style");
-            }
-            //side bar is off
-            else if (this.sidebar.status === false) {
-                $("#sidebar-" + id).removeAttr("style");
-                this.sidebar.current = id;
-                this.sidebar.status = true;
+            if (this.isDesktop) {
+                if (this.sidebar.status === true && this.sidebar.current === id) {
+                    this.sidebar.status = false;
+                    this.sidebar.current = "";
+                    $("#sidebar-" + id).css("display", "none");
+                }
+                //on but id does not match
+                else if (this.sidebar.status === true && this.sidebar.current !== id) {
+                    $("#sidebar-" + this.sidebar.current).css("display", "none");
+                    this.sidebar.status = true;
+                    this.sidebar.current = id;
+                    $("#sidebar-" + id).removeAttr("style");
+                }
+                //side bar is off
+                else if (this.sidebar.status === false) {
+                    $("#sidebar-" + id).removeAttr("style");
+                    this.sidebar.current = id;
+                    this.sidebar.status = true;
+                }
             }
         },
 
         getRowHeight() {
-            // if (!this.isDesktop) {
-            //   // mobile heart sizing
-            //   let target = this.$refs.items[0].clientHeight;
-            //   let factor = target / 100;
-            //   let string = "scale(" + 1 * factor + ")";
-            //   Vue.set(this.heartHeight, "transform", string);
-            //   Vue.set(this.heartHeight, "bottom", "120px");
-            //   Vue.set(this.heartHeight, "left", "-25px");
-            // } else if (this.isDesktop) {
-            // desktop heart sizing
+
             let target = this.$refs.desktopItems[0].clientHeight;
             let factor = target / 100;
-            let string = "scale(" + 2.5 * factor + ")";
+            let string = "scale(" + 1 * factor + ")";
             Vue.set(this.heartHeightDesktop, "transform", string);
             Vue.set(this.heartHeightDesktop, "top", "-40px");
             Vue.set(this.heartHeightDesktop, "left", "-40px");
@@ -679,6 +669,7 @@ h1 {
     display: inline-block;
     word-wrap: normal;
     margin: 0;
+    height: 60px;
 }
 
 .imgDesktop {
