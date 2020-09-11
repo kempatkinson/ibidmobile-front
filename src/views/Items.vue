@@ -52,21 +52,22 @@
                                                         <router-link :to="{ name: 'post', params: {id: data.itID}}">
                                                             <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                         </router-link>
+                                                        <div id="heartPos"></div>
                                                     </div>
-                                                    <div style="position: relative; width: 0; height: 0">
+                                                    <div style="position: relative;">
                                                         <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                                     </div>
                                                 </b-col>
                                             </b-row>
                                             <b-row>
                                                 <b-col>
-                                                    <div v-if="!(data.itStatus === 4)">
-                                                        <label for="price" class="date-text">Current Bid: </label>
-                                                        <span id="price" class="date-text"> ${{data.itMinBid}}</span>
+                                                    <div v-if="!(data.itStatus === 4)" id="priceCol">
+                                                        <label for="price" class="date-text">Current Bid:</label>
+                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
                                                     </div>
-                                                    <div v-if="(data.itStatus === 4)">
+                                                    <div v-if="(data.itStatus === 4)" id="priceCol">
                                                         <label for="price" class="date-text">Sold:</label>
-                                                        <span id="price" class="date-text"> ${{data.itMinBid}}</span>
+                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -165,7 +166,7 @@
                         </b-row>
                         <b-row class="justify-content-center">
                             <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <button class="btn btn-primary bar-button">Bid Now!</button>
+                                <button class="btn btn-primary bar-button" id="bidButton">Bid Now!</button>
                             </router-link>
                         </b-row>
                         <b-row>
@@ -419,22 +420,39 @@ export default {
         },
 
         getRowHeight() {
-
             let target = this.$refs.desktopItems[0].clientHeight;
             let factor = target / 100;
             let string = "scale(" + 1 * factor + ")";
             Vue.set(this.heartHeightDesktop, "transform", string);
-            Vue.set(this.heartHeightDesktop, "top", "-40px");
-            Vue.set(this.heartHeightDesktop, "left", "-40px");
+
+            Vue.set(
+                this.heartHeightDesktop,
+                "top",
+                $("#heartPos")
+                .parent()
+                .offset().top -
+                $("#heartPos").offset().top +
+                "px"
+            );
+            Vue.set(
+                this.heartHeightDesktop,
+                "left",
+                $("#priceCol").offset().left +
+                $("#priceCol").width() / 2 -
+                $(".heart").offset().left -
+                $(".heart").width() / 2 +
+                "px"
+            );
 
             if (this.isDesktop) {
                 // sidebar heart sizing
                 let target2 = this.$refs.sidebarName[0].clientHeight;
                 let factor2 = target / 100;
-                let string2 = "scale(" + 2.5 * factor + ")";
+                let string2 = "scale(" + 1 * factor + ")";
                 Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-                Vue.set(this.heartHeightDesktopSidebar, "left", "0px");
-                Vue.set(this.heartHeightDesktopSidebar, "bottom", "-15px");
+                console.log($(".bar-button").position())
+                //  Vue.set(this.heartHeightDesktopSidebar, "left", +"px");
+                //  Vue.set(this.heartHeightDesktopSidebar, "bottom", $("#bidButton").offset().bottom - $("#bidButton").offset().bottom + "px");
             }
         },
         getImage: function (image) {
@@ -670,6 +688,12 @@ h1 {
     word-wrap: normal;
     margin: 0;
     height: 60px;
+}
+
+#heartPos {
+    width: 1px;
+    margin: 0 auto;
+    height: 1px;
 }
 
 .imgDesktop {

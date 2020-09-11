@@ -45,6 +45,9 @@ export default new Vuex.Store({
 
       commit("SET_EVENT", event)
     },
+    logInUser({ commit }, user) {
+      commit("SET_USER", user)
+    },
     setFavorite({ commit }, n) {
       commit("favorite", n);
     },
@@ -53,7 +56,8 @@ export default new Vuex.Store({
     },
     findFavorite({ commit }, i) {
       commit("findfavorite", i)
-    }
+    },
+
   },
   mutations: {
     GET_POSTS(state, posts) {
@@ -62,12 +66,14 @@ export default new Vuex.Store({
     SET_EVENT(state, event) {
       state.event = event;
     },
+    SET_USER(state, user) {
+      state.user = user;
+    },
     favorite(state, n) {
       state.favorites.push(n);
     },
     unfavorite(state, i) {
       state.favorites.splice(state.favorites.findIndex((element) => element.n === i.n), 1)
-
     },
     clear(state) {
       state.favorites = [];

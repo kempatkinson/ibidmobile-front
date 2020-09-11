@@ -15,6 +15,7 @@
     "bootstrap-vue": "^2.12.0",
     "cloudinary-core": "^2.8.2",
     "core-js": "^3.6.4",
+    "crypto-js": "^4.0.0",
     "datetime": "0.0.3",
     "eslint-loader": "^2.1.2",
     "interact.js": "^1.2.8",
