@@ -5,16 +5,20 @@
             <img src="./assets/logo.png" />
         </b-navbar-brand>
 
-        <b-navbar-nav class="nav nav-justified-start ml-auto">
-            <b-nav-item id="sign" v-if="!this.loggedIn">
+        <b-navbar-nav class="nav nav-justified-start ml-auto" :key="this.isLoggedIn">
+            <b-nav-item id="sign" v-if="!this.isLoggedIn">
                 <a class="noHover">
                     <router-link to="/login">Sign In</router-link>
                 </a>
             </b-nav-item>
-            <b-nav-item id="sign" v-if="this.loggedIn">
+            <b-nav-item id="sign" v-if="this.isLoggedIn">
                 <a class="noHover" @click="logOut">Log Out</a>
             </b-nav-item>
-
+            <b-nav-item v-if="this.isLoggedIn">
+                <a class="noHover">
+                    <router-link to="/favorites" class="noHover">Favorited Items</router-link>
+                </a>
+            </b-nav-item>
             <b-nav-item>
                 <a v-b-toggle.sidebar-n class="link noHover">Menu</a>
             </b-nav-item>
@@ -48,22 +52,37 @@
 
 <script>
 import jquery from "jquery";
+import {
+    mapState
+} from "vuex";
+
 export default {
     data() {
         return {
             url: "",
-            loggedIn: this.$store.state.user !== undefined | this.$store.state.user !== {},
-            user: this.$store.state.user
+            user: this.$store.state.user,
         };
     },
-    mounted() {},
+    mounted() {
+        if (this.isLoggedIn()) {
+            console.log(this.$store.state.user);
+        }
+    },
+
     methods: {
         logOut() {
             this.$store.dispatch("logInUser", {});
-            console.log("logging out")
+            console.log("logging out");
         }
     },
-    computed: {}
+    computed: {
+        isLoggedIn() {
+            if (this.$store.state.user.UserID !== undefined) {
+                return true
+            } else return false;
+        },
+        ...mapState['user']
+    }
 };
 </script>
 

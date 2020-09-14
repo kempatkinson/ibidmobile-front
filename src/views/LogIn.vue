@@ -2,9 +2,18 @@
 <div id="login">
     <h1>iBid Login</h1>
     <br />
+    <div class="row" v-if="isLoggedIn">
+        <div class="col-6 offset-md-3">
+
+            <h3>You're already logged in! Do you want to log out? </h3>
+
+            <button class="btn btn-primary" @click="logOut">Log Out</button>
+
+        </div>
+    </div>
     <div class="row">
         <div class="col-6 offset-md-3">
-            <div id="emailForm">
+            <div id="emailForm" v-if="!isLoggedIn">
                 <label for="email">Please enter your email:</label>
                 <br />
                 <input type="text" id="email" name="email" class="form-control" />
@@ -12,10 +21,11 @@
                 <button class="btn btn-primary" id="next" @click="checkEmail">Next</button>
             </div>
             <div id="passwordForm">
-                <!--        <button @click="forgot">Forgot Password?</button> -->
+
                 <label for="password">Password:</label>
-                <input type="text" id="password" name="password" />
-                <button class="btn btn-primary" @click="logIn">Log In</button>
+                <input type="text" id="password" name="password" class="form-control" />
+                <button class="btn btn-primary" @click="forgot" id="forgotbutton">Forgot Password?</button>
+                <button class="btn btn-primary" id="loginbutton" @click="logIn">Log In</button>
             </div>
             <div id="registerForm">
                 <div class="row">
@@ -110,6 +120,9 @@
 
 <script>
 import Vue from "vue";
+import {
+    mapState
+} from 'vuex'
 import sha256 from "crypto-js/sha256";
 
 export default {
@@ -117,11 +130,24 @@ export default {
     data() {
         return {
             user: {},
-            loggedIn: this.$store.state.user !== undefined | this.$store.state.user == {},
+
             requestedEvent: this.$store.state.event
         };
     },
+    computed: {
+        isLoggedIn() {
+            if (this.$store.state.user.UserID !== undefined) {
+                return true
+            } else
+                return false;
+        },
+        ...mapState['user']
+    },
     methods: {
+        logOut() {
+            this.$store.dispatch("logInUser", {});
+
+        },
         //check for iBid account
         checkEmail() {
             if ($("#email").val() === "") {
@@ -139,8 +165,11 @@ export default {
                             this.user = response.data[0];
                             this.checkID(this.user.UserID);
                             $("#passwordForm").show();
+                            $("#forgotbutton").show();
+
                         } else {
                             $("#passwordForm").show();
+                            $("#loginbutton").hide();
 
                             $("#registerForm").show();
                         }
@@ -172,21 +201,19 @@ export default {
         },
         logIn() {
             // use salt to hash password
+            this.checkEmail();
             var password = $("#password").val();
             var salt = this.user.Salt;
             var hashDigest = sha256(salt + password);
-            //hashDigest is array of Bytes , incoming password is hex
-            console.log(hashDigest.toString())
-
             var shortenedPass = hashDigest.toString().substr(0, this.user.Password.length)
-            console.log(this.user.Password)
-            console.log(shortenedPass)
+
             // if hashedPassword matches stored hashedPassword then log them in;
             if (shortenedPass == this.user.Password) {
-                this.loggedIn = true;
                 this.$store.dispatch("logInUser", this.user);
                 // check registration for event
                 this.checkID(this.user.UserID);
+                // if registered, go to event
+                this.$router.push("/v/" + this.requestedEvent[0].EventInfo[0].TinyID)
 
             } else alert("wrong password! try again");
         },
@@ -208,7 +235,6 @@ export default {
                     zipcode: $("#zipcode").val(),
                     phone: $("#phone").val()
                 };
-                console.log(myData);
                 $.ajax({
                     type: "POST",
                     async: true,
@@ -225,6 +251,9 @@ export default {
                     }
                 });
             }
+        },
+        forgot() {
+            console.log('you forgot me!')
         },
         createSalt() {
             var salt = "";
@@ -253,14 +282,6 @@ export default {
                 return false;
             } else return true;
         },
-        // ascii_to_hexa(str) {
-        //     var arr1 = [];
-        //     for (var n = 0, l = str.length; n < l; n++) {
-        //         var hex = Number(str.charCodeAt(n)).toString(8);
-        //         arr1.push(hex);
-        //     }
-        //     return arr1.join("");
-        // },
         string2bytes(str) {
             var bytes = [];
 
@@ -277,8 +298,8 @@ export default {
         $("#registerEvent").hide();
         $("#emailForm").hide();
 
-        if (this.loggedIn) {
-            console.log("user is logged in");
+        if (this.isLoggedIn) {
+            console.log(this.$store.state.user);
         } else {
             $("#emailForm").show();
         }
@@ -302,5 +323,10 @@ input {
 
 label {
     float: left;
+}
+
+.btn {
+    margin: 10px;
+
 }
 </style>
