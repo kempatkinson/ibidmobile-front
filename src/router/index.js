@@ -5,7 +5,7 @@ import Post from "../views/Post.vue";
 import Stack from "../views/Stack.vue";
 import Welcome from "../views/Welcome.vue"
 import Favorites from "../views/Favorites.vue"
-
+import Profile from "../views/Profile.vue"
 import LogIn from "../views/LogIn.vue"
 
 
@@ -26,6 +26,11 @@ const router = new VueRouter({
       path: "/v/:TinyURL",
       name: "Items",
       component: Items
+    },
+    {
+      path: "/myprofile",
+      name: "profile",
+      component: Profile
     },
     {
       path: "/about",

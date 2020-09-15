@@ -55,8 +55,8 @@ export default new Vuex.Store({
     removeFavorite({ commit }, n) {
       commit("unfavorite", n);
     },
-    findFavorite({ commit }, i) {
-      commit("findfavorite", i)
+    clearFavorites({ commit }, i) {
+      commit("clear", i)
     },
 
   },

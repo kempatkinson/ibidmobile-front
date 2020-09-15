@@ -19,6 +19,11 @@
                     <router-link to="/favorites" class="noHover">Favorited Items</router-link>
                 </a>
             </b-nav-item>
+            <b-nav-item v-if="this.isLoggedIn">
+                <a class="noHover">
+                    <router-link to="/myprofile" class="noHover">My Profile</router-link>
+                </a>
+            </b-nav-item>
             <b-nav-item>
                 <a v-b-toggle.sidebar-n class="link noHover">Menu</a>
             </b-nav-item>
@@ -72,6 +77,7 @@ export default {
     methods: {
         logOut() {
             this.$store.dispatch("logInUser", {});
+            this.$store.dispatch("clearFavorites");
             console.log("logging out");
         }
     },

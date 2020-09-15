@@ -145,7 +145,10 @@ export default {
     },
     methods: {
         logOut() {
+            // save favorites to database
             this.$store.dispatch("logInUser", {});
+            // clear favorites when log out
+            this.$store.dispatch("clearFavorites");
 
         },
         //check for iBid account
@@ -158,9 +161,6 @@ export default {
                 axios
                     .get("https://localhost:5001/api/users/email/" + $("#email").val())
                     .then(response => {
-                        // if email is associated with event, show password form
-                        // if email is not associated with event, show regsiter form
-                        // if email does not exist in database, make them register
                         if (response.data.length > 0) {
                             this.user = response.data[0];
                             this.checkID(this.user.UserID);
@@ -188,7 +188,9 @@ export default {
                     var events = response.data[0].G.map(x => x.EventID);
                     console.log(events);
                     if (events.contains(this.requestedEvent.EventID)) {
-                        console.log("registered for event");
+                        console.log("registered for requested event");
+                        this.$router.push("/v/" + this.requestedEvent[0].EventInfo[0].TinyID)
+
                         //redirect to event
                     } else {
                         console.log("not registered for event");
@@ -212,6 +214,8 @@ export default {
                 this.$store.dispatch("logInUser", this.user);
                 // check registration for event
                 this.checkID(this.user.UserID);
+                // push in favorites
+
                 // if registered, go to event
                 this.$router.push("/v/" + this.requestedEvent[0].EventInfo[0].TinyID)
 

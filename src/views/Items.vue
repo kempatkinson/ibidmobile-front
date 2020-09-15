@@ -14,9 +14,17 @@
                 <b-input type="text" name="search" id="searchInput" v-model="term" placeholder="Search" />
             </b-col>
         </b-row>
-        <b-row id="EventHeader">
+        <div id="EventHeader">
+            <b-row>
+                <b-col v-bind:style="{'background-color': categoryColor}">
+                    <h1 id="eventName">Welcome to the {{event.EventInfo[0].Name}}</h1>
+
+                    <h1 v-if="this.user.UserID !== undefined" id="userName">{{this.user.FirstName}} {{this.user.LastName}} </h1>
+                </b-col>
+            </b-row>
+        </div>
+        <b-row>
             <b-col>
-                <h1 v-bind:style="{'background-color': categoryColor}">Welcome to the {{event.EventInfo[0].Name}}</h1>
                 <div id="descriptionCountdown">
                     <p>{{event.EventInfo[0].Description}}</p>
                     <p>Auction Closes: {{returnDate(event.EventInfo[0].EndDate)}}</p>
@@ -225,7 +233,8 @@ export default {
             windowWidth: window.innerWidth,
             id: "",
             url: "",
-            term: ""
+            term: "",
+            user: this.$store.state.user
         };
     },
     mounted() {
@@ -583,9 +592,15 @@ h1 {
 
 #EventHeader {
     display: block !important;
+    width: 100%;
 
-    h1 {
-        text-align: left;
+    #eventName {
+        float: left;
+
+    }
+
+    #userName {
+        float: right;
     }
 
     h2 {

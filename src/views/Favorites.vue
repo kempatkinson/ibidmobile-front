@@ -1,181 +1,26 @@
 <template>
-<div id="list">
-    <div class="b-container" v-if="!(isDesktop)">
-        <div id="filter">
-            <b-row>
-                <b-col>
-                    <div class="selection" id="gap">
-                        <select v-model="selected" id="dropdown" @change="scrollPage()">
-                            <option v-for="option in categories" v-bind:key="option.category">{{ option.name }}</option>
-                        </select>
-                    </div>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col>
-                    <a class="search-form-trigger btn btn-success" data-toggle="search-form" id="toggler">
-                        <i id="opener" class="fa fa-search" aria-hidden="true"></i>
-                        <i id="closer" class="fa fa-window-close" style="display: none"></i>
-                    </a>
-                    <div class="search-form-wrapper">
-                        <b-form class="search-form">
-                            <div class="input-group">
-                                <b-input type="text" name="search" id="searchInput" v-model="term" />
-                                <button class="input-group-addon btn-primary" id="basic-addon2">
-                                    <i class="fa fa-search" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </b-form>
-                    </div>
-                </b-col>
-            </b-row>
-        </div>
-        <b-row id="EventHeader">
-            <b-col>
-                <h1>Welcome to the {{event.Name}}</h1>
-                <h2>{{event.Description}}</h2>
-
-                <countdown :time="timeUntil(event.EndDate)">
-                    <div slot-scope="props">
-                        <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
-                    </div>
-                </countdown>
-            </b-col>
-        </b-row>
-
-        <div v-if="!searchBar">
-            <b-row class="allData" v-for="category in categories" :key="category.category">
-                <b-col>
-                    <b-row>
-                        <b-col>
-                            <h2 class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
-                        </b-col>
-                    </b-row>
-
-                    <b-row>
-                        <b-col>
-                            <b-row class="cardData" v-for="(chunk,index) in chunks(category.ids)" :data-count="(chunk.length)" :key="index">
-                                <div class="single" v-for="data in chunk" :key="data.itID">
-                                    <div class="card" v-bind:style="containerStyle">
-                                        <b-row>
-                                            <b-col>
-                                                <p class="idMobile">1101</p>
-                                                <p class="closedMobile" v-if="(data.itStatus === 4)">CLOSED</p>
-                                            </b-col>
-                                        </b-row>
-                                        <div class="card-body" v-on:click="toggler(data.itID)">
-                                            <b-row v-on:click="select($event)" :id="data.itID">
-                                                <b-col>
-                                                    <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
-                                                </b-col>
-                                            </b-row>
-                                            <b-row>
-                                                <b-col>
-                                                    <div class="card-title" style="position: relative">
-                                                        <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                            <h3 ref="items" v-on:click="toggler(data.itID)">{{data.itName}}</h3>
-                                                        </router-link>
-                                                    </div>
-                                                    <p class="card-text">Current Bid : {{data.itMinBid}}</p>
-                                                </b-col>
-                                            </b-row>
-                                            <b-row>
-                                                <b-col>
-                                                    <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeight" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
-                                                </b-col>
-                                            </b-row>
-                                        </div>
-                                    </div>
-                                </div>
-                            </b-row>
-                        </b-col>
-                    </b-row>
-                </b-col>
-            </b-row>
-        </div>
-
-        <div v-if="searchBar">
-            <b-row>
-                <b-col>
-                    <h2 id="searchResults">Search Results</h2>
-                </b-col>
-            </b-row>
-            <b-row class="allData">
-                <b-col>
-                    <b-row>
-                        <b-col>
-                            <b-row class="cardData" v-for="(chunk,index) in chunks(activeCards)" :data-count="(chunk.length)" :key="index">
-                                <div class="single" v-for="data in chunk" :key="data.itID">
-                                    <div class="card" v-bind:style="containerStyle">
-                                        <p class="idMobile">1101</p>
-                                        <p class="closedMobile" v-if="(data.itStatus === 4)">CLOSED</p>
-
-                                        <div class="card-body" v-on:click="toggler(data.itID)">
-                                            <b-row v-on:click="select($event)" :id="data.itID">
-                                                <b-col>
-                                                    <img class="card-image imgMobile" v-bind:src="getImage(sample)" />
-                                                </b-col>
-                                            </b-row>
-                                            <b-row>
-                                                <b-col>
-                                                    <div class="card-title" style="position: relative">
-                                                        <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                            <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
-                                                        </router-link>
-                                                    </div>
-                                                    <p class="card-text">Current Bid : {{data.itMinBid}}</p>
-                                                </b-col>
-                                            </b-row>
-                                            <b-row>
-                                                <b-col>
-                                                    <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeight" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
-                                                </b-col>
-                                            </b-row>
-                                        </div>
-                                    </div>
-                                </div>
-                            </b-row>
-                        </b-col>
-                    </b-row>
-                </b-col>
-            </b-row>
-        </div>
-    </div>
-    <div class="b-container" v-if="(isDesktop)">
+<div id="list" v-bind:style="this.backgroundStyle">
+    <div class="b-container">
         <b-row id="filter">
-            <b-col>
+            <b-col md="8">
                 <div class="selection" id="gap">
                     <select v-model="selected" id="dropdown" @change="scrollPage()">
-                        <option v-for="option in categories" v-bind:key="option.category">{{ option.name }}</option>
+                        <option ref="option" v-for="option in categories" v-bind:key="option.category" v-bind:value="option.name">{{ option.name.toUpperCase()}}</option>
                     </select>
                 </div>
             </b-col>
 
             <b-col>
-                <a class="search-form-trigger btn btn-success" data-toggle="search-form" id="toggler">
-                    <i id="opener" class="fa fa-search" aria-hidden="true"></i>
-                    <i id="closer" class="fa fa-window-close" style="display: none"></i>
-                </a>
-                <div class="search-form-wrapper">
-                    <div class="input-group search-form" method="none">
-                        <b-input type="text" name="search" id="searchInput" v-model="term" />
-                        <button class="input-group-addon btn-primary" id="basic-addon2">
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </div>
+                <b-input type="text" name="search" id="searchInput" v-model="term" placeholder="Search" />
             </b-col>
         </b-row>
         <b-row id="EventHeader">
             <b-col>
-                <h1>Welcome to the {{event.Name}}</h1>
-                <h2>{{event.Description}}</h2>
-
-                <countdown :time="timeUntil(event.EndDate)">
-                    <div slot-scope="props">
-                        <h2>Event Closes in: {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</h2>
-                    </div>
-                </countdown>
+                <h1 v-bind:style="{'background-color': categoryColor}">Welcome to the {{event.EventInfo[0].Name}}</h1>
+                <div id="descriptionCountdown">
+                    <p>{{event.EventInfo[0].Description}}</p>
+                    <p>Auction Closes: {{returnDate(event.EventInfo[0].EndDate)}}</p>
+                </div>
             </b-col>
         </b-row>
 
@@ -184,37 +29,45 @@
                 <b-col>
                     <b-row>
                         <div class="col-12">
-                            <h2 class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name}}</h2>
+                            <h2 v-bind:style="{'background-color': categoryColor}" class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name.toUpperCase()}}</h2>
                         </div>
                     </b-row>
 
                     <b-row>
                         <b-col>
-                            <b-row class="cardData" v-for="(chunk,index) in chunks(category.ids)" :data-count="(chunk.length)" :key="index">
+                            <b-row class="cardData allData" v-for="(chunk,index) in chunks(category.ids)" :data-count="(chunk.length)" :key="index">
                                 <div class="single" v-for="data in chunk" :key="data.itID">
                                     <div class="card" v-bind:style="containerStyle">
-                                        <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
-                                        <p class="idDesktop">1102</p>
-                                        <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                        <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
+                                        <p class="idDesktop">{{data.itCatalogNum}}</p>
 
-                                        <div class="card-body" v-on:click="toggler(data.itID)">
+                                        <div v-on:click="toggler(data.itID)">
                                             <b-row v-on:click="select($event)" :id="data.itID">
                                                 <b-col>
-                                                    <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
-                                                    <div class="card-title" ref="desktopItems" style="position: relative">
+                                                    <div class="imgContainer">
+                                                        <img class="imgDesktop" v-bind:src="getImage(sample)" />
+                                                    </div>
+
+                                                    <div class="card-title" style="position: relative">
                                                         <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                            <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                                                            <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                         </router-link>
+                                                        <div id="heartPos"></div>
+                                                    </div>
+                                                    <div style="position: relative;">
+                                                        <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                                     </div>
                                                 </b-col>
                                             </b-row>
                                             <b-row>
                                                 <b-col>
-                                                    <div v-if="!(data.itStatus === 4)">
-                                                        <p class="date-text">Current Bid : {{data.itMinBid}}</p>
+                                                    <div v-if="!(data.itStatus === 4)" id="priceCol">
+                                                        <label for="price" class="date-text">Current Bid:</label>
+                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
                                                     </div>
-                                                    <div v-if="(data.itStatus === 4)">
-                                                        <p class="date-text">Sold for : {{data.itMinBid}}</p>
+                                                    <div v-if="(data.itStatus === 4)" id="priceCol">
+                                                        <label for="price" class="date-text">Sold:</label>
+                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -237,28 +90,36 @@
 
             <b-row>
                 <b-col>
-                    <b-row class="cardData" v-for="(chunk,index) in chunks(activeCards)" :data-count="(chunk.length)" :key="index">
+                    <b-row class="cardData allData" v-for="(chunk,index) in chunks(activeCards)" :data-count="(chunk.length)" :key="index">
                         <div class="single" v-for="data in chunk" :key="data.itID">
                             <div class="card" v-bind:style="containerStyle">
-                                <p class="closed" v-if="(data.itStatus === 4)">CLOSED</p>
-                                <p class="idDesktop">1102</p>
-                                <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
+                                <p class="idDesktop">{{data.itCatalogNum}}</p>
 
-                                <div class="card-body" v-on:click="toggler(data.itID)">
+                                <div v-on:click="toggler(data.itID)">
                                     <b-row v-on:click="select($event)" :id="data.itID">
                                         <b-col>
-                                            <img class="card-image imgDesktop" v-bind:src="getImage(sample)" />
+                                            <div class="imgContainer">
+                                                <img class="imgDesktop" v-bind:src="getImage(sample)" />
+                                            </div>
+
                                             <div class="card-title" style="position: relative">
                                                 <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                    <h3 v-on:click="toggler(data.itID)">{{data.itName}}</h3>
+                                                    <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName}}</h3>
                                                 </router-link>
                                             </div>
+                                            <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                         </b-col>
                                     </b-row>
                                     <b-row>
                                         <b-col>
                                             <div v-if="!(data.itStatus === 4)">
-                                                <p class="card-text">Current Bid : {{data.itMinBid}}</p>
+                                                <label for="price" class="date-text">Current Bid:</label>
+                                                <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                            </div>
+                                            <div v-if="(data.itStatus === 4)">
+                                                <label for="price" class="date-text">Sold:</label>
+                                                <span id="price" class="date-text">${{data.itMinBid}}</span>
                                             </div>
                                         </b-col>
                                     </b-row>
@@ -273,15 +134,13 @@
         <div class="row">
             <div class="col-9"></div>
             <div class="col-3">
-                <b-sidebar :id="'sidebar-' + data.itID" right shadow v-for="data in this.deck" :key="data.itID">
+                <b-sidebar :id="'sidebar-' + data.itID" right v-for="data in this.deck" :key="data.itID">
                     <b-container>
                         <b-row id="gap">
-                            <b-col class="d-flex justify-content-center">
-                                <h3 id="name" ref="sidebarName">{{data.itName}}</h3>
+                            <b-col class="justify-content-center">
                                 <p class="closedSidebar" v-if="(data.itStatus === 4)">CLOSED</p>
-                                <p class="idDesktopSidebar">1102</p>
-
-                                <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                <p class="idDesktopSidebar">{{data.itCatalogNum}}</p>
+                                <h3 class="name" id="nameSidebar" ref="sidebarName">{{data.itName}}</h3>
                             </b-col>
                         </b-row>
 
@@ -296,27 +155,30 @@
                                 <div>
                                     <p class="bar-text">Donated By: {{data.itDonor}}</p>
 
-                                    <p class="bar-text" id="description">{{data.itDescription}}</p>
+                                    <p class="bar-text">{{data.itDescription}}</p>
                                     <p class="bar-text">Value: {{data.itValue}}</p>
-                                    <p v-if="!(data.itStatus === 4)" class="date-text">Current Bid : {{data.itMinBid}}</p>
+                                    <p v-if="!(data.itStatus === 4)" class="bar-text">Current Bid : {{data.itMinBid}}</p>
 
-                                    <p v-if="(data.itStatus === 4)" class="date-text">Sold for : {{data.itMinBid}}</p>
+                                    <p v-if="(data.itStatus === 4)" class="bar-text">Sold for : {{data.itMinBid}}</p>
                                     <p class="bar-text">Minmum raise: {{data.itMinRaise}}</p>
                                 </div>
                             </b-col>
                         </b-row>
                         <b-row class="justify-content-center">
                             <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <button class="btn btn-primary bar-button">Bid Now!</button>
+                                <button class="btn btn-primary bar-button" id="bidButton">Bid Now!</button>
                             </router-link>
                         </b-row>
-                        <b-row id="date-text">
-                            <b-col class="d-flex justify-content-center">
+                        <b-row>
+                            <b-col class="justify-content-center">
                                 <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
 
                                 <countdown :time="timeUntil(data.itEndDate)">
                                     <div slot-scope="props" class="bar-text">Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
                                 </countdown>
+                                <div style="position: relative; width: 0; height: 0">
+                                    <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                </div>
                             </b-col>
                         </b-row>
                     </b-container>
@@ -338,22 +200,17 @@ import VueCountdown from "@chenfengyuan/vue-countdown";
 import cloudinary from "cloudinary-core";
 import lodash from "lodash";
 import jquery from "jquery";
+import moment from "moment";
 
 Vue.component(VueCountdown.name, VueCountdown);
 export default {
     name: "Home",
     data() {
         return {
-            selected: "All Items",
-            // options: [
-            //   { text: "All Items", value: "1" },
-            //   { text: "Live Items", value: "2" },
-            //   { text: "Unsold Items", value: "3" },
-            //   { text: "Items with no bids", value: "4" }
-            // ],
+            selected: "",
+
             anchor: {},
             times: [],
-            heartHeight: {},
             heartHeightDesktop: {},
             heartHeightDesktopSidebar: {},
             cardWidth: 274,
@@ -361,8 +218,9 @@ export default {
             event: {},
             containerStyle: {},
             sample: "hello.jpg",
-            sidebarPost: {},
             sidebar: {},
+            categoryStyle: {},
+            backgroundStyle: {},
             searchBarBool: false,
             windowWidth: window.innerWidth,
             id: "",
@@ -372,67 +230,53 @@ export default {
     },
     mounted() {
         this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+        this.deck = this.$store.state.favorites;
         this.$store.dispatch("getEvent", this.$route.params.TinyURL);
-        for (let i = 0; i < this.$store.state.posts.length; i++) {
-            if (this.$store.getters.findFavorite(this.$store.state.posts[i].itID)) {
-                this.deck.push(this.$store.state.posts[i]);
-            }
-        }
         this.event = this.$store.state.event[0];
+        this.getStyle();
         this.sidebar = {
-            snptatus: false,
+            status: false,
             current: ""
         };
+        this.selected = this.categories[0].name;
+
         this.$nextTick(() => {
             this.windowWidth = window.innerWidth;
-            this.getHeight();
             this.getRowHeight();
         });
 
         //listeners
         window.addEventListener("resize", () => {
             this.windowWidth = window.innerWidth;
-            // this.getHeight();
 
             this.getRowHeight();
         });
 
-        $("#toggler").on("click", evt => {
-            this.searchBarBool = !this.searchBarBool;
-            $(".search-form-wrapper").toggleClass("open");
-            $(".search-form-wrapper .search").focus();
-            $("html").toggleClass("search-form-open");
-            if (this.searchBarBool) {
-                $("#opener").css("display", "none");
-                $("#closer").removeAttr("style");
-                $("#toggler").removeClass("btn-success");
-                $("#toggler").addClass("btn-danger");
-            } else if (!this.searchBarBool) {
-                $("#closer").css("display", "none");
-                $("#opener").removeAttr("style");
-
-                $("#toggler").addClass("btn-success");
-                $("#toggler").removeClass("btn-danger");
-                $("#searchInput").val("");
-                this.term = "";
-            }
-        });
-
-        $(".close").click(function () {
-            {
-                let sidebar = $(this.offsetParent).attr("id");
-                let id = sidebar.substr(8, sidebar.length - 1);
-                $("#sidebar-" + id).css("display", "none");
-                this.sidebar = {
-                    status: false,
-                    current: ""
-                };
-            }
+        this.$nextTick(() => {
+            $(".close").on("click", evt => {
+                {
+                    let sidebar = $(evt.target)
+                        .parent()
+                        .parent()
+                        .parent()
+                        .attr("id");
+                    let id = sidebar.substr(8, sidebar.length - 1);
+                    $("#sidebar-" + id).css("display", "none");
+                    this.sidebar = {
+                        status: false,
+                        current: ""
+                    };
+                }
+            });
         });
     },
+
     computed: {
+        categoryColor() {
+            return this.event.EventSettings[0].eCategoryColor;
+        },
         isDesktop() {
-            return this.windowWidth > 768;
+            return this.windowWidth > 800;
         },
         searchBar() {
             if (this.term.length > 0) {
@@ -502,14 +346,34 @@ export default {
         ...mapState(["posts"])
     },
     methods: {
+        returnDate: function (datetime) {
+            const format1 = "LLLL";
+            return moment(datetime).format(format1);
+        },
+        getStyle: function () {
+            Vue.set(
+                this.categoryStyle,
+                "background-color",
+                this.event.EventSettings[0].eCategoryColor
+            );
+            Vue.set(
+                this.backgroundStyle,
+                "background-color",
+                this.event.EventSettings[0].eBackgroundColor
+            );
+            Vue.set(
+                this.backgroundStyle,
+                "color",
+                this.event.EventSettings[0].eFontColor
+            );
+        },
         scrollPage: function () {
             this.scrollTo("#" + this.selected);
         },
 
         myEventHandler(e) {
             this.windowWidth = e.srcElement.window.innerWidth;
-            this.isDesktop();
-            this.getHeight();
+            this.isDesktop;
             this.getRowHeight();
         },
         chunks: function (array) {
@@ -533,95 +397,75 @@ export default {
         toggler: function (id) {
             // sidebar is on
             // on and id matches
-            if (this.sidebar.status === true && this.sidebar.current === id) {
-                this.sidebar.status = false;
-                this.sidebar.current = "";
-                $("#sidebar-" + id).css("display", "none");
-            }
-            //on but id does not match
-            else if (this.sidebar.status === true && this.sidebar.current !== id) {
-                $("#sidebar-" + this.sidebar.current).css("display", "none");
-                this.sidebar.status = true;
-                this.sidebar.current = id;
-                $("#sidebar-" + id).removeAttr("style");
-            }
-            //side bar is off
-            else if (this.sidebar.status === false) {
-                $("#sidebar-" + id).removeAttr("style");
-                this.sidebar.current = id;
-                this.sidebar.status = true;
+            if (this.isDesktop) {
+                if (this.sidebar.status === true && this.sidebar.current === id) {
+                    this.sidebar.status = false;
+                    this.sidebar.current = "";
+                    $("#sidebar-" + id).css("display", "none");
+                }
+                //on but id does not match
+                else if (this.sidebar.status === true && this.sidebar.current !== id) {
+                    $("#sidebar-" + this.sidebar.current).css("display", "none");
+                    this.sidebar.status = true;
+                    this.sidebar.current = id;
+                    $("#sidebar-" + id).removeAttr("style");
+                }
+                //side bar is off
+                else if (this.sidebar.status === false) {
+                    $("#sidebar-" + id).removeAttr("style");
+                    this.sidebar.current = id;
+                    this.sidebar.status = true;
+                }
             }
         },
-        getHeight() {
-            // if (this.isDesktop) {
-            //   let height = this.$refs.targetCard.clientHeight;
-            //   height += "px";
-            //   Vue.set(this.containerStyle, "height", height);
-            //   let width = $("#element")[0].clientWidth;
-            //   console.log(width);
-            //   width += "px";
-            //   Vue.set(this.containerStyle, "width", "274px");
-            // }
-            // if (!this.isDesktop) {
-            //   let height = this.$refs.targetCardMobile.clientHeight;
-            //   height += "px";
-            //   Vue.set(this.containerStyle, "height", height);
-            //   let width = this.$refs.targetCardMobile.clientWidth;
-            //   width += "px";
-            //   Vue.set(this.containerStyle, "width", width);
-            // }
-        },
-        getRowHeight() {
-            if (!this.isDesktop) {
-                // heart sizing
-                let target = this.$refs.items[0].clientHeight;
-                let factor = target / 100;
-                let string = "scale(" + 2 * factor + ")";
-                Vue.set(this.heartHeight, "transform", string);
-                Vue.set(this.heartHeight, "bottom", "50px");
-                Vue.set(this.heartHeight, "left", "-20px");
-            } else if (this.isDesktop) {
-                // heart sizing
-                let target = this.$refs.desktopItems[0].clientHeight;
-                let factor = target / 100;
-                let string = "scale(" + 3 * factor + ")";
-                Vue.set(this.heartHeightDesktop, "top", "5%");
-                Vue.set(this.heartHeightDesktop, "left", "-14%");
-                Vue.set(this.heartHeightDesktop, "transform", string);
 
+        getRowHeight() {
+            let target = this.$refs.desktopItems[0].clientHeight;
+            let factor = target / 100;
+            let string = "scale(" + 1 * factor + ")";
+            Vue.set(this.heartHeightDesktop, "transform", string);
+
+            Vue.set(
+                this.heartHeightDesktop,
+                "top",
+                $("#heartPos")
+                .parent()
+                .offset().top -
+                $("#heartPos").offset().top +
+                "px"
+            );
+            Vue.set(
+                this.heartHeightDesktop,
+                "left",
+                $("#priceCol").offset().left +
+                $("#priceCol").width() / 2 -
+                $(".heart").offset().left -
+                $(".heart").width() / 2 +
+                "px"
+            );
+
+            if (this.isDesktop) {
                 // sidebar heart sizing
                 let target2 = this.$refs.sidebarName[0].clientHeight;
                 let factor2 = target / 100;
-                let string2 = "scale(" + 2.5 * factor + ")";
+                let string2 = "scale(" + 1 * factor + ")";
                 Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-                Vue.set(this.heartHeightDesktopSidebar, "top", "1800%");
-                Vue.set(this.heartHeightDesktopSidebar, "right", "-10px");
+                console.log($(".bar-button").position())
+                //  Vue.set(this.heartHeightDesktopSidebar, "left", +"px");
+                //  Vue.set(this.heartHeightDesktopSidebar, "bottom", $("#bidButton").offset().bottom - $("#bidButton").offset().bottom + "px");
             }
         },
         getImage: function (image) {
-            if (this.isDesktop) {
-                var cl = new cloudinary.Cloudinary({
-                    cloud_name: "kemp",
-                    secure: true
-                });
-                var tag = cl.url(image, {
-                    height: 198,
-                    width: 198,
-                    crop: "fill"
-                });
-                return tag;
-            } else if (!this.isDesktop) {
-                var cl = new cloudinary.Cloudinary({
-                    cloud_name: "kemp",
-                    secure: true
-                });
-                var tag = cl.url(image, {
-                    height: 100,
-                    width: 100,
-                    crop: "fill"
-                });
-                return tag;
-            }
+            var cl = new cloudinary.Cloudinary({
+                cloud_name: "kemp",
+                secure: true
+            });
+            var tag = cl.url(image, {
+                height: 198,
+                width: 198,
+                crop: "fill"
+            });
+            return tag;
         },
         getImageSidebar: function (image) {
             var cl = new cloudinary.Cloudinary({
@@ -666,114 +510,51 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@media (max-height: 600px) {
+@media (max-width: 400px) {
     #gap {
         background-color: none;
     }
 
-    .card-text {
-        font-size: 14px;
+    .single {
+        width: 146px;
     }
 
-    .date-text {
-        font-size: 14px;
-        margin: 0 5% 0 5%;
-    }
-
-    h3 {
-        font-size: 18px;
+    #EventHeader {
+        h1 {
+            padding-top: 130px;
+        }
     }
 }
 
-@media (min-height: 600px) {
+@media (min-width: 400px) {
     #gap {
         background-color: none;
     }
 
-    .card-text {
-        font-size: 14px;
+    .single {
+        width: 190px;
     }
 
-    .date-text {
-        font-size: 14px;
-    }
-
-    .card-title {
-        font-size: 18px;
-    }
-
-    h3 {
-        font-size: 20px;
+    #EventHeader {
+        h1 {
+            padding-top: 130px;
+        }
     }
 }
 
-@media (min-height: 700px) {
+@media (min-width: 600px) {
     #gap {
         background-color: none;
     }
 
-    .card-text {
-        font-size: 14px;
+    .single {
+        width: 280px;
     }
 
-    .card-title {
-        font-size: 24px;
-    }
-
-    .date-text {
-        font-size: 14px;
-    }
-
-    .card-title {
-        font-size: 20px;
-    }
-
-    h3 {
-        font-size: 18px;
-    }
-}
-
-@media (min-height: 900px) {
-    #gap {
-        background-color: none;
-    }
-
-    .btn {
-        font-size: 25px;
-    }
-
-    .card-title {
-        font-size: 64px;
-    }
-
-    .card-text {
-        font-size: 24px;
-    }
-
-    .date-text {
-        font-size: 20px;
-    }
-
-    .selection {
-        font-size: 24px;
-    }
-
-    h3 {
-        font-size: 30px;
-    }
-}
-
-@media (min-width: 801px) {
-
-    /* tablet, landscape iPad, lo-res laptops ands desktops */
-    .b-container {
-        width: 100%;
-        justify-content: center;
-        align-content: center;
-    }
-
-    .btn {
-        font-size: 16px;
+    #EventHeader {
+        h1 {
+            padding-top: 135px;
+        }
     }
 }
 
@@ -782,20 +563,8 @@ export default {
     bottom: 200px;
 }
 
-#list {
-    background-color: blue;
-}
-
 h1 {
     margin-bottom: 0%;
-}
-
-#searchResults {
-    color: white;
-}
-
-.allData {
-    background-color: blue;
 }
 
 #toggler {
@@ -803,116 +572,146 @@ h1 {
 }
 
 .catAnchor {
-    background-color: orange;
+    min-height: 36px;
+    vertical-align: middle;
+    font-weight: bold;
+    width: 100%;
     text-align: left;
-    padding: 5px 10px 5px;
-    color: white;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 #EventHeader {
+    display: block !important;
+
     h1 {
-        background-color: orange;
         text-align: left;
-        padding-left: 10%;
-        padding-top: 150px;
     }
 
     h2 {
         margin-bottom: 0%;
     }
 
-    background-color: blue;
-    color: white;
     font-size: 24px;
 }
 
 // DROPDOWN/ SEARCH BAR
 .selection {
     padding: 5px 0px;
+    font-size: 14px;
+    color: black;
+}
+
+.date-text {
+    font-size: 80%;
+    color: black;
+}
+
+#descriptionCountdown {
+    text-align: center;
+    color: white !important;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 14px;
+    line-height: 1.428571429;
 }
 
 #dropdown {
-    margin: 10px 0px;
+    font-size: 1em;
+    background-color: #fff;
+    /* background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAGCAYAAADOic7aAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MTZBOTk1RjMxRjZCMTFFMUFDRjA5NUJCNzg2QTA1OEYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MTZBOTk1RjQxRjZCMTFFMUFDRjA5NUJCNzg2QTA1OEYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxNkE5OTVGMTFGNkIxMUUxQUNGMDk1QkI3ODZBMDU4RiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxNkE5OTVGMjFGNkIxMUUxQUNGMDk1QkI3ODZBMDU4RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PtOZMNcAAABeSURBVHjaYmBgYJgGxP8J4JkMIMb//zgxCDAD8XY8hhwAYjZiDAIBfiC+hMWQh0AsClNEjEEgIA3ET5AM+QbEusgKiDWIAarxM9SgEHRJUgwCAT8grsMmgc8ggAADAGY/m1aWUowGAAAAAElFTkSuQmCC) no-repeat 95% 50%; */
+    box-sizing: border-box;
+    border: 1px solid darkGrey;
+    padding: 0.25em 0.6em;
+    height: 2.2em;
+    width: 90%;
+    border-radius: 5px;
+    margin: 0px;
 }
 
 #filter {
     background-color: white;
     width: 100%;
+    border-bottom: 1px black solid;
     margin: 0 auto;
     position: fixed;
+    padding-bottom: 5px;
     z-index: 100;
     top: 50px;
-    border-bottom: black solid 2px;
 }
 
 #searchInput {
-    width: 40%;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.5);
+    box-sizing: border-box;
+    border: 1px solid darkGrey;
+    /* border-radius: 5px; */
+    padding: 0.25em 0.6em;
+    /* float: left; */
+    height: 2em;
+    font-size: 16px;
+    text-align: center;
 }
 
 #basic-addon2 {
     width: 20%;
 }
 
-.row {
+.allData {
     display: block !important;
 }
 
 .single {
     display: inline-block;
-}
-
-//CARDS
-.card-header {
-    padding: 1%;
-    margin-bottom: 5%;
-}
-
-.card-body {
-    margin: 0;
-    padding: 0px;
-}
-
-.card-footer {
-    padding: 0px;
-    padding-bottom: 2.5%;
-    margin-top: 5%;
-    align-content: center;
-}
-
-.card-title {
-    margin-top: 5%;
-    margin: 0;
-}
-
-.card {
-    max-width: 274px;
-    margin-bottom: 10%;
-    border: black 0.5px solid;
-    border-radius: 4px;
+    z-index: 5;
+    height: auto;
     background-color: white;
+    -moz-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+    -webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+    box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+    font-size: 14px;
+    margin: 2px;
+    padding: 2px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 4px;
+    margin-bottom: 25px;
 }
 
-h3 {
-    font-size: 16px;
-    margin-bottom: 0em;
+.name {
     color: black;
+    overflow: hidden;
+    white-space: normal;
+    text-overflow: ellipsis;
+    display: inline-block;
+    word-wrap: normal;
+    margin: 0;
+    height: 60px;
 }
 
-p {
-    color: black;
-    font-size: 12px;
-    margin-bottom: 0em;
+#heartPos {
+    width: 1px;
+    margin: 0 auto;
+    height: 1px;
 }
 
 .imgDesktop {
-    height: 198px;
-    margin: 3px 30px 5px;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    max-width: 100%;
+    border: 1px solid darkGrey;
+    margin: auto;
 }
 
-.imgMobile {
-    width: 98px;
-    height: 98px;
-    margin: 3px 30px 5px;
+.imgContainer {
+    overflow: hidden;
+    height: 200px;
+    vertical-align: middle;
+
+    display: flex;
+    align-items: center;
 }
 
 button {
@@ -927,67 +726,60 @@ button {
     margin: 5px;
 }
 
-.closed {
-    background-color: black;
+.closedTag {
+    right: 0;
+    top: 0;
+    font-size: 14px !important;
+    padding: 3px;
+    height: auto;
+    z-index: 5;
     width: auto;
-    right: 0%;
+    text-decoration: none;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font-weight: bold;
     position: absolute;
-    font-size: 14px;
-}
-
-.closedMobile {
+    color: #ffffff;
     background-color: black;
-    width: auto;
-    right: 8%;
-    font-size: 8px;
-}
-
-.idMobile {
-    background-color: orange;
-    width: auto;
-    float: left;
-    font-size: 8px;
+    z-index: 5;
 }
 
 .idDesktop {
-    background-color: orange;
-    width: 20%;
-    float: left;
-    font-size: 14px;
-}
+    width: auto;
+    background-color: #e4450a;
+    color: #ffffff;
+    font-size: 14px !important;
 
-.closed,
-.closedMobile,
-.idDesktop,
-.idMobile {
-    position: absolute;
-    z-index: 5;
-    padding: 3px;
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    z-index: 5;
-    color: white;
     font-weight: bold;
+    padding: 3px;
+    position: absolute;
+    border-top-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    box-shadow: inset 0px 24px 20px -15px rgba(255, 255, 255, 0.1),
+        inset 0px 0px 10px rgba(0, 0, 0, 0.4), 0px 0px 30px rgba(255, 255, 255, 0.4);
+    z-index: 5;
 }
 
 //SIDEBAR
 
 .idDesktopSidebar,
 .closedSidebar {
-    top: 0%;
-    position: absolute;
-    font-size: 14px;
-    z-index: 5;
-    padding: 3px;
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    z-index: 5;
-    color: white;
+    width: auto;
+    color: #ffffff;
+    font-size: 14px !important;
+
     font-weight: bold;
+    padding: 3px;
+    position: absolute;
+    border-top-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    box-shadow: inset 0px 24px 20px -15px rgba(255, 255, 255, 0.1),
+        inset 0px 0px 10px rgba(0, 0, 0, 0.4), 0px 0px 30px rgba(255, 255, 255, 0.4);
+    z-index: 5;
 }
 
 .idDesktopSidebar {
-    background-color: orange;
+    background-color: #e4450a;
     margin-right: 250px;
 }
 
@@ -997,11 +789,11 @@ button {
 }
 
 .bar-button {
-    width: 50%;
+    width: auto;
 }
 
 .bar-text {
-    font-size: 14px;
+    font-size: 120%;
     color: black;
     align-content: left;
 }
@@ -1009,6 +801,7 @@ button {
 #description {
     font-size: 14px;
     margin: 10px;
+
     margin-bottom: 10%;
 }
 
@@ -1016,6 +809,8 @@ button {
 .heart {
     z-index: 2;
     position: absolute;
+
+    margin: 0 auto;
     width: 100px;
     height: 100px;
     background: url("https://cssanimation.rocks/images/posts/steps/heart.png") no-repeat;
@@ -1042,6 +837,11 @@ button {
 
 .search-form-wrapper.open {
     display: block;
+}
+
+* {
+    font-family: "Verdana", "Calibri", "Trebuchet MS", "Helvetica Neue", "Arial",
+        sans-serif !important;
 }
 
 // BASIC
