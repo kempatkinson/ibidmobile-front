@@ -49,9 +49,11 @@ export default {
             user: this.$store.state.user,
             backgroundStyle: {},
             event: this.$store.state.event[0]
+
         };
     },
     computed: {
+        ...mapState(["event"])
 
     },
     mounted() {
@@ -75,7 +77,6 @@ export default {
 
 <style lang="scss" scoped>
 .DetailContent {
-    align-content: center;
     margin: 0 auto;
     width: 90%;
     max-width: 700px;
@@ -90,5 +91,18 @@ export default {
 .myprofile {
     padding-top: 130px;
     padding-bottom: 100%;
+}
+
+table {
+    text-align: left;
+    border-spacing: 2px;
+
+}
+
+body,
+* {
+    font-family: 'Verdana', 'Calibri', 'Trebuchet MS', 'Helvetica Neue', 'Arial', sans-serif !important;
+    font-size: 24px;
+
 }
 </style>

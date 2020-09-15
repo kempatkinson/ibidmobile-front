@@ -17,10 +17,7 @@
         <b-row id="EventHeader">
             <b-col>
                 <h1 v-bind:style="{'background-color': categoryColor}">Welcome to the {{event.EventInfo[0].Name}}</h1>
-                <div id="descriptionCountdown">
-                    <p>{{event.EventInfo[0].Description}}</p>
-                    <p>Auction Closes: {{returnDate(event.EventInfo[0].EndDate)}}</p>
-                </div>
+
             </b-col>
         </b-row>
 
@@ -231,7 +228,6 @@ export default {
     mounted() {
         this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
         this.deck = this.$store.state.favorites;
-        this.$store.dispatch("getEvent", this.$route.params.TinyURL);
         this.event = this.$store.state.event[0];
         this.getStyle();
         this.sidebar = {
@@ -607,16 +603,6 @@ h1 {
     color: black;
 }
 
-#descriptionCountdown {
-    text-align: center;
-    color: white !important;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 14px;
-    line-height: 1.428571429;
-}
-
 #dropdown {
     font-size: 1em;
     background-color: #fff;
@@ -842,6 +828,10 @@ button {
 * {
     font-family: "Verdana", "Calibri", "Trebuchet MS", "Helvetica Neue", "Arial",
         sans-serif !important;
+}
+
+#list {
+    padding-bottom: 100%;
 }
 
 // BASIC

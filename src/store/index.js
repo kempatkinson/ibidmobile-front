@@ -17,34 +17,34 @@ export default new Vuex.Store({
   actions: {
     loadPosts({ commit }, id) {
       // console.log(id)
-      // axios.get(
-      //   //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-      //    "https://localhost:5001/api/items/" + id
-      // )
-      //   .then(response => 
-      //     response.data)
-      //   .then(posts => {
-      //     commit("GET_POSTS", posts)
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
-      commit("GET_POSTS", deck)
+      axios.get(
+        //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+         "https://localhost:5001/api/items/" + id
+      )
+        .then(response => 
+          response.data)
+        .then(posts => {
+          commit("GET_POSTS", posts)
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      // commit("GET_POSTS", deck)
     },
     getEvent({ commit }, id) {
-      // axios.get(
-      //   // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-      //   "https://localhost:5001/api/events/" + id
-      // )
-      //   .then(response => {
-      //     response.data,
-      //       commit("SET_EVENT", response.data)
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
+      axios.get(
+        // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+        "https://localhost:5001/api/events/" + id
+      )
+        .then(response => {
+          response.data,
+            commit("SET_EVENT", response.data)
+        })
+        .catch(error => {
+          console.log(error);
+        });
 
-      commit("SET_EVENT", event)
+      //commit("SET_EVENT", event)
     },
     logInUser({ commit }, user) {
       commit("SET_USER", user)
