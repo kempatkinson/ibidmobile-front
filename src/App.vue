@@ -6,20 +6,20 @@
         </b-navbar-brand>
 
         <b-navbar-nav class="nav nav-justified-start ml-auto" :key="this.isLoggedIn">
-            <b-nav-item id="sign" v-if="!this.isLoggedIn">
+            <b-nav-item id="sign" v-if="this.isLoggedIn == 0">
                 <a class="noHover">
                     <router-link to="/login">Sign In</router-link>
                 </a>
             </b-nav-item>
-            <b-nav-item id="sign" v-if="this.isLoggedIn">
+            <b-nav-item id="sign" v-if="this.isLoggedIn== 1">
                 <a class="noHover" @click="logOut">Log Out</a>
             </b-nav-item>
-            <b-nav-item v-if="this.isLoggedIn">
+            <b-nav-item v-if="this.isLoggedIn== 1">
                 <a class="noHover">
                     <router-link to="/favorites" class="noHover">Favorited Items</router-link>
                 </a>
             </b-nav-item>
-            <b-nav-item v-if="this.isLoggedIn">
+            <b-nav-item v-if="this.isLoggedIn== 1">
                 <a class="noHover">
                     <router-link to="/myprofile" class="noHover">My Profile</router-link>
                 </a>
@@ -69,8 +69,9 @@ export default {
         };
     },
     mounted() {
-        if (this.isLoggedIn()) {
-            console.log(this.$store.state.user);
+        if (this.isLoggedIn) {
+            // console.log(this.$store.state.user);
+
         }
     },
 
@@ -79,13 +80,14 @@ export default {
             this.$store.dispatch("logInUser", {});
             this.$store.dispatch("clearFavorites");
             console.log("logging out");
-        }
+        },
+
     },
     computed: {
         isLoggedIn() {
             if (this.$store.state.user.UserID !== undefined) {
-                return true
-            } else return false;
+                return 1
+            } else return 0;
         },
         ...mapState['user']
     }

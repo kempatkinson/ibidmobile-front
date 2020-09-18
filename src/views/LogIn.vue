@@ -217,9 +217,13 @@ export default {
                 // push in favorites
 
                 // if registered, go to event
+
+                this.$store.dispatch("getFavorites", this.$store.state.user.UserID);
+
                 this.$router.push("/v/" + this.requestedEvent[0].EventInfo[0].TinyID)
 
             } else alert("wrong password! try again");
+
         },
         registeriBid() {
             // if (this.validate())

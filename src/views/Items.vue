@@ -49,21 +49,21 @@
                                         <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
                                         <p class="idDesktop">{{data.itCatalogNum}}</p>
 
-                                        <div v-on:click="toggler(data.itID)">
-                                            <b-row v-on:click="select($event)" :id="data.itID">
+                                        <div>
+                                            <b-row :id="data.itID">
                                                 <b-col>
-                                                    <div class="imgContainer">
+                                                    <div class="imgContainer" v-on:click="toggler(data.itID)">
                                                         <img class="imgDesktop" v-bind:src="getImage(sample)" />
                                                     </div>
 
                                                     <div class="card-title" style="position: relative">
                                                         <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                            <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
+                                                            <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                         </router-link>
                                                         <div id="heartPos"></div>
                                                     </div>
                                                     <div style="position: relative;">
-                                                        <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                        <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -104,19 +104,19 @@
                                 <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
                                 <p class="idDesktop">{{data.itCatalogNum}}</p>
 
-                                <div v-on:click="toggler(data.itID)">
-                                    <b-row v-on:click="select($event)" :id="data.itID">
+                                <div>
+                                    <b-row :id="data.itID">
                                         <b-col>
-                                            <div class="imgContainer">
+                                            <div class="imgContainer" v-on:click="toggler(data.itID)">
                                                 <img class="imgDesktop" v-bind:src="getImage(sample)" />
                                             </div>
 
                                             <div class="card-title" style="position: relative">
                                                 <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                    <h3 class="name" v-on:click="toggler(data.itID)" ref="desktopItems">{{data.itName}}</h3>
+                                                    <h3 class="name" ref="desktopItems">{{data.itName}}</h3>
                                                 </router-link>
                                             </div>
-                                            <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                            <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                         </b-col>
                                     </b-row>
                                     <b-row>
@@ -185,7 +185,7 @@
                                     <div slot-scope="props" class="bar-text">Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
                                 </countdown>
                                 <div style="position: relative; width: 0; height: 0">
-                                    <div class="heart" v-on:click="toggle(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                    <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                 </div>
                             </b-col>
                         </b-row>
@@ -223,7 +223,6 @@ export default {
             heartHeightDesktopSidebar: {},
             cardWidth: 274,
             deck: [],
-            event: {},
             containerStyle: {},
             sample: "hello.jpg",
             sidebar: {},
@@ -234,7 +233,9 @@ export default {
             id: "",
             url: "",
             term: "",
-            user: this.$store.state.user
+            event: {},
+            user: {},
+
         };
     },
     mounted() {
@@ -242,6 +243,10 @@ export default {
         this.deck = this.$store.state.posts;
         this.$store.dispatch("getEvent", this.$route.params.TinyURL);
         this.event = this.$store.state.event[0];
+        this.user = this.$store.state.user
+        this.$store.dispatch("getFavorites", this.user.UserID);
+        this.favorites = this.$store.state.favorites;
+
         this.getStyle();
         this.sidebar = {
             status: false,
@@ -318,7 +323,9 @@ export default {
             return found;
         },
         activeKeys() {
+
             var array = [];
+
             for (let i = 0; i < this.$store.state.posts.length; i++) {
                 array.push({
                     id: this.$store.state.posts[i].itID,
@@ -352,7 +359,7 @@ export default {
             return categories;
         },
 
-        ...mapState(["posts"])
+        ...mapState(["posts", "favorites", "user"])
     },
     methods: {
         returnDate: function (datetime) {
@@ -459,7 +466,6 @@ export default {
                 let factor2 = target / 100;
                 let string2 = "scale(" + 1 * factor + ")";
                 Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-                console.log($(".bar-button").position())
                 //  Vue.set(this.heartHeightDesktopSidebar, "left", +"px");
                 //  Vue.set(this.heartHeightDesktopSidebar, "bottom", $("#bidButton").offset().bottom - $("#bidButton").offset().bottom + "px");
             }
@@ -489,22 +495,63 @@ export default {
 
             return tag;
         },
-        toggle: function (id) {
-            if (this.activeKeys.length > 0) {
-                var index = this.activeKeys.findIndex(element => element.id === id);
+        toggleFavorite: function (id) {
+            this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+            this.$store.dispatch("getFavorites", this.user.UserID);
+            var index = this.activeKeys.findIndex(element => element.id === id);
 
-                if (this.activeKeys[index].active === false) {
-                    this.activeKeys[index].active = true;
-                    this.$store.dispatch("setFavorite", {
-                        n: id
-                    });
-                } else if (this.activeKeys[index].active === true) {
-                    this.activeKeys[index].active = false;
-                    this.$store.dispatch("removeFavorite", {
-                        n: id
-                    });
+            if (this.activeKeys[index].active === false) {
+
+                //FAVORITE ITEM (POST)
+                var favoritedItem = {
+                    userID: this.$store.state.user.UserID,
+                    itemID: id
                 }
+                console.log(favoritedItem)
+                $.ajax({
+                    type: "POST",
+                    async: true,
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "https://localhost:5001/api/users/favorites",
+                    data: JSON.stringify(favoritedItem),
+                    success: function (data) {
+                        console.log("added rows ↓");
+
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err.responseText);
+                    }
+                });
+            } else if (this.activeKeys[index].active === true) {
+
+                var favoritedItem = {
+                    userID: this.$store.state.user.UserID,
+                    itemID: id
+                }
+                //   console.log(favoritedItem)
+                $.ajax({
+                    type: "DELETE",
+                    async: true,
+                    contentType: "application/json",
+                    url: "https://localhost:5001/api/users/favorites",
+                    data: JSON.stringify(favoritedItem),
+                    success: function (data) {
+                        console.log("deleted rows ↓");
+                        console.log(data);
+
+                    },
+                    error: function (err) {
+                        console.log(err.responseText);
+                    }
+                });
+
             }
+
+            this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+            this.$store.dispatch("getFavorites", this.user.UserID);
+
         },
         timeUntil: function (end) {
             if (end) {
