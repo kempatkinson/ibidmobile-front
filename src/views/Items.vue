@@ -17,17 +17,17 @@
         <div id="EventHeader">
             <b-row>
                 <b-col v-bind:style="{'background-color': categoryColor}">
-                    <h1 id="eventName">Welcome to the {{event.EventInfo[0].Name}}</h1>
+                    <h1 id="eventName">Welcome to the {{currEvent.EventInfo[0].Name}}</h1>
 
-                    <h1 v-if="this.user.UserID !== undefined" id="userName">{{this.user.FirstName}} {{this.user.LastName}} </h1>
+                    <h1 v-if="this.currUser.UserID !== undefined" id="userName">{{this.currUser.FirstName}} {{this.currUser.LastName}}</h1>
                 </b-col>
             </b-row>
         </div>
         <b-row>
             <b-col>
                 <div id="descriptionCountdown">
-                    <p>{{event.EventInfo[0].Description}}</p>
-                    <p>Auction Closes: {{returnDate(event.EventInfo[0].EndDate)}}</p>
+                    <p>{{currEvent.EventInfo[0].Description}}</p>
+                    <p>Auction Closes: {{returnDate(currEvent.EventInfo[0].EndDate)}}</p>
                 </div>
             </b-col>
         </b-row>
@@ -60,10 +60,11 @@
                                                         <router-link :to="{ name: 'post', params: {id: data.itID}}">
                                                             <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                         </router-link>
-                                                        <div id="heartPos"></div>
+                                                        <div v-bind:id="
+                                                        'heartPos-' + data.itID"></div>
                                                     </div>
-                                                    <div style="position: relative;">
-                                                        <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                    <div style=" position: relative;">
+                                                        <div class="heart" v-bind:id="'heart-' + data.itID" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -113,15 +114,19 @@
 
                                             <div class="card-title" style="position: relative">
                                                 <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                    <h3 class="name" ref="desktopItems">{{data.itName}}</h3>
+                                                    <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                 </router-link>
+                                                <div v-bind:id="
+                                                        'heartPos-' + data.itID"></div>
                                             </div>
-                                            <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                            <div style=" position: relative;">
+                                                <div class="heart" v-bind:id="'heart-' + data.itID" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                            </div>
                                         </b-col>
                                     </b-row>
                                     <b-row>
                                         <b-col>
-                                            <div v-if="!(data.itStatus === 4)">
+                                            <div v-if="!(data.itStatus === 4)" id="priceCol">
                                                 <label for="price" class="date-text">Current Bid:</label>
                                                 <span id="price" class="date-text">${{data.itMinBid}}</span>
                                             </div>
@@ -218,7 +223,6 @@ export default {
             selected: "",
 
             anchor: {},
-            times: [],
             heartHeightDesktop: {},
             heartHeightDesktopSidebar: {},
             cardWidth: 274,
@@ -233,26 +237,28 @@ export default {
             id: "",
             url: "",
             term: "",
-            event: {},
-            user: {},
-
+            currEvent: {},
+            currUser: {},
+            currFavorites: []
         };
     },
     mounted() {
         this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
-        this.deck = this.$store.state.posts;
         this.$store.dispatch("getEvent", this.$route.params.TinyURL);
-        this.event = this.$store.state.event[0];
-        this.user = this.$store.state.user
-        this.$store.dispatch("getFavorites", this.user.UserID);
-        this.favorites = this.$store.state.favorites;
+        this.currUser = this.$store.state.user;
 
-        this.getStyle();
+        this.$store.dispatch("getFavorites", this.currUser.UserID);
+        this.currFavorites = this.$store.state.favorites;
+        this.deck = this.$store.state.posts;
+        this.activeKeys;
+
+        this.currEvent = this.$store.state.event[0];
         this.sidebar = {
             status: false,
             current: ""
         };
         this.selected = this.categories[0].name;
+        this.getStyle();
 
         this.$nextTick(() => {
             this.windowWidth = window.innerWidth;
@@ -262,7 +268,6 @@ export default {
         //listeners
         window.addEventListener("resize", () => {
             this.windowWidth = window.innerWidth;
-
             this.getRowHeight();
         });
 
@@ -287,18 +292,19 @@ export default {
 
     computed: {
         categoryColor() {
-            return this.event.EventSettings[0].eCategoryColor;
+            return this.currEvent.EventSettings[0].eCategoryColor;
         },
         isDesktop() {
             return this.windowWidth > 800;
         },
         searchBar() {
             if (this.term.length > 0) {
+
                 return true;
             } else return false;
-            this.getRowHeight();
         },
         activeCards() {
+
             var found = [];
             var reg = new RegExp(this.term, "gi");
             for (let i = 0; i < this.deck.length; i++) {
@@ -310,12 +316,12 @@ export default {
                 if (description) {
                     if (
                         this.deck[i].itName.match(reg) ||
-                        this.deck[i].itDescription.match(reg)
+                        this.deck[i].itDescription.match(reg) || this.deck[i].itCatalogNum.match(reg)
                     ) {
                         found.push(this.deck[i]);
                     }
                 } else if (!description) {
-                    if (this.deck[i].itName.match(reg)) {
+                    if (this.deck[i].itName.match(reg) || this.deck[i].itCatalogNum.match(reg)) {
                         found.push(this.deck[i]);
                     }
                 }
@@ -323,9 +329,7 @@ export default {
             return found;
         },
         activeKeys() {
-
             var array = [];
-
             for (let i = 0; i < this.$store.state.posts.length; i++) {
                 array.push({
                     id: this.$store.state.posts[i].itID,
@@ -359,7 +363,7 @@ export default {
             return categories;
         },
 
-        ...mapState(["posts", "favorites", "user"])
+        ...mapState(["posts", "favorites", "user", "event"])
     },
     methods: {
         returnDate: function (datetime) {
@@ -370,17 +374,17 @@ export default {
             Vue.set(
                 this.categoryStyle,
                 "background-color",
-                this.event.EventSettings[0].eCategoryColor
+                this.currEvent.EventSettings[0].eCategoryColor
             );
             Vue.set(
                 this.backgroundStyle,
                 "background-color",
-                this.event.EventSettings[0].eBackgroundColor
+                this.currEvent.EventSettings[0].eBackgroundColor
             );
             Vue.set(
                 this.backgroundStyle,
                 "color",
-                this.event.EventSettings[0].eFontColor
+                this.currEvent.EventSettings[0].eFontColor
             );
         },
         scrollPage: function () {
@@ -390,9 +394,9 @@ export default {
         myEventHandler(e) {
             this.windowWidth = e.srcElement.window.innerWidth;
             this.isDesktop;
-            this.getRowHeight();
         },
         chunks: function (array) {
+
             if (this.isDesktop) {
                 return _.chunk(
                     Object.values(array),
@@ -402,6 +406,7 @@ export default {
             if (!this.isDesktop) {
                 return _.chunk(Object.values(array), 2);
             }
+
         },
         scrollTo(element) {
             this.$scrollTo("#anchor-" + element.substring(1), 500, {
@@ -441,24 +446,22 @@ export default {
             let string = "scale(" + 1 * factor + ")";
             Vue.set(this.heartHeightDesktop, "transform", string);
 
-            Vue.set(
-                this.heartHeightDesktop,
-                "top",
-                $("#heartPos")
-                .parent()
-                .offset().top -
-                $("#heartPos").offset().top +
-                "px"
-            );
-            Vue.set(
-                this.heartHeightDesktop,
-                "left",
-                $("#priceCol").offset().left +
-                $("#priceCol").width() / 2 -
-                $(".heart").offset().left -
-                $(".heart").width() / 2 +
-                "px"
-            );
+            for (var i = 0; i < this.activeCards.length; i++) {
+                var heartPos = $("#heartPos-" + this.activeCards[i].itID)
+                console.log('parent')
+                console.log(heartPos.parent().parent().offset())
+                console.log('kid')
+                console.log(heartPos.offset())
+
+                var heart = $("#heart-" + this.activeCards[i].itID)
+                heart.css("top", (heartPos.parent().offset().top - heartPos.offset().top) + "px")
+                heart.css("left", (heartPos.width() / 2 +
+                    "px"))
+
+                // heart.css("left", (heartPos.offset().left) +
+                //     "px")
+
+            }
 
             if (this.isDesktop) {
                 // sidebar heart sizing
@@ -497,17 +500,16 @@ export default {
         },
         toggleFavorite: function (id) {
             this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
-            this.$store.dispatch("getFavorites", this.user.UserID);
+            this.$store.dispatch("getFavorites", this.currUser.UserID);
             var index = this.activeKeys.findIndex(element => element.id === id);
 
             if (this.activeKeys[index].active === false) {
-
                 //FAVORITE ITEM (POST)
                 var favoritedItem = {
                     userID: this.$store.state.user.UserID,
                     itemID: id
-                }
-                console.log(favoritedItem)
+                };
+                console.log(favoritedItem);
                 $.ajax({
                     type: "POST",
                     async: true,
@@ -525,11 +527,10 @@ export default {
                     }
                 });
             } else if (this.activeKeys[index].active === true) {
-
                 var favoritedItem = {
                     userID: this.$store.state.user.UserID,
                     itemID: id
-                }
+                };
                 //   console.log(favoritedItem)
                 $.ajax({
                     type: "DELETE",
@@ -540,18 +541,15 @@ export default {
                     success: function (data) {
                         console.log("deleted rows ↓");
                         console.log(data);
-
                     },
                     error: function (err) {
                         console.log(err.responseText);
                     }
                 });
-
             }
 
             this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
-            this.$store.dispatch("getFavorites", this.user.UserID);
-
+            this.$store.dispatch("getFavorites", this.currUser.UserID);
         },
         timeUntil: function (end) {
             if (end) {
@@ -560,6 +558,11 @@ export default {
                 const difference = then - now + 5 * 60 * 60 * 1000;
                 return difference;
             }
+        }
+    },
+    watch: {
+        activeCards: function () {
+            this.getRowHeight()
         }
     }
 };
@@ -643,7 +646,6 @@ h1 {
 
     #eventName {
         float: left;
-
     }
 
     #userName {

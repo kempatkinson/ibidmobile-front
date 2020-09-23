@@ -12,6 +12,8 @@ export default new Vuex.Store({
     posts: [],
     favorites: [],
     user: {},
+    event: {},
+    item: {}
   },
 
   actions: {
@@ -19,7 +21,7 @@ export default new Vuex.Store({
       // console.log(id)
       axios.get(
         //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-         "https://localhost:5001/api/items/event/a" + id
+         "https://localhost:5001/api/items/event/" + id
       )
         .then(response => 
           response.data)
@@ -62,8 +64,23 @@ export default new Vuex.Store({
           console.log(error);
         });
 
+    },
 
-
+    getItem({ commit }, id) {
+      // console.log(id)
+      axios.get(
+        //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+         "https://localhost:5001/api/items/itID/" + id
+      )
+        .then(response => 
+          response.data)
+        .then(item => {
+          commit("GET_ITEM", item[0])
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      // commit("GET_POSTS", deck)
     },
     setFavorite({ commit }, n) {
       commit("favorite", n);
@@ -82,6 +99,9 @@ export default new Vuex.Store({
     },
     GET_FAVORITES(state, favorites) {
       state.favorites = favorites;
+    },
+    GET_ITEM(state, item) {
+      state.item = item;
     },
     SET_EVENT(state, event) {
       state.event = event;

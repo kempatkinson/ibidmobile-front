@@ -10,7 +10,7 @@
 
         <h3>Minimum Raise: ${{post.itMinRaise}}</h3>
 
-        <div class="heart" v-bind:style="this.heartHeight" v-on:click="toggle" v-bind:class="{amactive: isActive}"></div>
+        <div class="heart" v-bind:style="this.heartHeight" v-on:click="toggleFavorite(post.itID)" v-bind:class="{amactive: isActive}"></div>
     </div>
     <div>
         <router-link :to="{ name: 'Items', params: {TinyURL: backToEvent}}">
@@ -37,7 +37,7 @@
                             <p class="card-text">Minmum raise: {{post.itMinRaise}}</p>
                         </div>
                     </div>
-                    <div class="row" v-if='isLoggedIn'>
+                    <div class="row">
                         <div class="col d-flex justify-content-center">
                             <form>
                                 <a v-on:click.prevent="decrement">
@@ -58,7 +58,7 @@
                         </div>
                     </div>
 
-                    <div class="row " v-if='isLoggedIn'>
+                    <div class="row">
                         <div class="col d-flex justify-content-center">
                             <button id="submitButton" type="button" class="btn btn-primary" v-on:click.prevent="submit">Submit Bid</button>
                         </div>
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="col d-flex justify-content-center" v-if="(post.BuyItNowPrice > 0) && isLoggedIn">
+            <div class="col d-flex justify-content-center" v-if="(post.BuyItNowPrice > 0)">
                 <button type="button" class="btn btn-primary" id="buyNow" v-on:click.prevent="buyNow">Buy Now for {{post.BuyItNowPrice}}</button>
             </div>
         </div>
@@ -120,40 +120,41 @@ import moment from "moment";
 export default {
     beforeRouteUpdate(to, from, next) {
         this.$route.params.id = to.params.id;
-        this.post = this.$store.getters.post(to.params.id);
-        this.$store.dispatch("loadPosts", this.post.EventInfo[0].TinyID);
-        this.post = this.$store.getters.post(to.params.id);
-        this.bid = this.post.itMinBid + this.post.itMinRaise;
+        this.$store.dispatch("getItem", this.$route.params.id);
+        this.post = this.$store.state.item;
+        this.initFavorite(this.post.itID)
 
         this.index = this.$store.state.posts.findIndex(
-            element => element.itID === to.params.id
+            element => element.itID === this.$route.params.id
         );
-        this.isActive = this.$store.getters.findFavorite(to.params.id);
+        this.bid =
+            this.post.itMinRaise +
+            this.post.itMinBid;
+        this.currUser = this.$store.state.user;
         // var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
         // this.getImage(this.$store.getters.post(to.params.id).image);
-        next();
+        next({
+            id: to.params.id
+        });
     },
     name: "post",
     data() {
         return {
-            post: this.$store.getters.post(this.$route.params.id),
-            bid: parseInt(this.$store.getters.post(this.$route.params.id).itMinBid) +
-                parseInt(this.$store.getters.post(this.$route.params.id).itMinRaise),
-            index: this.$store.state.posts.findIndex(
-                element => element.itID === this.$route.params.id
-            ),
-            currUser: {},
-            currEvent: {},
+
             cards: [],
             sample: "hello.jpg",
-            isActive: this.$store.getters.findFavorite(this.$route.params.id),
-            rowHeight: 0,
+            isActive: false,
             heartHeight: {},
             image: "",
             windowWidth: window.innerWidth,
             isDesktop: window.innerWidth > 800,
             backgroundStyle: {},
-            isLoggedIn: this.$store.state.user.UserID !== undefined,
+            currEvent: {},
+            currUser: {},
+            post: {},
+            bid: -1,
+            index: -1,
+
         };
     },
     computed: {
@@ -168,19 +169,30 @@ export default {
             } else return false;
         },
         backToEvent() {
-            var url = this.currEvent.EventInfo[0].TinyID;
+            var url = this.post.EventInfo[0].TinyID;
             return url;
-        }
+        },
+        ...mapState(["posts", "favorites", "user", "event", "item"])
+
     },
     mounted() {
+        this.$store.dispatch("getItem", this.$route.params.id);
+        this.post = this.$store.state.item
+        this.initFavorite(this.post.itID)
+
+        this.$store.dispatch("getFavorites", this.currUser.UserID);
         this.$store.dispatch("loadPosts", this.post.EventInfo[0].TinyID);
-        this.currEvent = this.$store.state.event[0];
+        this.$store.dispatch("getEvent", this.post.EventInfo[0].TinyID);
         this.currUser = this.$store.state.user;
+        this.index = this.$store.state.posts.findIndex(
+            element => element.itID === this.$route.params.id
+        );
+        this.bid = this.post.itMinBid + this.post.itMinRaise;
+        this.currEvent = this.$store.state.event[0];
 
         this.getStyle();
         this.getCards();
         this.getRowHeight();
-        this.initFavorite(this.$params.id);
     },
     methods: {
         returnDate: function (datetime) {
@@ -261,20 +273,58 @@ export default {
                 this.isActive = true;
             } else this.isActive = false;
         },
-        toggle() {
-            this.isActive = !this.isActive;
+        toggleFavorite: function (id) {
 
-            if (this.isActive) {
-                this.$store.dispatch("setFavorite", {
-                    n: this.post.id
+            this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+            this.$store.dispatch("getFavorites", this.currUser.UserID);
+            this.initFavorite(id)
+
+            if (this.isActive === false) {
+                //FAVORITE ITEM (POST)
+                var favoritedItem = {
+                    userID: this.$store.state.user.UserID,
+                    itemID: id
+                };
+                $.ajax({
+                    type: "POST",
+                    async: true,
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "https://localhost:5001/api/users/favorites",
+                    data: JSON.stringify(favoritedItem),
+                    success: function (data) {
+                        console.log("added rows ↓");
+
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err.responseText);
+                    }
+                });
+            } else if (this.isActive === true) {
+                var favoritedItem = {
+                    userID: this.$store.state.user.UserID,
+                    itemID: id
+                };
+                $.ajax({
+                    type: "DELETE",
+                    async: true,
+                    contentType: "application/json",
+                    url: "https://localhost:5001/api/users/favorites",
+                    data: JSON.stringify(favoritedItem),
+                    success: function (data) {
+                        console.log("deleted rows ↓");
+                        console.log(data);
+                    },
+                    error: function (err) {
+                        console.log(err.responseText);
+                    }
                 });
             }
-            if (!this.isActive) {
-                this.$store.dispatch("removeFavorite", {
-                    n: this.post.id
-                });
-            }
-            // some code to filter users
+            this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+            this.$store.dispatch("getFavorites", this.currUser.UserID);
+            this.initFavorite(id);
+
         },
         getRowHeight() {
             Vue.nextTick(() => {
@@ -317,45 +367,25 @@ export default {
                 parseInt($("#bidinput").val()) >=
                 this.post.itMinBid + this.post.itMinRaise
             ) {
-                var myData = {
-                    userID: this.currUser.UserID,
-                    itemID: this.post.itID,
-                    eventID: this.currEvent.EventInfo[0].EventID,
-                    // maxbid: this.post,
-                    bidamount: this.bid
-                };
-                console.log(myData);
-                $.ajax({
-                    type: "POST",
-                    async: true,
-                    dataType: "json",
-                    contentType: "application/json",
-                    url: "https://localhost:5001/api/bids",
-                    data: JSON.stringify(myData),
-                    success: function (data) {
-                        console.log("Response Data ↓");
-                        console.log(data);
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-                $.ajax({
-                    type: "PUT",
-                    async: true,
-                    dataType: "json",
-                    contentType: "application/json",
-                    url: "https://localhost:5001/api/bids",
-                    data: JSON.stringify(myData),
-                    success: function (data) {
-                        console.log("Response Data ↓");
-                        console.log(data);
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-                this.initBid();
+                alert("all good");
+                var newPost = this.post;
+                newPost.itMinBid = this.bid;
+                const url =
+                    //"https://afternoon-taiga-12401.herokuapp.com/api/biditems/" +
+                    "https://localhost:5001/api/BidItems/" + this.post.id;
+                return axios
+                    .put(url, newPost, {
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(response => {
+                        this.post.itMinBid = this.bid;
+                        this.initBid();
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
             } else {
                 alert("your bid is not high enough");
                 this.initBid();

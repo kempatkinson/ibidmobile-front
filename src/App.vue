@@ -39,11 +39,11 @@
                     <router-link to="/about">About this Auction</router-link>
                 </li>
                 <li class="nav-item">
-                    <router-link to="/items">Browse Items as List</router-link>
+                    <router-link to="/v/">Browse Items as List</router-link>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <router-link :to="{ path: this.url }" exact>Browse Items as Cards</router-link>
-                </li>
+                </li> -->
 
                 <li class="nav-item">
                     <router-link to="/favorites">Favorited Items</router-link>
@@ -51,7 +51,7 @@
             </ul>
         </div>
     </b-sidebar>
-    <router-view v-bind:key="$route.fullPath"></router-view>
+    <router-view v-bind:key="$route.fullPath" style="min-height: 100vh;"></router-view>
 </div>
 </template>
 

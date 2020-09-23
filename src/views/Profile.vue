@@ -46,26 +46,26 @@ export default {
     name: "profile",
     data() {
         return {
-            user: this.$store.state.user,
+            currUser: this.$store.state.user,
             backgroundStyle: {},
-            event: this.$store.state.event[0]
+            currEvent: this.$store.state.event[0]
 
         };
     },
     computed: {
-        ...mapState(["event"])
+        ...mapState(["user", "event"])
 
     },
     mounted() {
         Vue.set(
             this.backgroundStyle,
             "background-color",
-            this.event.EventSettings[0].eBackgroundColor
+            this.currEvent.EventSettings[0].eBackgroundColor
         );
         Vue.set(
             this.backgroundStyle,
             "color",
-            this.event.EventSettings[0].eFontColor
+            this.currEvent.EventSettings[0].eFontColor
         );
 
     },
