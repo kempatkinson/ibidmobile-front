@@ -49,7 +49,7 @@
                                         <b-row :id="data.itID">
                                             <b-col>
                                                 <div class="imgContainer" v-on:click="toggler(data.itID)">
-                                                    <img class="imgDesktop" v-bind:src="getImage(sample)" />
+                                                    <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
                                                 </div>
 
                                                 <div class="card-title" style="position: relative">
@@ -100,7 +100,7 @@
 
                         <b-row>
                             <b-col class="d-flex justify-content-center">
-                                <img class="imgDesktop" v-bind:src="getImageSidebar(sample)" />
+                                <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
                             </b-col>
                         </b-row>
 
@@ -169,7 +169,6 @@ export default {
             cardWidth: 274,
             deck: [],
             containerStyle: {},
-            sample: "hello.jpg",
             sidebar: {},
             categoryStyle: {},
             backgroundStyle: {},
@@ -396,22 +395,12 @@ export default {
             }
         },
         getImage: function (image) {
-            var tag = "https://onepage.events.org/data/demo/614.jpg"
 
-            return tag;
-        },
-        getImageSidebar: function (image) {
-            var cl = new cloudinary.Cloudinary({
-                cloud_name: "kemp",
-                secure: true
-            });
-            var int = Math.round(window.innerWidth * 0.2);
-            var tag = cl.url(image, {
-                height: int,
-                width: int
-            });
+            if (image == undefined) {
 
-            return tag;
+                return false
+            } else return image;
+
         },
         toggleFavorite: function (id) {
             this.$store.dispatch("getFavorites", this.currUser.UserID);

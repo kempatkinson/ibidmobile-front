@@ -18,7 +18,7 @@
         </router-link>
     </div>
     <div class="Details">
-        <img class="imgDetails" v-bind:src="getImage(sample)" />
+        <img class="imgDetails" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
         <p class="textDetails">{{post.itDescription}}</p>
         <p class="textDetails">Donated By: {{post.itDonor}}</p>
 
@@ -129,8 +129,7 @@ export default {
             element => element.itID === to.params.id
         );
         this.isActive = this.$store.getters.findFavorite(to.params.id);
-        // var cl = new cloudinary.Cloudinary({ cloud_name: "kemp", secure: true });
-        // this.getImage(this.$store.getters.post(to.params.id).image);
+
         next();
     },
     name: "post",
@@ -145,7 +144,6 @@ export default {
             currUser: {},
             currEvent: {},
             cards: [],
-            sample: "hello.jpg",
             isActive: this.$store.getters.findFavorite(this.$route.params.id),
             rowHeight: 0,
             heartHeight: {},
@@ -231,29 +229,12 @@ export default {
             return difference;
         },
         getImage: function (image) {
-            if (this.isDesktop) {
-                var cl = new cloudinary.Cloudinary({
-                    cloud_name: "kemp",
-                    secure: true
-                });
-                var tag = cl.url(image, {
-                    height: 160,
-                    width: 160,
-                    crop: "fill"
-                });
-                return tag;
-            } else if (!this.isDesktop) {
-                var cl = new cloudinary.Cloudinary({
-                    cloud_name: "kemp",
-                    secure: true
-                });
-                var tag = cl.url(image, {
-                    height: 100,
-                    width: 100,
-                    crop: "fill"
-                });
-                return tag;
-            }
+
+            if (image == undefined) {
+
+                return false
+            } else return image;
+
         },
 
         initFavorite: function (id) {
