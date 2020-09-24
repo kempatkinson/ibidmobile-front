@@ -53,7 +53,7 @@
                                             <b-row :id="data.itID">
                                                 <b-col>
                                                     <div class="imgContainer" v-on:click="toggler(data.itID)">
-                                                        <img class="imgDesktop" v-bind:src="getImage(sample)" />
+                                                        <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
                                                     </div>
 
                                                     <div class="card-title" style="position: relative">
@@ -109,7 +109,7 @@
                                     <b-row :id="data.itID">
                                         <b-col>
                                             <div class="imgContainer" v-on:click="toggler(data.itID)">
-                                                <img class="imgDesktop" v-bind:src="getImage(sample)" />
+                                                <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
                                             </div>
 
                                             <div class="card-title" style="position: relative">
@@ -159,7 +159,7 @@
 
                         <b-row>
                             <b-col class="d-flex justify-content-center">
-                                <img class="imgDesktop" v-bind:src="getImageSidebar(sample)" />
+                                <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
                             </b-col>
                         </b-row>
 
@@ -228,7 +228,6 @@ export default {
             cardWidth: 274,
             deck: [],
             containerStyle: {},
-            sample: "hello.jpg",
             sidebar: {},
             categoryStyle: {},
             backgroundStyle: {},
@@ -243,6 +242,7 @@ export default {
         };
     },
     mounted() {
+
         this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
         this.$store.dispatch("getEvent", this.$route.params.TinyURL);
         this.currUser = this.$store.state.user;
@@ -263,6 +263,8 @@ export default {
         this.$nextTick(() => {
             this.windowWidth = window.innerWidth;
             this.getRowHeight();
+            this.removeSrc()
+
         });
 
         //listeners
@@ -302,6 +304,9 @@ export default {
 
                 return true;
             } else return false;
+        },
+        searchBarLength() {
+            return this.term.length
         },
         activeCards() {
 
@@ -366,6 +371,7 @@ export default {
         ...mapState(["posts", "favorites", "user", "event"])
     },
     methods: {
+
         returnDate: function (datetime) {
             const format1 = "LLLL";
             return moment(datetime).format(format1);
@@ -448,16 +454,16 @@ export default {
 
             for (var i = 0; i < this.activeCards.length; i++) {
                 var heartPos = $("#heartPos-" + this.activeCards[i].itID)
-                console.log('parent')
-                console.log(heartPos.parent().parent().offset())
-                console.log('kid')
-                console.log(heartPos.offset())
-
                 var heart = $("#heart-" + this.activeCards[i].itID)
-                heart.css("top", (heartPos.parent().offset().top - heartPos.offset().top) + "px")
-                heart.css("left", (heartPos.width() / 2 +
-                    "px"))
 
+                heart.css("top", (heartPos.parent().offset().top - heartPos.offset().top) + "px")
+                Vue.set(this.heartHeightDesktop, "top", (heartPos.parent().offset().top - heartPos.offset().top) + "px")
+                // heart.css("left", (heartPos.width() / 2 +
+                //     "px"))
+
+                Vue.set(this.heartHeightDesktop, 'left', ($(".name").offset().left -
+                    $(".name").parent().parent().offset().left +
+                    "px"))
                 // heart.css("left", (heartPos.offset().left) +
                 //     "px")
 
@@ -474,29 +480,12 @@ export default {
             }
         },
         getImage: function (image) {
-            var cl = new cloudinary.Cloudinary({
-                cloud_name: "kemp",
-                secure: true
-            });
-            var tag = cl.url(image, {
-                height: 198,
-                width: 198,
-                crop: "fill"
-            });
-            return tag;
-        },
-        getImageSidebar: function (image) {
-            var cl = new cloudinary.Cloudinary({
-                cloud_name: "kemp",
-                secure: true
-            });
-            var int = Math.round(window.innerWidth * 0.2);
-            var tag = cl.url(image, {
-                height: int,
-                width: int
-            });
 
-            return tag;
+            if (image == undefined) {
+
+                return false
+            } else return image;
+
         },
         toggleFavorite: function (id) {
             this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
@@ -561,7 +550,7 @@ export default {
         }
     },
     watch: {
-        activeCards: function () {
+        searchBarLength: function () {
             this.getRowHeight()
         }
     }
@@ -761,11 +750,11 @@ h1 {
 }
 
 .imgDesktop {
-    width: auto;
-    height: auto;
+    width: 198px;
+    height: 198px;
     max-height: 100%;
     max-width: 100%;
-    border: 1px solid darkGrey;
+    //   border: 1px solid darkGrey;
     margin: auto;
 }
 

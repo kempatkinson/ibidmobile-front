@@ -27,11 +27,6 @@
         </b-row>
 
         <div>
-            <b-row>
-                <b-col>
-                    <h2 v-if="searchBar" id="searchResults">Search Results</h2>
-                </b-col>
-            </b-row>
 
             <b-container :key="reRender" v-if="this.deck.length > 0">
                 <b-row>
@@ -41,6 +36,7 @@
                         </router-link>
                     </b-col>
                 </b-row>
+
                 <b-row>
                     <b-col>
                         <b-row class="cardData allData" v-for="(chunk,index) in chunks(activeCards)" :data-count="(chunk.length)" :key="index">
@@ -60,9 +56,12 @@
                                                     <router-link :to="{ name: 'post', params: {id: data.itID}}">
                                                         <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                     </router-link>
-                                                    <div id="heartPos"></div>
+                                                    <div v-bind:id="
+                                                        'heartPos-' + data.itID" style="width: 100%"></div>
                                                 </div>
-                                                <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                <div style=" position: relative;">
+                                                    <div class="heart" v-bind:id="'heart-' + data.itID" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                </div>
                                             </b-col>
                                         </b-row>
                                         <b-row>
@@ -89,7 +88,7 @@
         <div class="row">
             <div class="col-9"></div>
             <div class="col-3">
-                <b-sidebar :id="'sidebar-' + data.itID" right v-for="data in this.deck" :key="data.itID">
+                <b-sidebar :id="'sidebar-' + data.itID" right v-for="data in this.deck" :key="'sidebarKey' + data.itID">
                     <b-container>
                         <b-row id="gap">
                             <b-col class="justify-content-center">
@@ -252,7 +251,6 @@ export default {
             this.getRowHeight();
         },
         activeCards() {
-            this.deck = this.currFavorites.map(i => i.I[0]);
 
             var found = [];
             var reg = new RegExp(this.term, "gi");
@@ -368,21 +366,22 @@ export default {
                 let string = "scale(" + 1 * factor + ")";
                 Vue.set(this.heartHeightDesktop, "transform", string);
 
-                Vue.set(
-                    this.heartHeightDesktop,
-                    "top",
-                    $("#heartPos").offset().top / 2 +
-                    "px"
-                );
-                Vue.set(
-                    this.heartHeightDesktop,
-                    "left",
-                    $("#priceCol").offset().left +
-                    $("#priceCol").width() / 2 -
-                    $(".heart").offset().left -
-                    $(".heart").width() / 2 + 10 +
-                    "px"
-                );
+                for (var i = 0; i < this.activeCards.length; i++) {
+                    var heartPos = $("#heartPos-" + this.activeCards[i].itID)
+                    console.log('parent')
+                    console.log(heartPos.parent().parent().offset())
+                    console.log('kid')
+                    console.log(heartPos.offset())
+
+                    var heart = $("#heart-" + this.activeCards[i].itID)
+                    heart.css("top", (heartPos.parent().offset().top - heartPos.offset().top) + "px")
+
+                    heart.css('left', ($(".name").offset().left -
+                        $(".name").parent().parent().offset().left +
+                        $(".name").width() / 8 + "px"))
+                    //  console.log($(".name").offset().left - $(".name").parent().parent().offset().left)
+
+                }
 
                 if (this.isDesktop) {
                     // sidebar heart sizing
@@ -390,21 +389,15 @@ export default {
                     let factor2 = target / 100;
                     let string2 = "scale(" + 1 * factor + ")";
                     Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
+
                     //  Vue.set(this.heartHeightDesktopSidebar, "left", +"px");
                     //  Vue.set(this.heartHeightDesktopSidebar, "bottom", $("#bidButton").offset().bottom - $("#bidButton").offset().bottom + "px");
                 }
             }
         },
         getImage: function (image) {
-            var cl = new cloudinary.Cloudinary({
-                cloud_name: "kemp",
-                secure: true
-            });
-            var tag = cl.url(image, {
-                height: 198,
-                width: 198,
-                crop: "fill"
-            });
+            var tag = "https://onepage.events.org/data/demo/614.jpg"
+
             return tag;
         },
         getImageSidebar: function (image) {
@@ -423,7 +416,6 @@ export default {
         toggleFavorite: function (id) {
             this.$store.dispatch("getFavorites", this.currUser.UserID);
             this.currFavorites = this.$store.state.favorites;
-
             var index = this.activeKeys.findIndex(element => element.id === id);
 
             if (this.activeKeys[index].active === true) {
@@ -439,9 +431,8 @@ export default {
                     url: "https://localhost:5001/api/users/favorites",
                     data: JSON.stringify(favoritedItem),
                     success: function (data) {
-                        console.log("deleted rows ↓");
-                        console.log(data);
-                        this.reRender++;
+                        // console.log("deleted rows ↓");
+                        // console.log(data);
 
                     },
                     error: function (err) {
@@ -449,9 +440,6 @@ export default {
                     }
                 });
             }
-            this.$store.dispatch("getFavorites", this.currUser.UserID);
-            this.currFavorites = this.$store.state.favorites;
-            this.deck = this.currFavorites.map(i => i.I[0]);
 
         },
 
