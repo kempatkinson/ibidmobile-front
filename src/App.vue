@@ -39,11 +39,8 @@
                     <router-link to="/about">About this Auction</router-link>
                 </li>
                 <li class="nav-item">
-                    <router-link to="/v/">Browse Items as List</router-link>
+                    <router-link :to="this.eventURL">Browse Items as List</router-link>
                 </li>
-                <!-- <li class="nav-item">
-                    <router-link :to="{ path: this.url }" exact>Browse Items as Cards</router-link>
-                </li> -->
 
                 <li class="nav-item">
                     <router-link to="/favorites">Favorited Items</router-link>
@@ -66,6 +63,7 @@ export default {
         return {
             url: "",
             user: this.$store.state.user,
+            eventURL: '/v/' + this.$store.state.event[0].EventInfo[0].TinyID,
         };
     },
     mounted() {
@@ -89,7 +87,7 @@ export default {
                 return 1
             } else return 0;
         },
-        ...mapState['user']
+        ...mapState['user', 'event']
     }
 };
 </script>

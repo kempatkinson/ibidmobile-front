@@ -18,7 +18,7 @@
         </router-link>
     </div>
     <div class="Details">
-        <img class="imgDetails" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
+        <img class="imgDetails" v-if="(getImage(post.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
         <p class="textDetails">{{post.itDescription}}</p>
         <p class="textDetails">Donated By: {{post.itDonor}}</p>
 
@@ -114,7 +114,6 @@ import {
     mapState
 } from "vuex";
 import Vue from "vue";
-import cloudinary from "cloudinary-core";
 import moment from "moment";
 
 export default {

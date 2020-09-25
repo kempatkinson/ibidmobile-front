@@ -56,11 +56,11 @@
                                                     <router-link :to="{ name: 'post', params: {id: data.itID}}">
                                                         <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
                                                     </router-link>
-                                                    <div v-bind:id="
-                                                        'heartPos-' + data.itID" style="width: 100%"></div>
+                                                    <div class="heartPos"></div>
+
                                                 </div>
                                                 <div style=" position: relative;">
-                                                    <div class="heart" v-bind:id="'heart-' + data.itID" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                    <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                                 </div>
                                             </b-col>
                                         </b-row>
@@ -131,7 +131,7 @@
                                     <div slot-scope="props" class="bar-text">Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
                                 </countdown>
                                 <div style="position: relative; width: 0; height: 0">
-                                    <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                    <div class="heart sidebarHeart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
                                 </div>
                             </b-col>
                         </b-row>
@@ -151,7 +151,6 @@ import {
 } from "vuex";
 import Vue from "vue";
 import VueCountdown from "@chenfengyuan/vue-countdown";
-import cloudinary from "cloudinary-core";
 import lodash from "lodash";
 import jquery from "jquery";
 import moment from "moment";
@@ -360,38 +359,30 @@ export default {
 
         getRowHeight() {
             if (this.deck.length > 0) {
+
                 let target = this.$refs.desktopItems[0].clientHeight;
                 let factor = target / 100;
                 let string = "scale(" + 1 * factor + ")";
                 Vue.set(this.heartHeightDesktop, "transform", string);
 
-                for (var i = 0; i < this.activeCards.length; i++) {
-                    var heartPos = $("#heartPos-" + this.activeCards[i].itID)
-                    console.log('parent')
-                    console.log(heartPos.parent().parent().offset())
-                    console.log('kid')
-                    console.log(heartPos.offset())
+                var parentOffset = $(".heartPos").parent().offset()
+                var offset = $(".heartPos").offset()
 
-                    var heart = $("#heart-" + this.activeCards[i].itID)
-                    heart.css("top", (heartPos.parent().offset().top - heartPos.offset().top) + "px")
-
-                    heart.css('left', ($(".name").offset().left -
-                        $(".name").parent().parent().offset().left +
-                        $(".name").width() / 8 + "px"))
-                    //  console.log($(".name").offset().left - $(".name").parent().parent().offset().left)
-
-                }
+                Vue.set(this.heartHeightDesktop, "top", parentOffset.top - offset.top + 'px')
 
                 if (this.isDesktop) {
                     // sidebar heart sizing
                     let target2 = this.$refs.sidebarName[0].clientHeight;
                     let factor2 = target / 100;
                     let string2 = "scale(" + 1 * factor + ")";
+
                     Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
+                    Vue.set(this.heartHeightDesktopSidebar, "top", parentOffset.top + 'px')
 
                     //  Vue.set(this.heartHeightDesktopSidebar, "left", +"px");
                     //  Vue.set(this.heartHeightDesktopSidebar, "bottom", $("#bidButton").offset().bottom - $("#bidButton").offset().bottom + "px");
                 }
+
             }
         },
         getImage: function (image) {
@@ -422,13 +413,17 @@ export default {
                     success: function (data) {
                         // console.log("deleted rows ↓");
                         // console.log(data);
-
                     },
                     error: function (err) {
                         console.log(err.responseText);
                     }
                 });
             }
+            this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
+                this.currFavorites = this.$store.state.favorites;
+                this.deck = this.currFavorites.map(i => i.I[0])
+                this.deck = this.deck.filter(e => (e.EventID == this.currEvent.EventInfo[0].EventID));
+            })
 
         },
 

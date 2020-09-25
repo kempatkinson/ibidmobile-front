@@ -52,7 +52,7 @@ export default new Vuex.Store({
       commit("SET_USER", user)
     },
     getFavorites({commit},id){
-      axios.get(
+      return axios.get(
         // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
         "https://localhost:5001/api/users/favorites/" + id
       )
