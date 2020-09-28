@@ -19,7 +19,7 @@ export default new Vuex.Store({
   actions: {
     loadPosts({ commit }, id) {
       // console.log(id)
-      axios.get(
+     return axios.get(
         //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
          "https://localhost:5001/api/items/event/" + id
       )
@@ -34,7 +34,7 @@ export default new Vuex.Store({
       // commit("GET_POSTS", deck)
     },
     getEvent({ commit }, id) {
-      axios.get(
+      return axios.get(
         // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
         "https://localhost:5001/api/events/" + id
       )

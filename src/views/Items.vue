@@ -241,28 +241,34 @@ export default {
     },
     mounted() {
 
-        this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
-        this.$store.dispatch("getEvent", this.$route.params.TinyURL);
+        this.$store.dispatch("loadPosts", this.$route.params.TinyURL).then((res) => {
+            this.deck = this.$store.state.posts;
+
+        })
+
+        this.$store.dispatch("getEvent", this.$route.params.TinyURL).then((res) => {
+            this.currEvent = this.$store.state.event[0];
+            this.getStyle();
+            this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
+                this.currFavorites = this.$store.state.favorites;
+                this.$nextTick(() => {
+
+                    this.windowWidth = window.innerWidth;
+                    this.getRowHeight();
+                })
+
+            });
+        })
+
         this.currUser = this.$store.state.user;
 
-        this.$store.dispatch("getFavorites", this.currUser.UserID);
-        this.currFavorites = this.$store.state.favorites;
-        this.deck = this.$store.state.posts;
         this.activeKeys;
 
-        this.currEvent = this.$store.state.event[0];
         this.sidebar = {
             status: false,
             current: ""
         };
         this.selected = this.categories[0].name;
-        this.getStyle();
-
-        this.$nextTick(() => {
-            this.windowWidth = window.innerWidth;
-            this.getRowHeight();
-
-        });
 
         //listeners
         window.addEventListener("resize", () => {

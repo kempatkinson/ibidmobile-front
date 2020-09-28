@@ -1,6 +1,6 @@
 <template>
 <div id="favorites" v-bind:style="this.backgroundStyle">
-    <div class="b-container" v-if="this.deck.length === 0 && isLoggedIn" id="warning">
+    <div class="b-container" v-if="this.deck.length === 0 && isLoggedIn && loaded" id="warning">
         <h1> Go back to the event to favorite some items! </h1>
         <div>
             <router-link :to="{ name: 'Items', params: {TinyURL: backToEvent}}">
@@ -8,7 +8,7 @@
             </router-link>
         </div>
     </div>
-    <div class="b-container" v-if="!isLoggedIn" id="warning">
+    <div class="b-container" v-if="!isLoggedIn && loaded" id="warning">
         <h1> Log in and go back to the event to favorite some items! </h1>
 
         <div>
@@ -181,27 +181,33 @@ export default {
             currFavorites: [],
             reRender: 0,
             isLoggedIn: this.$store.state.user.UserID !== undefined,
+            loaded: false,
 
         };
     },
     mounted() {
+
         this.currEvent = this.$store.state.event[0];
         this.currUser = this.$store.state.user;
-        this.$store.dispatch("getFavorites", this.currUser.UserID);
-        this.currFavorites = this.$store.state.favorites;
-        this.deck = this.currFavorites.map(i => i.I[0])
-        this.deck = this.deck.filter(e => (e.EventID == this.currEvent.EventInfo[0].EventID));
+
+        this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
+            this.currFavorites = this.$store.state.favorites;
+
+            this.deck = this.currFavorites.map(i => i.I[0])
+            this.deck = this.deck.filter(e => (e.EventID == this.currEvent.EventInfo[0].EventID));
+            this.$nextTick(() => {
+                this.windowWidth = window.innerWidth;
+                this.getRowHeight();
+                this.loaded = true;
+            })
+
+        });
         this.getStyle();
 
         this.sidebar = {
             status: false,
             current: ""
         };
-
-        this.$nextTick(() => {
-            this.windowWidth = window.innerWidth;
-            this.getRowHeight();
-        });
 
         //listeners
         window.addEventListener("resize", () => {

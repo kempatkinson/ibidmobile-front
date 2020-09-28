@@ -119,15 +119,18 @@ import moment from "moment";
 export default {
     beforeRouteUpdate(to, from, next) {
         this.$route.params.id = to.params.id;
-        this.post = this.$store.getters.post(to.params.id);
-        this.$store.dispatch("loadPosts", this.post.EventInfo[0].TinyID);
-        this.post = this.$store.getters.post(to.params.id);
-        this.bid = this.post.itMinBid + this.post.itMinRaise;
 
-        this.index = this.$store.state.posts.findIndex(
-            element => element.itID === to.params.id
-        );
-        this.isActive = this.$store.getters.findFavorite(to.params.id);
+        this.$store.dispatch("loadPosts", this.post.EventInfo[0].TinyID).then((res) => {
+            this.post = this.$store.getters.post(to.params.id);
+            this.deck = this.$store.state.posts;
+            this.bid = this.post.itMinBid + this.post.itMinRaise;
+
+            this.index = this.$store.state.posts.findIndex(
+                element => element.itID === to.params.id
+            );
+            this.isActive = this.$store.getters.findFavorite(to.params.id);
+
+        })
 
         next();
     },
@@ -170,7 +173,6 @@ export default {
         }
     },
     mounted() {
-        this.$store.dispatch("loadPosts", this.post.EventInfo[0].TinyID);
         this.currEvent = this.$store.state.event[0];
         this.currUser = this.$store.state.user;
 
@@ -178,6 +180,7 @@ export default {
         this.getCards();
         this.getRowHeight();
         this.initFavorite(this.$params.id);
+
     },
     methods: {
         returnDate: function (datetime) {
