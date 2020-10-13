@@ -38,9 +38,9 @@
                 <li class="nav-item">
                     <router-link to="/about">About this Auction</router-link>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <router-link :to="this.eventURL">Browse Items as List</router-link>
-                </li>
+                </li>-->
 
                 <li class="nav-item">
                     <router-link to="/favorites">Favorited Items</router-link>
@@ -63,7 +63,7 @@ export default {
         return {
             url: "",
             user: this.$store.state.user,
-            eventURL: '/v/' + this.$store.state.event[0].EventInfo[0].TinyID,
+            // eventURL: '/v/' + this.$store.state.event[0].EventInfo[0].TinyID,
         };
     },
     mounted() {
