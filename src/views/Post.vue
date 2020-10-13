@@ -10,7 +10,7 @@
 
         <h3>Minimum Raise: ${{post.itMinRaise}}</h3>
 
-        <div class="heart" v-bind:style="this.heartHeight" v-on:click="toggle" v-bind:class="{amactive: isActive}"></div>
+        <div class="heart" v-bind:style="this.heartHeight" v-on:click="toggleFavorite" v-bind:class="{amactive: isActive}"></div>
     </div>
     <div>
         <router-link :to="{ name: 'Items', params: {TinyURL: backToEvent}}">
@@ -244,20 +244,65 @@ export default {
                 this.isActive = true;
             } else this.isActive = false;
         },
-        toggle() {
-            this.isActive = !this.isActive;
+        toggleFavorite: function () {
+            var id = this.post.itID
+            this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+            this.$store.dispatch("getFavorites", this.currUser.UserID);
+            // var index = this.activeKeys.findIndex(element => element.id === id);
 
-            if (this.isActive) {
-                this.$store.dispatch("setFavorite", {
-                    n: this.post.id
+            if (this.isActive === false) {
+                //FAVORITE ITEM (POST)
+                var favoritedItem = {
+                    userID: this.$store.state.user.UserID,
+                    itemID: id
+                };
+                console.log(favoritedItem);
+                $.ajax({
+                    type: "POST",
+                    async: true,
+                    dataType: "json",
+                    contentType: "application/json",
+                    url: "https://localhost:5001/api/users/favorites",
+                    data: JSON.stringify(favoritedItem),
+                    success: function (data) {
+                        console.log("added rows ↓");
+
+                        console.log(data);
+
+                    },
+                    error: function (err) {
+                        console.log(err.responseText);
+                    }
                 });
-            }
-            if (!this.isActive) {
-                this.$store.dispatch("removeFavorite", {
-                    n: this.post.id
+                this.isActive = true;
+
+            } else if (this.isActive) {
+                var favoritedItem = {
+                    userID: this.$store.state.user.UserID,
+                    itemID: id
+                };
+                //   console.log(favoritedItem)
+                $.ajax({
+                    type: "DELETE",
+                    async: true,
+                    contentType: "application/json",
+                    url: "https://localhost:5001/api/users/favorites",
+                    data: JSON.stringify(favoritedItem),
+                    success: function (data) {
+                        console.log("deleted rows ↓");
+                        console.log(data);
+
+                    },
+                    error: function (err) {
+                        console.log(err.responseText);
+                    }
                 });
+                this.isActive = false;
+
             }
-            // some code to filter users
+
+            this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
+            this.$store.dispatch("getFavorites", this.currUser.UserID);
         },
         getRowHeight() {
             Vue.nextTick(() => {

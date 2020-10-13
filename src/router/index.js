@@ -7,6 +7,8 @@ import Welcome from "../views/Welcome.vue"
 import Favorites from "../views/Favorites.vue"
 import Profile from "../views/Profile.vue"
 import LogIn from "../views/LogIn.vue"
+import LogIn2 from "../views/LogIn2.vue"
+
 
 
 
@@ -60,6 +62,11 @@ const router = new VueRouter({
       path: "/login/",
       name: "login",
       component: LogIn
+    },
+    {
+      path: "/login2/",
+      name: "login2",
+      component: LogIn2
     }
   ]
 });

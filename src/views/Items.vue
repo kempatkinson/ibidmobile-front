@@ -243,22 +243,21 @@ export default {
 
         this.$store.dispatch("loadPosts", this.$route.params.TinyURL).then((res) => {
             this.deck = this.$store.state.posts;
-
+            this.$nextTick(() => {
+                this.windowWidth = window.innerWidth;
+                this.getRowHeight();
+            })
         })
+        //        this.$store.dispatch("getEvent", this.$route.params.TinyURL).then((res) => {
+        this.currEvent = this.$store.state.event[0];
+        this.getStyle();
+        //          this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
+        this.currFavorites = this.$store.state.favorites;
 
-        this.$store.dispatch("getEvent", this.$route.params.TinyURL).then((res) => {
-            this.currEvent = this.$store.state.event[0];
-            this.getStyle();
-            this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
-                this.currFavorites = this.$store.state.favorites;
-                this.$nextTick(() => {
+        // });
 
-                    this.windowWidth = window.innerWidth;
-                    this.getRowHeight();
-                })
-
-            });
-        })
+        //     })
+        // })
 
         this.currUser = this.$store.state.user;
 
@@ -407,7 +406,7 @@ export default {
             if (this.isDesktop) {
                 return _.chunk(
                     Object.values(array),
-                    Math.floor(this.windowWidth / this.cardWidth)
+                    Math.floor(this.windowWidth / this.cardWidth) - 1
                 );
             }
             if (!this.isDesktop) {
@@ -489,43 +488,47 @@ export default {
                     userID: this.$store.state.user.UserID,
                     itemID: id
                 };
-                console.log(favoritedItem);
-                $.ajax({
-                    type: "POST",
-                    async: true,
-                    dataType: "json",
-                    contentType: "application/json",
-                    url: "https://localhost:5001/api/users/favorites",
-                    data: JSON.stringify(favoritedItem),
-                    success: function (data) {
-                        console.log("added rows ↓");
 
-                        console.log(data);
-                    },
-                    error: function (err) {
-                        console.log(err.responseText);
-                    }
-                });
+                // $.ajax({
+                //     type: "POST",
+                //     async: true,
+                //     dataType: "json",
+                //     contentType: "application/json",
+                //     url: "https://localhost:5001/api/users/favorites",
+                //     data: JSON.stringify(favoritedItem),
+                //     success: function (data) {
+                //         console.log("added rows ↓");
+
+                //         console.log(data);
+                //     },
+                //     error: function (err) {
+                //         console.log(err.responseText);
+                //     }
+                // });
+
+                this.$store.dispatch("setFavorite", id)
             } else if (this.activeKeys[index].active === true) {
                 var favoritedItem = {
                     userID: this.$store.state.user.UserID,
                     itemID: id
                 };
                 //   console.log(favoritedItem)
-                $.ajax({
-                    type: "DELETE",
-                    async: true,
-                    contentType: "application/json",
-                    url: "https://localhost:5001/api/users/favorites",
-                    data: JSON.stringify(favoritedItem),
-                    success: function (data) {
-                        console.log("deleted rows ↓");
-                        console.log(data);
-                    },
-                    error: function (err) {
-                        console.log(err.responseText);
-                    }
-                });
+                // $.ajax({
+                //     type: "DELETE",
+                //     async: true,
+                //     contentType: "application/json",
+                //     url: "https://localhost:5001/api/users/favorites",
+                //     data: JSON.stringify(favoritedItem),
+                //     success: function (data) {
+                //         console.log("deleted rows ↓");
+                //         console.log(data);
+                //     },
+                //     error: function (err) {
+                //         console.log(err.responseText);
+                //     }
+                // });
+                this.$store.dispatch("removeFavorite", id)
+
             }
 
             this.$store.dispatch("loadPosts", this.$route.params.TinyURL);

@@ -19,50 +19,50 @@ export default new Vuex.Store({
   actions: {
     loadPosts({ commit }, id) {
       // console.log(id)
-     return axios.get(
-        //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-         "https://localhost:5001/api/items/event/" + id
-      )
-        .then(response => 
-          response.data)
-        .then(posts => {
-          commit("GET_POSTS", posts)
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      // commit("GET_POSTS", deck)
+    //  return axios.get(
+    //     //"https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+    //      "https://localhost:5001/api/items/event/" + id
+    //   )
+    //     .then(response => 
+    //       response.data)
+    //     .then(posts => {
+    //       commit("GET_POSTS", posts)
+    //     })
+    //     .catch(error => {
+    //       console.log(error);
+    //     });
+      commit("GET_POSTS", deck)
     },
     getEvent({ commit }, id) {
-      return axios.get(
-        // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-        "https://localhost:5001/api/events/" + id
-      )
-        .then(response => {
-          response.data,
-            commit("SET_EVENT", response.data)
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      // return axios.get(
+      //   // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+      //   "https://localhost:5001/api/events/" + id
+      // )
+      //   .then(response => {
+      //     response.data,
+      //       commit("SET_EVENT", response.data)
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
 
-      //commit("SET_EVENT", event)
+      commit("SET_EVENT", event)
     },
     logInUser({ commit }, user) {
       commit("SET_USER", user)
     },
     getFavorites({commit},id){
-      return axios.get(
-        // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
-        "https://localhost:5001/api/users/favorites/" + id
-      )
-        .then(response => {
-          response.data,
-            commit("GET_FAVORITES", response.data)
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      // return axios.get(
+      //   // "https://afternoon-taiga-12401.herokuapp.com/api/items/" + id
+      //   "https://localhost:5001/api/users/favorites/" + id
+      // )
+      //   .then(response => {
+      //     response.data,
+      //       commit("GET_FAVORITES", response.data)
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
 
     },
 
@@ -80,7 +80,7 @@ export default new Vuex.Store({
         .catch(error => {
           console.log(error);
         });
-      // commit("GET_POSTS", deck)
+      
     },
     setFavorite({ commit }, n) {
       commit("favorite", n);
@@ -98,7 +98,7 @@ export default new Vuex.Store({
       state.posts = posts;
     },
     GET_FAVORITES(state, favorites) {
-      state.favorites = favorites;
+      state.favorites = favorites
     },
     GET_ITEM(state, item) {
       state.item = item;

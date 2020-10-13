@@ -212,7 +212,6 @@ export default {
         //listeners
         window.addEventListener("resize", () => {
             this.windowWidth = window.innerWidth;
-
             this.getRowHeight();
         });
 
@@ -324,14 +323,16 @@ export default {
         myEventHandler(e) {
             this.windowWidth = e.srcElement.window.innerWidth;
             this.isDesktop;
-            this.getRowHeight();
+            //  this.getRowHeight();
         },
         chunks: function (array) {
+
             if (this.isDesktop) {
                 return _.chunk(
                     Object.values(array),
-                    Math.floor(this.windowWidth / this.cardWidth)
+                    Math.floor(this.windowWidth / this.cardWidth) - 1
                 );
+
             }
             if (!this.isDesktop) {
                 return _.chunk(Object.values(array), 2);
@@ -364,6 +365,7 @@ export default {
         },
 
         getRowHeight() {
+            this.reRender++
             if (this.deck.length > 0) {
 
                 let target = this.$refs.desktopItems[0].clientHeight;
@@ -404,27 +406,28 @@ export default {
             this.currFavorites = this.$store.state.favorites;
             var index = this.activeKeys.findIndex(element => element.id === id);
 
-            if (this.activeKeys[index].active === true) {
-                var favoritedItem = {
-                    userID: this.$store.state.user.UserID,
-                    itemID: id
-                };
-                //   console.log(favoritedItem)
-                $.ajax({
-                    type: "DELETE",
-                    async: true,
-                    contentType: "application/json",
-                    url: "https://localhost:5001/api/users/favorites",
-                    data: JSON.stringify(favoritedItem),
-                    success: function (data) {
-                        // console.log("deleted rows ↓");
-                        // console.log(data);
-                    },
-                    error: function (err) {
-                        console.log(err.responseText);
-                    }
-                });
-            }
+            // if (this.activeKeys[index].active === true) {
+            //     var favoritedItem = {
+            //         userID: this.$store.state.user.UserID,
+            //         itemID: id
+            //     };
+            //     //   console.log(favoritedItem)
+            //     $.ajax({
+            //         type: "DELETE",
+            //         async: true,
+            //         contentType: "application/json",
+            //         url: "https://localhost:5001/api/users/favorites",
+            //         data: JSON.stringify(favoritedItem),
+            //         success: function (data) {
+            //             // console.log("deleted rows ↓");
+            //             // console.log(data);
+            //         },
+            //         error: function (err) {
+            //             console.log(err.responseText);
+            //         }
+            //     });
+            // }
+            this.$store.dispatch("removeFavorite", id)
             this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
                 this.currFavorites = this.$store.state.favorites;
                 this.deck = this.currFavorites.map(i => i.I[0])

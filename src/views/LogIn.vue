@@ -20,7 +20,7 @@
                 <br />
                 <button class="btn btn-primary" id="next" @click="checkEmail">Next</button>
             </div>
-            <div id="passwordForm">
+            <div id="passwordForm" v-if="!isLoggedIn">
 
                 <label for="password">Password:</label>
                 <input type="text" id="password" name="password" class="form-control" />
