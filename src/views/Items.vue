@@ -5,7 +5,7 @@
             <b-col md="8">
                 <div class="selection" id="gap">
                     <select v-model="selected" id="dropdown" @change="scrollPage()">
-                        <option ref="option" v-for="option in categories" v-bind:key="option.category" v-bind:value="option.name">{{ option.name.toUpperCase()}}</option>
+                        <option ref="option" v-for="option in categories" v-bind:key="option.category" v-bind:value="option.name">{{ option.name.toUpperCase() }}</option>
                     </select>
                 </div>
             </b-col>
@@ -16,18 +16,24 @@
         </b-row>
         <div id="EventHeader">
             <b-row>
-                <b-col v-bind:style="{'background-color': categoryColor}">
-                    <h1 id="eventName">Welcome to the {{currEvent.EventInfo[0].Name}}</h1>
+                <b-col v-bind:style="{ 'background-color': categoryColor }">
+                    <h1 id="eventName">
+                        Welcome to the {{ currEvent.EventInfo[0].Name }}
+                    </h1>
 
-                    <h1 v-if="this.currUser.UserID !== undefined" id="userName">{{this.currUser.FirstName}} {{this.currUser.LastName}}</h1>
+                    <h1 v-if="this.currUser.UserID !== undefined" id="userName">
+                        {{ this.currUser.FirstName }} {{ this.currUser.LastName }}
+                    </h1>
                 </b-col>
             </b-row>
         </div>
         <b-row>
             <b-col>
                 <div id="descriptionCountdown">
-                    <p>{{currEvent.EventInfo[0].Description}}</p>
-                    <p>Auction Closes: {{returnDate(currEvent.EventInfo[0].EndDate)}}</p>
+                    <p>{{ currEvent.EventInfo[0].Description }}</p>
+                    <p>
+                        Auction Closes: {{ returnDate(currEvent.EventInfo[0].EndDate) }}
+                    </p>
                 </div>
             </b-col>
         </b-row>
@@ -37,33 +43,47 @@
                 <b-col>
                     <b-row>
                         <div class="col-12">
-                            <h2 v-bind:style="{'background-color': categoryColor}" class="catAnchor" v-bind:id="'anchor-'+category.name">{{category.name.toUpperCase()}}</h2>
+                            <h2 v-bind:style="{ 'background-color': categoryColor }" class="catAnchor" v-bind:id="'anchor-' + category.name">
+                                {{ category.name.toUpperCase() }}
+                            </h2>
                         </div>
                     </b-row>
 
                     <b-row>
                         <b-col>
-                            <b-row class="cardData allData" v-for="(chunk,index) in chunks(category.ids)" :data-count="(chunk.length)" :key="index">
+                            <b-row class="cardData allData" v-for="(chunk, index) in chunks(category.ids)" :data-count="chunk.length" :key="index">
                                 <div class="single" v-for="data in chunk" :key="data.itID">
                                     <div class="card" v-bind:style="containerStyle">
-                                        <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
-                                        <p class="idDesktop">{{data.itCatalogNum}}</p>
+                                        <p class="closedTag" v-if="data.itStatus === 4">CLOSED</p>
+                                        <p class="idDesktop">{{ data.itCatalogNum }}</p>
 
                                         <div>
                                             <b-row :id="data.itID">
                                                 <b-col>
                                                     <div class="imgContainer" v-on:click="toggler(data.itID)">
-                                                        <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
+                                                        <img class="imgDesktop" v-if="getImage(data.itImageURL)" v-bind:src="getImage(data.itImageURL)" />
                                                     </div>
 
                                                     <div class="card-title" style="position: relative">
-                                                        <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                            <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
+                                                        <router-link :to="{
+                                  name: 'post',
+                                  params: { id: data.itID }
+                                }">
+                                                            <h3 class="name" ref="desktopItems">
+                                                                {{ data.itName.toUpperCase() }}
+                                                            </h3>
                                                         </router-link>
                                                         <div class="heartPos"></div>
                                                     </div>
                                                     <div style=" position: relative;">
-                                                        <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                        <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key="'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{
+                                  amactive:
+                                    activeKeys[
+                                      activeKeys.findIndex(
+                                        element => element.id === data.itID
+                                      )
+                                    ].active
+                                }"></div>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -71,11 +91,11 @@
                                                 <b-col>
                                                     <div v-if="!(data.itStatus === 4)" id="priceCol">
                                                         <label for="price" class="date-text">Current Bid:</label>
-                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                                        <span id="price" class="date-text">${{ data.itMinBid }}</span>
                                                     </div>
-                                                    <div v-if="(data.itStatus === 4)" id="priceCol">
+                                                    <div v-if="data.itStatus === 4" id="priceCol">
                                                         <label for="price" class="date-text">Sold:</label>
-                                                        <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                                        <span id="price" class="date-text">${{ data.itMinBid }}</span>
                                                     </div>
                                                 </b-col>
                                             </b-row>
@@ -98,28 +118,36 @@
 
             <b-row>
                 <b-col>
-                    <b-row class="cardData allData" v-for="(chunk,index) in chunks(activeCards)" :data-count="(chunk.length)" :key="index">
+                    <b-row class="cardData allData" v-for="(chunk, index) in chunks(activeCards)" :data-count="chunk.length" :key="index">
                         <div class="single" v-for="data in chunk" :key="data.itID">
                             <div class="card" v-bind:style="containerStyle">
-                                <p class="closedTag" v-if="(data.itStatus === 4)">CLOSED</p>
-                                <p class="idDesktop">{{data.itCatalogNum}}</p>
+                                <p class="closedTag" v-if="data.itStatus === 4">CLOSED</p>
+                                <p class="idDesktop">{{ data.itCatalogNum }}</p>
 
                                 <div>
                                     <b-row :id="data.itID">
                                         <b-col>
                                             <div class="imgContainer" v-on:click="toggler(data.itID)">
-                                                <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
+                                                <img class="imgDesktop" v-if="getImage(data.itImageURL)" v-bind:src="getImage(data.itImageURL)" />
                                             </div>
 
                                             <div class="card-title" style="position: relative">
-                                                <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                                    <h3 class="name" ref="desktopItems">{{data.itName.toUpperCase()}}</h3>
+                                                <router-link :to="{ name: 'post', params: { id: data.itID } }">
+                                                    <h3 class="name" ref="desktopItems">
+                                                        {{ data.itName.toUpperCase() }}
+                                                    </h3>
                                                 </router-link>
                                                 <div class="heartPos"></div>
-
                                             </div>
                                             <div style=" position: relative;">
-                                                <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                                <div class="heart" v-on:click="toggleFavorite(data.itID)" v-bind:key="'heart: ' + data.itID" v-bind:style="heartHeightDesktop" v-bind:class="{
+                              amactive:
+                                activeKeys[
+                                  activeKeys.findIndex(
+                                    element => element.id === data.itID
+                                  )
+                                ].active
+                            }"></div>
                                             </div>
                                         </b-col>
                                     </b-row>
@@ -127,11 +155,11 @@
                                         <b-col>
                                             <div v-if="!(data.itStatus === 4)" id="priceCol">
                                                 <label for="price" class="date-text">Current Bid:</label>
-                                                <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                                <span id="price" class="date-text">${{ data.itMinBid }}</span>
                                             </div>
-                                            <div v-if="(data.itStatus === 4)">
+                                            <div v-if="data.itStatus === 4">
                                                 <label for="price" class="date-text">Sold:</label>
-                                                <span id="price" class="date-text">${{data.itMinBid}}</span>
+                                                <span id="price" class="date-text">${{ data.itMinBid }}</span>
                                             </div>
                                         </b-col>
                                     </b-row>
@@ -150,46 +178,66 @@
                     <b-container>
                         <b-row id="gap">
                             <b-col class="justify-content-center">
-                                <p class="closedSidebar" v-if="(data.itStatus === 4)">CLOSED</p>
-                                <p class="idDesktopSidebar">{{data.itCatalogNum}}</p>
-                                <h3 class="name" id="nameSidebar" ref="sidebarName">{{data.itName}}</h3>
+                                <p class="closedSidebar" v-if="data.itStatus === 4">CLOSED</p>
+                                <p class="idDesktopSidebar">{{ data.itCatalogNum }}</p>
+                                <h3 class="name" id="nameSidebar" ref="sidebarName">
+                                    {{ data.itName }}
+                                </h3>
                             </b-col>
                         </b-row>
 
                         <b-row>
                             <b-col class="d-flex justify-content-center">
-                                <img class="imgDesktop" v-if="(getImage(data.itImageURL))" v-bind:src="getImage(data.itImageURL)" />
+                                <img class="imgDesktop" v-if="getImage(data.itImageURL)" v-bind:src="getImage(data.itImageURL)" />
                             </b-col>
                         </b-row>
 
                         <b-row>
                             <b-col class="d-flex justify-content-center">
                                 <div>
-                                    <p class="bar-text">Donated By: {{data.itDonor}}</p>
+                                    <p class="bar-text">Donated By: {{ data.itDonor }}</p>
 
-                                    <p class="bar-text">{{data.itDescription}}</p>
-                                    <p class="bar-text">Value: {{data.itValue}}</p>
-                                    <p v-if="!(data.itStatus === 4)" class="bar-text">Current Bid : {{data.itMinBid}}</p>
+                                    <p class="bar-text">{{ data.itDescription }}</p>
+                                    <p class="bar-text">Value: {{ data.itValue }}</p>
+                                    <p v-if="!(data.itStatus === 4)" class="bar-text">
+                                        Current Bid : {{ data.itMinBid }}
+                                    </p>
 
-                                    <p v-if="(data.itStatus === 4)" class="bar-text">Sold for : {{data.itMinBid}}</p>
-                                    <p class="bar-text">Minmum raise: {{data.itMinRaise}}</p>
+                                    <p v-if="data.itStatus === 4" class="bar-text">
+                                        Sold for : {{ data.itMinBid }}
+                                    </p>
+                                    <p class="bar-text">Minmum raise: {{ data.itMinRaise }}</p>
                                 </div>
                             </b-col>
                         </b-row>
                         <b-row class="justify-content-center">
-                            <router-link :to="{ name: 'post', params: {id: data.itID}}">
-                                <button class="btn btn-primary bar-button" id="bidButton">Bid Now!</button>
+                            <router-link :to="{ name: 'post', params: { id: data.itID } }">
+                                <button class="btn btn-primary bar-button" id="bidButton">
+                                    Bid Now!
+                                </button>
                             </router-link>
                         </b-row>
                         <b-row>
                             <b-col class="justify-content-center">
-                                <div class="bar-text" v-if="(timeUntil(data.itEndDate) <= 0)">Auction Over!</div>
+                                <div class="bar-text" v-if="timeUntil(data.itEndDate) <= 0">
+                                    Auction Over!
+                                </div>
 
                                 <countdown :time="timeUntil(data.itEndDate)">
-                                    <div slot-scope="props" class="bar-text">Bidding closes in {{ props.days }} days, {{ props.hours }} hours, {{ props.minutes }} minutes!</div>
+                                    <div slot-scope="props" class="bar-text">
+                                        Bidding closes in {{ props.days }} days,
+                                        {{ props.hours }} hours, {{ props.minutes }} minutes!
+                                    </div>
                                 </countdown>
                                 <div style="position: relative; width: 0; height: 0">
-                                    <div class="sidebarHeart" v-on:click="toggleFavorite(data.itID)" v-bind:key=" 'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{amactive: activeKeys[activeKeys.findIndex((element) => element.id === data.itID)].active}"></div>
+                                    <div class="sidebarHeart" v-on:click="toggleFavorite(data.itID)" v-bind:key="'heart: ' + data.itID" v-bind:style="heartHeightDesktopSidebar" v-bind:class="{
+                        amactive:
+                          activeKeys[
+                            activeKeys.findIndex(
+                              element => element.id === data.itID
+                            )
+                          ].active
+                      }"></div>
                                 </div>
                             </b-col>
                         </b-row>
@@ -240,18 +288,17 @@ export default {
         };
     },
     mounted() {
-
-        this.$store.dispatch("loadPosts", this.$route.params.TinyURL).then((res) => {
+        this.$store.dispatch("loadPosts", this.$route.params.TinyURL).then(res => {
             this.deck = this.$store.state.posts;
             this.$nextTick(() => {
                 this.windowWidth = window.innerWidth;
                 this.getRowHeight();
-            })
-        })
-        //        this.$store.dispatch("getEvent", this.$route.params.TinyURL).then((res) => {
+            });
+        });
+        this.$store.dispatch("getEvent", this.$route.params.TinyURL);
         this.currEvent = this.$store.state.event[0];
         this.getStyle();
-        //          this.$store.dispatch("getFavorites", this.currUser.UserID).then((res) => {
+        this.$store.dispatch("getFavorites", this.currUser.UserID)
         this.currFavorites = this.$store.state.favorites;
 
         // });
@@ -303,13 +350,11 @@ export default {
         },
         searchBar() {
             if (this.term.length > 0) {
-
                 return true;
             } else return false;
         },
 
         activeCards() {
-
             var found = [];
             var reg = new RegExp(this.term, "gi");
             for (let i = 0; i < this.deck.length; i++) {
@@ -321,12 +366,16 @@ export default {
                 if (description) {
                     if (
                         this.deck[i].itName.match(reg) ||
-                        this.deck[i].itDescription.match(reg) || this.deck[i].itCatalogNum.match(reg)
+                        this.deck[i].itDescription.match(reg) ||
+                        this.deck[i].itCatalogNum.match(reg)
                     ) {
                         found.push(this.deck[i]);
                     }
                 } else if (!description) {
-                    if (this.deck[i].itName.match(reg) || this.deck[i].itCatalogNum.match(reg)) {
+                    if (
+                        this.deck[i].itName.match(reg) ||
+                        this.deck[i].itCatalogNum.match(reg)
+                    ) {
                         found.push(this.deck[i]);
                     }
                 }
@@ -371,7 +420,6 @@ export default {
         ...mapState(["posts", "favorites", "user", "event"])
     },
     methods: {
-
         returnDate: function (datetime) {
             const format1 = "LLLL";
             return moment(datetime).format(format1);
@@ -402,7 +450,6 @@ export default {
             this.isDesktop;
         },
         chunks: function (array) {
-
             if (this.isDesktop) {
                 return _.chunk(
                     Object.values(array),
@@ -412,7 +459,6 @@ export default {
             if (!this.isDesktop) {
                 return _.chunk(Object.values(array), 2);
             }
-
         },
         scrollTo(element) {
             this.$scrollTo("#anchor-" + element.substring(1), 500, {
@@ -452,10 +498,16 @@ export default {
             let string = "scale(" + 1 * factor + ")";
             Vue.set(this.heartHeightDesktop, "transform", string);
 
-            var parentOffset = $(".heartPos").parent().offset()
-            var offset = $(".heartPos").offset()
+            var parentOffset = $(".heartPos")
+                .parent()
+                .offset();
+            var offset = $(".heartPos").offset();
 
-            Vue.set(this.heartHeightDesktop, "top", parentOffset.top - offset.top + 'px')
+            Vue.set(
+                this.heartHeightDesktop,
+                "top",
+                parentOffset.top - offset.top + "px"
+            );
 
             if (this.isDesktop) {
                 // sidebar heart sizing
@@ -464,18 +516,16 @@ export default {
                 let string2 = "scale(" + 1 * factor + ")";
 
                 Vue.set(this.heartHeightDesktopSidebar, "transform", string2);
-                Vue.set(this.heartHeightDesktopSidebar, "top", parentOffset.top + 'px')
+                Vue.set(this.heartHeightDesktopSidebar, "top", parentOffset.top + "px");
 
                 //  Vue.set(this.heartHeightDesktopSidebar, "left", +"px");
                 //  Vue.set(this.heartHeightDesktopSidebar, "bottom", $("#bidButton").offset().bottom - $("#bidButton").offset().bottom + "px");
             }
         },
         getImage: function (image) {
-
             if (image == undefined) {
-                return false
+                return false;
             } else return image;
-
         },
         toggleFavorite: function (id) {
             this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
@@ -506,7 +556,7 @@ export default {
                 //     }
                 // });
 
-                this.$store.dispatch("setFavorite", id)
+                this.$store.dispatch("setFavorite", id);
             } else if (this.activeKeys[index].active === true) {
                 var favoritedItem = {
                     userID: this.$store.state.user.UserID,
@@ -527,8 +577,7 @@ export default {
                 //         console.log(err.responseText);
                 //     }
                 // });
-                this.$store.dispatch("removeFavorite", id)
-
+                this.$store.dispatch("removeFavorite", id);
             }
 
             this.$store.dispatch("loadPosts", this.$route.params.TinyURL);
@@ -543,7 +592,7 @@ export default {
             }
         }
     }
-}
+};
 </script>
 
 <style lang="scss" scoped>
